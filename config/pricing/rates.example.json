@@ -1,0 +1,12 @@
+[
+  {
+    "region": "JM",
+    "currency": "JMD",
+    "approved": false,
+    "_comment": "EXAMPLE SHAPE ONLY — these numbers are placeholders, not Axtara prices. Copy to rates.private.json (gitignored) or the PRICING_RATES_JSON env var, enter approved values and set approved: true.",
+    "plans": {
+      "core": { "perWorkerMonthly": 100, "minimumMonthly": 1000 },
+      "scale": { "perWorkerMonthly": 200, "minimumMonthly": 5000 }
+    }
+  }
+]
