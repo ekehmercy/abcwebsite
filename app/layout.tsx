@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { CookieConsent } from "@/components/layout/cookie-consent";
 import { RevealObserver } from "@/components/ui/reveal";
 import { jsonLd } from "@/lib/seo";
+import { indexingAllowed } from "@/lib/release";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -19,6 +20,8 @@ export const metadata: Metadata = {
   description: site.description,
   applicationName: site.name,
   openGraph: { siteName: site.name, type: "website" },
+  // Staging builds are never indexed (see lib/release.ts).
+  ...(indexingAllowed ? {} : { robots: { index: false, follow: false } }),
 };
 
 export const viewport: Viewport = {

@@ -15,7 +15,6 @@ export type ArticleCard = {
   categoryName: string;
   date: string;
   readingMinutes: number;
-  draft: boolean;
 };
 
 const fmt = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
@@ -133,7 +132,6 @@ export function ResourceBrowser({ articles, categories }: { articles: ArticleCar
                     <p className="mt-2 max-w-2xl text-[15px] leading-6 text-n-600">{a.summary}</p>
                     <p className="mt-3 flex items-center gap-3 text-[13px] text-n-500">
                       {a.readingMinutes} min read
-                      {a.draft && <span className="rounded-sm bg-accent-100/70 px-1.5 py-0.5 text-[11.5px] font-medium text-accent-700 ring-1 ring-inset ring-accent-300/60">Draft — not published</span>}
                     </p>
                   </div>
                 </Link>

@@ -16,9 +16,9 @@ export const metadata: Metadata = pageMetadata({
 });
 
 const expect = [
-  { I: MessagesSquare, title: "A short conversation first", body: "We ask how your sites, crews and approvals work today, so the demo reflects your operation." },
-  { I: MonitorPlay, title: "A walkthrough of the product", body: "Follow work from clock-in on site through approval, project cost and payroll preparation." },
-  { I: CalendarCheck, title: "Clear next steps", body: "Confirmed availability for your market, implementation scope and a quote for your workforce." },
+  { I: MessagesSquare, title: "Your operation, first", body: "We start with how your sites, crews and approvals run today — so everything you see reflects your business, not a generic script." },
+  { I: MonitorPlay, title: "The product, end to end", body: "Watch a worker clock in on site, a supervisor resolve an exception, approved hours land on a project and payroll preparation come together — on the web and mobile apps." },
+  { I: CalendarCheck, title: "A clear plan and quote", body: "Leave with a recommended plan, an implementation outline and a quote in your local currency." },
 ];
 
 export default function DemoPage() {
@@ -30,7 +30,7 @@ export default function DemoPage() {
           <Eyebrow>Request a demo</Eyebrow>
           <h1 className="t-h1 mt-4 text-n-950">See Axtara with your operation in mind.</h1>
           <p className="t-lead mt-5 text-n-600">
-            Tell us a little about your business. We&apos;ll show you how Axtara connects the people on site with the people approving, costing and paying for the work.
+            A guided demonstration built around your sites, crews and approval process. See how Axtara connects the people on site with the people approving, costing and paying for the work.
           </p>
         </div>
 
@@ -58,7 +58,7 @@ export default function DemoPage() {
               <MobileApprovals approved />
             </PhoneFrame>
             <div className="pb-6">
-              <p className="text-[13px] font-medium text-n-500">Common starting points</p>
+              <p className="text-[13px] font-medium text-n-500">What teams often start with</p>
               <ul className="mt-3 space-y-2">
                 {["Replacing paper sign-in sheets", "Approving hours before payroll", "Labour cost by project", "Daily reports from every site"].map((u) => (
                   <li key={u} className="text-[14.5px] text-n-800">{u}</li>

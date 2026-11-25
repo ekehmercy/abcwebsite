@@ -1,7 +1,12 @@
 /**
- * Market / regional configuration: currencies, contracting entities, and
- * regulatory context. Nothing here asserts that Axtara is registered, certified
- * or compliant in a jurisdiction — `complianceStatus` records what has been verified.
+ * Market / regional configuration: currencies, contracting entities and
+ * regulatory context.
+ *
+ * `complianceStatus`, `pricingModel` and `contractingEntity.verified` are
+ * INTERNAL fields for the private publication checklist — never rendered as
+ * status labels. `complianceNote` is visitor-facing: it explains how Axtara
+ * supports the employer's obligations. It must never claim registration,
+ * certification or regulatory approval.
  */
 
 export type RegionCode = "JM" | "NG" | "GY" | "US";
@@ -20,10 +25,11 @@ export type Region = {
   contractingEntity: LegalEntity | null;
   /** Data-protection frameworks relevant to customers in this market (context, not a compliance claim). */
   privacyFrameworks: { name: string; note: string }[];
-  /** What Axtara has verified about its own compliance position in this market. */
+  /** INTERNAL — Axtara's own verified compliance position in this market. */
   complianceStatus: "verified" | "in-review" | "not-yet-assessed";
+  /** Visitor-facing: how Axtara supports the employer's obligations in this market. */
   complianceNote: string;
-  /** Whether a commercial pricing model has been proposed for this market. */
+  /** INTERNAL — approval state of the commercial model for this market. */
   pricingModel: "proposed" | "under-review";
 };
 
@@ -41,7 +47,7 @@ export const regions: Region[] = [
     ],
     complianceStatus: "in-review",
     complianceNote:
-      "Axtara's obligations and registration position under Jamaican data-protection law are being confirmed. We will publish verified status here once complete.",
+      "Axtara supports your obligations as the employer under Jamaican law: workers are told what is collected and why, location is captured only at clock-in and clock-out, biometric checks are optional and consent-based, and retention periods are configured to your requirements.",
     pricingModel: "proposed",
   },
   {
@@ -57,7 +63,7 @@ export const regions: Region[] = [
     ],
     complianceStatus: "not-yet-assessed",
     complianceNote:
-      "Market entry for Nigeria is in preparation. Compliance assessment will be completed before Axtara contracts with customers there.",
+      "Axtara supports the lawful-basis, purpose-limitation and data-subject-rights principles of the NDPA: personal data is collected for workforce administration only, workers can see the information held about them, and retention is configured to your requirements.",
     pricingModel: "under-review",
   },
   {
@@ -73,7 +79,7 @@ export const regions: Region[] = [
     ],
     complianceStatus: "not-yet-assessed",
     complianceNote:
-      "Market entry for Guyana is in preparation. Compliance assessment will be completed before Axtara contracts with customers there.",
+      "Axtara supports your obligations under Guyanese law with purpose-limited collection, worker access to their own information, optional consent-based biometric checks and configurable retention.",
     pricingModel: "under-review",
   },
   {
@@ -93,7 +99,7 @@ export const regions: Region[] = [
     ],
     complianceStatus: "not-yet-assessed",
     complianceNote:
-      "Market entry for the United States is in preparation. Compliance assessment will be completed before Axtara contracts with customers there.",
+      "Axtara supports state-specific requirements with optional, consent-based biometric verification, point-in-time location capture, role-based access and configurable retention. Hours and payroll preparation records are kept with a full approval history.",
     pricingModel: "under-review",
   },
 ];

@@ -71,7 +71,7 @@ export type BillingArrangement = {
   termMonths: number | null;
 };
 
-/** Commercial model per market. `status: "proposed"` models are shown as proposed, not final. */
+/** Commercial model per market. `status` is INTERNAL (publication checklist) and never rendered. */
 export type MarketModel = {
   status: "proposed" | "approved" | "under-review";
   billing: BillingArrangement[];
@@ -113,7 +113,7 @@ export const marketModels: Partial<Record<RegionCode, MarketModel>> = {
     billing: jamaicaBilling,
     chargeBasis: "max-of-workers-or-minimum",
     notes: [
-      "Proposed commercial model for Jamaica. Final terms are confirmed in your order form.",
+      "Final terms are confirmed in your order form.",
     ],
   },
 };
@@ -138,7 +138,7 @@ export const separateCharges = [
   },
 ];
 
-/** Plan comparison. Entitlements must reflect APPROVED plan packaging. */
+/** Plan comparison. INTERNAL flag: set true once plan packaging is approved (publication checklist). */
 export const comparisonApproved = false;
 
 export type ComparisonRow = { group: string; name: string; values: Record<PlanId, boolean | string> };

@@ -3,18 +3,18 @@ import {
   ArrowRight, ArrowUpRight, Check, CheckCircle2, Clock, FileText, HardHat, Lock, MapPin, MessageSquare,
   Plane, Receipt, ShieldAlert, ShieldCheck, Users,
 } from "lucide-react";
-import { modules, getModule } from "@/config/features";
+import { modules, publicCapabilities, publicCapability, type ModuleSlug } from "@/config/features";
 import { industries } from "@/config/industries";
 import { plans } from "@/config/pricing";
-import { integrationCategories, publicIntegrations, integrationStatusLabels } from "@/config/integrations";
-import { securityPrinciples } from "@/content/security";
+import { integrationCategories, availableIntegrations } from "@/config/integrations";
+import { publicSecurityPrinciples } from "@/content/security";
 import { Eyebrow, SectionIntro } from "@/components/ui/section";
 import { LinkButton, TextLink } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { Icon } from "@/components/ui/icon";
-import { AvailabilityBadge } from "@/components/ui/availability-badge";
 import { EditorialImage } from "@/components/ui/editorial-image";
-import { screenComponents, ProjectsScreen, PayrollScreen, ReportingScreen, OverviewScreen } from "@/components/product-demo/screens";
+import { screenComponents, OverviewScreen } from "@/components/product-demo/screens";
+import { ApprovalsPhone, AttendanceDemo, ClockInPhone, PayrollDemo, ProjectsDemo, ReportingDemo } from "@/components/product-demo/interactive";
 import {
   MobileApprovals, MobileClockIn, MobileDailyReport, MobileHome, MobileSchedule,
 } from "@/components/product-demo/mobile-screens";
@@ -23,9 +23,8 @@ import { HeroDemo } from "./hero-demo";
 import { Fragmented } from "./fragmented";
 import { Journey, type JourneyStep } from "./journey";
 import { cn } from "@/lib/cn";
-import { strictClaims } from "@/lib/claims";
 
-const cap = (moduleSlug: string, id: string) => getModule(moduleSlug)!.capabilities.find((c) => c.id === id)!;
+const cap = (moduleSlug: ModuleSlug, id: string) => publicCapability(moduleSlug, id);
 
 /* ═════════════ 1. Hero ═════════════ */
 export function Hero() {
@@ -40,12 +39,12 @@ export function Hero() {
               Workforce and project operations for construction
             </p>
             <h1 id="hero-title" className="t-display mt-5 text-n-950">
-              Built for the way work really happens.
+              The work happens everywhere. Manage it from one place.
             </h1>
           </div>
           <div className="lg:col-span-5 lg:pb-3">
             <p className="t-lead text-n-600">
-              Connect your people, projects and field operations. Give everyone, from the jobsite to the boardroom, a clearer picture of the work that matters.
+              Connect your people, projects and field operations in one powerful platform built for the way construction businesses work.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton href="/demo" size="lg" arrow>Request a Demo</LinkButton>
@@ -122,10 +121,10 @@ export function ProductExplorer() {
           <h3 className="t-h3 text-white">{m.headline}</h3>
           <p className="mt-4 text-[16px] leading-7 text-white/70">{m.intro}</p>
           <ul className="mt-6 space-y-2.5">
-            {m.capabilities.slice(0, 5).map((c) => (
+            {publicCapabilities(m).slice(0, 5).map((c) => (
               <li key={c.id} className="flex items-start gap-2.5 text-[15px] text-white/85">
                 <Check className="mt-1 size-4 shrink-0 text-brand-300" aria-hidden="true" />
-                <span className="flex flex-wrap items-center gap-2">{c.name}<AvailabilityBadge cap={c} dark /></span>
+                <span>{c.name}</span>
               </li>
             ))}
           </ul>
@@ -146,7 +145,7 @@ export function ProductExplorer() {
     <section aria-labelledby="explore-title" className="dark-surface relative overflow-hidden bg-ink-900 py-24 text-white lg:py-32">
       <div aria-hidden="true" className="grid-lines-dark pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,#000,transparent_70%)]" />
       <div className="container-x relative">
-        <SectionIntro dark id="explore-title" eyebrow="Explore the product" title="One platform. A clearer view of every operation." lead="Eight connected parts of one product. Choose an area to see how it works." />
+        <SectionIntro dark id="explore-title" eyebrow="Explore the product" title="One platform. A clearer view of every operation." lead="Eight connected parts of one product. Choose an area, then use it — the previews below respond like the real application." />
         <Tabs
           label="Product areas"
           tabs={tabs}
@@ -168,7 +167,7 @@ export function ProductExplorer() {
 function TimeEntryCard() {
   return (
     <div className="mx-auto grid max-w-[760px] items-center gap-6 md:grid-cols-[auto_1fr]">
-      <PhoneFrame label="Kemar Williams is clocked in at Harbour Point" className="mx-auto w-[220px]"><MobileClockIn stage={2} /></PhoneFrame>
+      <PhoneFrame label="Kemar Williams is clocked in at Harbour Point" className="mx-auto w-[232px]"><MobileClockIn stage={2} title="Axtara Field" /></PhoneFrame>
       <Panel title="Time entry · TE-20418" meta="Created 06:52">
         <dl className="ui-md grid grid-cols-[auto_1fr] gap-x-5 gap-y-2.5">
           <dt className="text-n-500">Worker</dt><dd className="flex items-center gap-2 text-n-900"><Avatar name="Kemar Williams" size={20} />Kemar Williams</dd>
@@ -176,7 +175,7 @@ function TimeEntryCard() {
           <dt className="text-n-500">Site · area</dt><dd className="text-n-900">Block B · Level 3 slab</dd>
           <dt className="text-n-500">Cost code</dt><dd className="font-mono text-n-900">03-200 · Structural works</dd>
           <dt className="text-n-500">Location</dt><dd className="flex items-center gap-1.5 text-ok"><MapPin className="size-3.5" aria-hidden="true" />Inside site boundary</dd>
-          <dt className="text-n-500">Status</dt><dd><Tag tone="warn"><Clock className="size-3" aria-hidden="true" />Pending review</Tag></dd>
+          <dt className="text-n-500">Status</dt><dd><Tag tone="warn"><Clock className="size-3" aria-hidden="true" />Sent to Shanice Brown for review</Tag></dd>
         </dl>
       </Panel>
     </div>
@@ -185,31 +184,29 @@ function TimeEntryCard() {
 
 export function OperationalJourney() {
   const steps: JourneyStep[] = [
-    { title: "Worker arrives and clocks in", actor: "Field worker", person: "Kemar Williams, Steel Fixer", detail: "Kemar opens the Axtara app at the Harbour Point gate. His site, crew and shift are already there — he taps Clock in." },
-    { title: "Location is verified", actor: "Axtara", person: "Automatic check", detail: "Axtara checks the clock-in against the Block B site boundary at that moment. Location is not tracked continuously." },
-    { title: "Time is linked to the project", actor: "Axtara", person: "Automatic allocation", detail: "The time entry is allocated to Harbour Point, Block B and cost code 03-200 — no one has to transcribe it later." },
-    { title: "Supervisor reviews", actor: "Site supervisor", person: "Shanice Brown, Site Supervisor", detail: "Shanice sees the crew's clock-ins on her phone, checks the exceptions and approves Kemar's record in one tap." },
-    { title: "Hours reach the project record", actor: "Project manager", person: "Andre Campbell, Project Manager", detail: "Approved hours update labour against budget on Harbour Point. Andre can see Structural works trending at 94% of its labour budget." },
-    { title: "Finance prepares payroll", actor: "Finance manager", person: "Tavia Reid, Finance Manager", detail: "Only approved hours flow into payroll preparation. Tavia reviews variances and hands off to the payroll provider, which processes payment." },
-    { title: "Management reviews performance", actor: "Executive", person: "Paul Henry, Operations Director", detail: "Paul reviews attendance, labour and exceptions across every project — built from the same records that started on site this morning." },
+    { title: "Clock in on site", actor: "Field worker", person: "Kemar Williams, Steel Fixer", detail: "Kemar arrives at the Harbour Point gate. His site, crew and shift are already in Axtara Field — one tap records the start of his day." },
+    { title: "Linked to site and project", actor: "Site verification", person: "Recorded automatically", detail: "The clock-in is checked against the Block B site boundary and attached to Harbour Point, Block B and cost code 03-200. Nobody re-keys it later." },
+    { title: "Review and approve", actor: "Site supervisor", person: "Shanice Brown, Site Supervisor", detail: "Shanice sees her crew's clock-ins and any exceptions on her phone, resolves them on the spot and approves the hours." },
+    { title: "Update the project picture", actor: "Project manager", person: "Andre Campbell, Project Manager", detail: "Approved hours flow into labour cost by cost code. Andre sees Structural works at 94% of its labour budget and acts while there is still time." },
+    { title: "Prepare payroll", actor: "Finance", person: "Tavia Reid, Finance Manager", detail: "Only approved hours reach payroll preparation. Tavia clears the variances and prepares the schedule for the payroll provider, which pays employees." },
+    { title: "See the whole operation", actor: "Executive", person: "Paul Henry, Operations Director", detail: "Paul reviews progress, labour and exceptions across every project — built from the same records that started on site this morning." },
   ];
   const visuals = [
-    <div key="1" className="flex justify-center py-2"><PhoneFrame label="Kemar's assignment and Clock in button" className="w-[232px]"><MobileClockIn stage={0} /></PhoneFrame></div>,
-    <div key="2" className="flex justify-center py-2"><PhoneFrame label="Location verified, clocked in at 06:52" className="w-[232px]"><MobileClockIn stage={2} /></PhoneFrame></div>,
-    <TimeEntryCard key="3" />,
-    <div key="4" className="flex flex-wrap items-center justify-center gap-6 py-2">
-      <PhoneFrame label="Supervisor approval queue" className="w-[232px]"><MobileApprovals /></PhoneFrame>
-      <PhoneFrame label="Kemar's record approved" className="hidden w-[232px] md:block"><MobileApprovals approved /></PhoneFrame>
+    <div key="1" className="flex justify-center py-2"><ClockInPhone /></div>,
+    <TimeEntryCard key="2" />,
+    <div key="3" className="grid items-start gap-6 xl:grid-cols-[auto_1fr]">
+      <ApprovalsPhone className="mx-auto" />
+      <div className="hidden min-w-0 xl:block"><AttendanceDemo /></div>
     </div>,
-    <ProjectsScreen key="5" />,
-    <PayrollScreen key="6" />,
-    <ReportingScreen key="7" />,
+    <ProjectsDemo key="4" />,
+    <PayrollDemo key="5" />,
+    <ReportingDemo key="6" />,
   ];
   return (
     <section id="journey" aria-labelledby="journey-title" className="scroll-mt-16 py-24 lg:py-32">
       <div className="container-x">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-          <SectionIntro id="journey-title" eyebrow="Product walkthrough" title="Follow the work, from site to management." lead="One clock-in on a Tuesday morning, followed through every person who relies on it." />
+          <SectionIntro id="journey-title" eyebrow="Product walkthrough" title="From the jobsite to the boardroom." lead="Follow one clock-in through every person who relies on it. Each step is the product itself — tap, approve and explore." />
           <IllustrativeNote className="shrink-0" />
         </div>
         <div className="mt-12">
@@ -233,11 +230,14 @@ export function FieldSection() {
     { label: "Messages with supervisors", I: MessageSquare, c: cap("field-operations", "fo-comms") },
     { label: "Employee documents", I: FileText, c: cap("workforce", "wf-documents") },
   ];
-  const supervisor = [
+  const supervisorAll = [
     { label: "Crew attendance and exceptions", c: cap("time-attendance", "ta-exceptions") },
     { label: "Approve hours on site", c: cap("time-attendance", "ta-approvals") },
     { label: "Review daily reports", c: cap("field-operations", "fo-review") },
   ];
+  // Only capabilities that may be shown in this release stage.
+  const workerShown = worker.filter((w) => w.c);
+  const supervisor = supervisorAll.filter((w) => w.c);
   return (
     <section aria-labelledby="field-title" className="border-t border-n-150 bg-white py-24 lg:py-32">
       <div className="container-x">
@@ -248,10 +248,10 @@ export function FieldSection() {
               <div>
                 <h3 className="text-[14px] font-medium text-n-900">For field workers</h3>
                 <ul className="mt-3 space-y-2">
-                  {worker.map(({ label, I, c }) => (
+                  {workerShown.map(({ label, I }) => (
                     <li key={label} className="flex items-center gap-2.5 text-[14.5px] text-n-700">
                       <I className="size-4 shrink-0 text-n-400" aria-hidden="true" />
-                      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">{label}<AvailabilityBadge cap={c} /></span>
+                      <span>{label}</span>
                     </li>
                   ))}
                 </ul>
@@ -259,10 +259,10 @@ export function FieldSection() {
               <div>
                 <h3 className="text-[14px] font-medium text-n-900">For supervisors</h3>
                 <ul className="mt-3 space-y-2">
-                  {supervisor.map(({ label, c }) => (
+                  {supervisor.map(({ label }) => (
                     <li key={label} className="flex items-center gap-2.5 text-[14.5px] text-n-700">
                       <CheckCircle2 className="size-4 shrink-0 text-n-400" aria-hidden="true" />
-                      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">{label}<AvailabilityBadge cap={c} /></span>
+                      <span>{label}</span>
                     </li>
                   ))}
                 </ul>
@@ -287,11 +287,11 @@ export function FieldSection() {
 /* ═════════════ 7. Personas ═════════════ */
 export function Personas() {
   const personas = [
-    { id: "exec", label: "Executive", who: "Paul Henry · Operations Director", needs: "Operational performance, project visibility and the exceptions that need a decision.", points: ["Portfolio health across every project", "Labour cost against budget, by project", "One list of exceptions — not twelve reports"], preview: <ReportingScreen /> },
-    { id: "pm", label: "Project Manager", who: "Andre Campbell · Project Manager", needs: "Labour, progress and site activity on their projects, while there is still time to act.", points: ["Approved hours by cost code", "Daily reports and photos from every crew", "Early warning on labour overruns"], preview: <ProjectsScreen /> },
+    { id: "exec", label: "Executive", who: "Paul Henry · Operations Director", needs: "Operational performance, project visibility and the exceptions that need a decision.", points: ["Portfolio health across every project", "Labour cost against budget, by project", "One list of exceptions — not twelve reports"], preview: <ReportingDemo /> },
+    { id: "pm", label: "Project Manager", who: "Andre Campbell · Project Manager", needs: "Labour, progress and site activity on their projects, while there is still time to act.", points: ["Approved hours by cost code", "Daily reports and photos from every crew", "Early warning on labour overruns"], preview: <ProjectsDemo /> },
     { id: "super", label: "Site Supervisor", who: "Shanice Brown · Site Supervisor", needs: "Crew attendance, approvals, daily reports and safety incidents — from the site, not the office.", points: ["See who is on site right now", "Approve hours in one tap", "Report incidents and daily progress on the spot"], preview: <div className="flex justify-center gap-6 py-2"><PhoneFrame label="Supervisor approvals" className="w-[232px]"><MobileApprovals /></PhoneFrame><PhoneFrame label="Supervisor daily report" className="hidden w-[232px] sm:block"><MobileDailyReport /></PhoneFrame></div> },
     { id: "hr", label: "HR Manager", who: "Adaeze Nwosu · HR Manager", needs: "Employee records, attendance, leave and workforce compliance in one place.", points: ["Complete employee records and documents", "Leave requests routed and recorded", "Certification expiry before it becomes a problem"], preview: <screenComponents.workforce /> },
-    { id: "fin", label: "Finance Manager", who: "Tavia Reid · Finance Manager", needs: "Approved hours, expenses, labour cost and payroll preparation without re-keying.", points: ["Only approved hours reach payroll preparation", "Expenses allocated to projects and cost codes", "Variances highlighted before handoff"], preview: <PayrollScreen /> },
+    { id: "fin", label: "Finance Manager", who: "Tavia Reid · Finance Manager", needs: "Approved hours, expenses, labour cost and payroll preparation without re-keying.", points: ["Only approved hours reach payroll preparation", "Expenses allocated to projects and cost codes", "Variances highlighted before handoff"], preview: <PayrollDemo /> },
     { id: "worker", label: "Field Worker", who: "Kemar Williams · Steel Fixer", needs: "Their assignment, a quick clock-in, simple submissions and a direct line to their supervisor.", points: ["Today's site and shift on the phone", "Clock in at the gate in seconds", "Submit expenses, leave and reports in a few taps"], preview: <div className="flex justify-center gap-6 py-2"><PhoneFrame label="Worker home" className="w-[232px]"><MobileHome /></PhoneFrame><PhoneFrame label="Worker shifts" className="hidden w-[232px] sm:block"><MobileSchedule /></PhoneFrame></div> },
   ];
   const panels = personas.map((p) => (
@@ -330,21 +330,24 @@ export function Personas() {
 
 /* ═════════════ 8. Ecosystem ═════════════ */
 export function Ecosystem() {
-  const statusFor = (cat: string) => {
-    const list = publicIntegrations.filter((i) => i.category === cat);
-    const avail = list.find((i) => i.status === "available");
-    if (avail) return avail.verified || !strictClaims ? "Exports available" : "Structured exports";
-    const s = list[0]?.status;
-    return s ? integrationStatusLabels[s] : "Under evaluation";
+  const what: Record<string, string> = {
+    accounting: "Costs by project",
+    payroll: "Approved hours",
+    payments: "Reimbursements",
+    identity: "Worker identity",
+    estimating: "Budgets and cost codes",
+    procurement: "Field requests",
+    documents: "Compliance files",
   };
+  const statusFor = (cat: string) => (availableIntegrations.some((i) => i.category === cat) ? `${what[cat]} · connected` : what[cat]);
   const n = integrationCategories.length;
   return (
     <section aria-labelledby="eco-title" className="border-y border-n-150 bg-white py-24 lg:py-28">
       <div className="container-x grid items-center gap-14 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <SectionIntro id="eco-title" eyebrow="Integrations" title="Keep the tools you trust. Connect the work that matters." lead="Axtara is designed to sit alongside your accounting, payroll and document systems, not replace them. Our integration ecosystem is being developed around customer needs and regional requirements." />
+          <SectionIntro id="eco-title" eyebrow="Integrations" title="Your operation, connected to the tools you trust." lead="Axtara works alongside your accounting, payroll and document systems. Approved records leave Axtara ready to use — and if you need a connection to the software you already run, tell us what it is." />
           <div className="mt-8 flex flex-wrap gap-3">
-            <LinkButton href="/integrations" variant="secondary" arrow>Explore Integration Opportunities</LinkButton>
+            <LinkButton href="/integrations" variant="secondary" arrow>Explore integrations</LinkButton>
           </div>
         </div>
         <div className="lg:col-span-7" data-reveal>
@@ -397,26 +400,23 @@ export function SecurityTeaser() {
     <section aria-labelledby="sec-title" className="py-24 lg:py-32">
       <div className="container-x grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <SectionIntro id="sec-title" eyebrow="Security and trust" title="Operational visibility should never come at the expense of privacy." />
+          <SectionIntro id="sec-title" eyebrow="Security and trust" title="Visibility for managers. Privacy for the people doing the work." />
           <p className="mt-5 max-w-md text-[15.5px] leading-7 text-n-600" data-reveal>
-            Axtara holds information about people and their work. We treat that as a responsibility — and we are precise about what is in place today and what is a design commitment.
+            Axtara holds information about people, their hours and where they work. Access is controlled by role, every approval is recorded, and location is captured only at clock-in.
           </p>
           <TextLink href="/security" className="mt-7">Visit the Security and Trust centre</TextLink>
         </div>
-        <ul className="grid gap-px overflow-hidden rounded-xl bg-n-150 sm:grid-cols-2 lg:col-span-7" data-reveal>
-          {securityPrinciples.map((p) => (
-            <li key={p.id} className="bg-n-25 p-6">
-              <div className="flex items-center justify-between gap-3">
-                <span className="flex size-8 items-center justify-center rounded-md bg-white text-n-700 shadow-[0_0_0_1px_var(--n-150)]">
-                  {p.id === "access" ? <Lock className="size-4" aria-hidden="true" /> : p.id === "employee" ? <Users className="size-4" aria-hidden="true" /> : <ShieldCheck className="size-4" aria-hidden="true" />}
-                </span>
-                <span className="text-[11.5px] font-medium text-n-500">{p.status === "implemented" ? "In place" : "Design commitment"}</span>
-              </div>
-              <h3 className="mt-4 text-[16px] font-medium text-n-950">{p.title}</h3>
-              <p className="mt-1.5 text-[14.5px] leading-6 text-n-600">{p.body}</p>
-            </li>
+        <dl className="border-t border-n-200 lg:col-span-7" data-reveal>
+          {publicSecurityPrinciples.map((p) => (
+            <div key={p.id} className="grid gap-1 border-b border-n-150 py-5 sm:grid-cols-[220px_1fr] sm:gap-8">
+              <dt className="flex items-center gap-2.5 text-[15.5px] font-medium text-n-950">
+                {p.id === "access" ? <Lock className="size-4 text-brand-600" aria-hidden="true" /> : p.id === "employee" ? <Users className="size-4 text-brand-600" aria-hidden="true" /> : <ShieldCheck className="size-4 text-brand-600" aria-hidden="true" />}
+                {p.title}
+              </dt>
+              <dd className="text-[15px] leading-6 text-n-600">{p.body}</dd>
+            </div>
           ))}
-        </ul>
+        </dl>
       </div>
     </section>
   );

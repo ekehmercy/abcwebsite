@@ -53,7 +53,7 @@ export function HeroDemo() {
         {/* Mobile: the field app leads, the management view follows */}
         <div className="mb-5 flex justify-center sm:hidden">
           <PhoneFrame label="Axtara mobile app: Kemar Williams clocks in at Harbour Point, Block B" className="w-[224px]">
-            <MobileClockIn stage={phone} />
+            <MobileClockIn stage={phone} title="Axtara Field" />
           </PhoneFrame>
         </div>
         <div className="relative">
@@ -63,7 +63,7 @@ export function HeroDemo() {
         {/* Phone: stacked above on mobile, overlapping the dashboard on large screens */}
         <div className="pointer-events-none absolute -bottom-10 left-1/2 hidden -translate-x-1/2 sm:block lg:bottom-[-48px] lg:left-0 lg:translate-x-0">
           <PhoneFrame label="Axtara mobile app: Kemar Williams clocks in at Harbour Point, Block B" className="w-[218px] lg:w-[236px]">
-            <MobileClockIn stage={phone} />
+            <MobileClockIn stage={phone} title="Axtara Field" />
           </PhoneFrame>
         </div>
 
@@ -87,7 +87,7 @@ export function HeroDemo() {
           ))}
         </ol>
         <div className="flex items-center gap-3">
-          <p className="whitespace-nowrap text-[12.5px] text-n-500">Illustrative · fictional data</p>
+          <p className="whitespace-nowrap text-[12.5px] text-n-500">Demonstration data</p>
           {!reduced && (
             <button
               type="button"

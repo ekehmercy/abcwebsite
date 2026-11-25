@@ -3,6 +3,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { demoAttendance, demoCostCodes, demoPeople, demoProjects, type DemoStatus } from "@/content/demo-data";
+import {
+  AttendanceDemo, ComplianceDemo, CostsDemo, FieldDemo, PayrollDemo, ProjectsDemo, ReportingDemo, WorkforceDemo,
+} from "./interactive";
 import { AppFrame, Avatar, Bars, Kpi, LineChart, Meter, Panel, StatusPill, Table, Tag } from "./primitives";
 
 /* ═════════════════════ Overview — used in the hero ═════════════════════ */
@@ -38,7 +41,7 @@ export function OverviewScreen({ stage = 3, className }: { stage?: HeroStage; cl
         <Kpi label="On site now" value={`${onSite}`} sub="of 188 scheduled" highlight={stage === 3} />
         <Kpi label="Pending approvals" value={pending} sub={stage === 1 ? "1 new submission" : "Across 3 sites"} tone={stage === 1 ? "warn" : "neutral"} highlight={stage === 1} />
         <div className="hidden @3xl:block"><Kpi label="Attendance exceptions" value="3" sub="2 outside boundary" tone="bad" /></div>
-        <div className="hidden @3xl:block"><Kpi label="Labour hours · week" value={stage >= 3 ? "4,318" : "4,310"} sub="72% of planned" /></div>
+        <div className="hidden @3xl:block"><Kpi label="Labour cost · this week" value={stage >= 3 ? "J$4.22m" : "J$4.21m"} sub="Approved hours · all sites" /></div>
       </div>
 
       <div className="mt-2.5 grid gap-2.5 @4xl:grid-cols-[1.45fr_1fr]">
@@ -520,14 +523,15 @@ export function ReportingScreen({ className }: { className?: string }) {
   );
 }
 
+/** Interactive versions are used everywhere a module preview appears. */
 export const screenComponents = {
-  workforce: WorkforceScreen,
-  attendance: AttendanceScreen,
-  field: FieldScreen,
-  projects: ProjectsScreen,
-  costs: CostsScreen,
-  payroll: PayrollScreen,
-  compliance: ComplianceScreen,
-  reporting: ReportingScreen,
+  workforce: WorkforceDemo,
+  attendance: AttendanceDemo,
+  field: FieldDemo,
+  projects: ProjectsDemo,
+  costs: CostsDemo,
+  payroll: PayrollDemo,
+  compliance: ComplianceDemo,
+  reporting: ReportingDemo,
 } as const;
 

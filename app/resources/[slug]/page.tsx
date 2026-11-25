@@ -60,7 +60,6 @@ export default async function ArticlePage({ params }: Props) {
                 <time dateTime={a.date}>{fmt(a.date)}</time>
                 <span aria-hidden="true">·</span>
                 <span>{a.readingMinutes} min read</span>
-                {a.status === "draft" && <span className="rounded-sm bg-accent-100/70 px-1.5 py-0.5 text-[11.5px] font-medium text-accent-700 ring-1 ring-inset ring-accent-300/60">Draft — not published</span>}
               </p>
               <h1 className="t-h2 mt-5 text-n-950">{a.title}</h1>
               <p className="t-lead mt-5 text-n-600">{a.summary}</p>

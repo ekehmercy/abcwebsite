@@ -3,11 +3,10 @@ import Link from "next/link";
 import { ArrowDown, ArrowRight, Check, Hand, Languages, Lock, Smartphone, Sun } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { appUrls } from "@/config/site";
-import { getModule, type Capability } from "@/config/features";
+import { publicCapability, type Capability, type ModuleSlug } from "@/config/features";
 import { SectionIntro, Eyebrow } from "@/components/ui/section";
 import { LinkButton, TextLink } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
-import { AvailabilityBadge } from "@/components/ui/availability-badge";
 import { AttendanceScreen } from "@/components/product-demo/screens";
 import { IllustrativeNote, PhoneFrame } from "@/components/product-demo/primitives";
 import {
@@ -23,9 +22,9 @@ export const metadata: Metadata = pageMetadata({
   path: "/mobile",
 });
 
-const cap = (m: string, id: string): Capability => getModule(m)!.capabilities.find((c) => c.id === id)!;
+const cap = (m: ModuleSlug, id: string): Capability | undefined => publicCapability(m, id);
 
-const workerFeatures = [
+const workerFeaturesAll = [
   { id: "clock", label: "Clock-in", title: "Clock in at the gate in seconds.", body: "Today's site, crew and shift are already on the phone. One tap records the start of the day, with location checked at that moment against the site boundary.", c: cap("time-attendance", "ta-clock"), screen: <MobileClockIn stage={2} /> },
   { id: "shifts", label: "Shifts", title: "Know where you're working this week.", body: "Assignments and shift times by day, including early starts and site changes, so nobody turns up at the wrong gate.", c: cap("workforce", "wf-scheduling"), screen: <MobileSchedule /> },
   { id: "reports", label: "Daily reports", title: "Report the day before leaving site.", body: "Work completed, delays, weather and photos in a structured report that reaches the project manager the same day.", c: cap("field-operations", "fo-daily"), screen: <MobileDailyReport /> },
@@ -36,13 +35,17 @@ const workerFeatures = [
   { id: "messages", label: "Messages", title: "Hear about changes from the person running the site.", body: "Notices and messages between supervisors and crews, tied to the site rather than a personal group chat.", c: cap("field-operations", "fo-comms"), screen: <MobileMessages /> },
 ];
 
-const supervisorPoints = [
+const supervisorPointsAll = [
   { label: "See who is on site right now, and who isn't", c: cap("time-attendance", "ta-exceptions") },
   { label: "Approve, correct or query hours in one tap", c: cap("time-attendance", "ta-approvals") },
   { label: "Review crew daily reports and photos", c: cap("field-operations", "fo-review") },
   { label: "Record incidents and follow-up actions", c: cap("compliance", "cp-incidents") },
   { label: "Approve field expenses against cost codes", c: cap("expenses", "ex-approvals") },
 ];
+
+// Only capabilities that may be shown in this release stage.
+const workerFeatures = workerFeaturesAll.filter((f): f is typeof f & { c: Capability } => !!f.c);
+const supervisorPoints = supervisorPointsAll.filter((p) => p.c);
 
 function StoreOrInterestCtas() {
   if (appUrls.appStore || appUrls.googlePlay) {
@@ -68,7 +71,7 @@ export default function MobilePage() {
         <h3 className="t-h3 text-n-950">{f.title}</h3>
         <p className="mt-4 text-[16px] leading-7 text-n-600">{f.body}</p>
         <p className="mt-5 flex items-center gap-2 text-[14px] text-n-700">
-          <Check className="size-4 text-brand-600" aria-hidden="true" />{f.c.name}<AvailabilityBadge cap={f.c} />
+          <Check className="size-4 text-brand-600" aria-hidden="true" />{f.c.name}
         </p>
       </div>
       <div className="flex justify-center">
@@ -182,7 +185,7 @@ export default function MobilePage() {
               {supervisorPoints.map((p) => (
                 <li key={p.label} className="flex items-start gap-2.5 text-[15px] text-white/85">
                   <Check className="mt-1 size-4 shrink-0 text-brand-300" aria-hidden="true" />
-                  <span className="flex flex-wrap items-center gap-2">{p.label}<AvailabilityBadge cap={p.c} dark /></span>
+                  <span>{p.label}</span>
                 </li>
               ))}
             </ul>

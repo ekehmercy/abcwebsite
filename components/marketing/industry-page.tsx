@@ -89,10 +89,10 @@ export function IndustryPage({ ind }: { ind: Industry }) {
       <section aria-labelledby="sc-title" className="dark-surface bg-ink-900 py-20 text-white lg:py-28">
         <div className="container-x grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Eyebrow dark>Illustrative scenario</Eyebrow>
+            <Eyebrow dark>In practice</Eyebrow>
             <h2 id="sc-title" className="t-h2 mt-4">{ind.scenario.title}</h2>
             <p className="mt-5 text-[15.5px] leading-7 text-white/70">{ind.scenario.context}</p>
-            <p className="mt-6 text-[13px] text-white/50">A hypothetical example using fictional organisations and people. It does not describe an Axtara customer.</p>
+            <p className="mt-6 text-[13px] text-white/45">Example scenario · demonstration data</p>
           </div>
           <ol className="relative lg:col-span-7 lg:col-start-6">
             {ind.scenario.beats.map((b, i) => (

@@ -3,9 +3,9 @@ import { site } from "@/config/site";
 import { modules } from "@/config/features";
 import { industries } from "@/config/industries";
 import { policies } from "@/config/legal";
-import { articles } from "@/content/resources";
+import { articles, isArticleVisible } from "@/content/resources";
 
-/** Only published, indexable pages are listed. Drafts and unpublished policies are excluded. */
+/** Lists the routes visible in the current release stage. Unpublished legal policies are excluded. */
 export default function sitemap(): MetadataRoute.Sitemap {
   const u = (p: string, priority = 0.7): MetadataRoute.Sitemap[number] => ({ url: new URL(p, site.url).toString(), changeFrequency: "monthly", priority });
   return [
@@ -18,7 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     u("/integrations"),
     u("/security"),
     u("/resources", 0.6),
-    ...articles.filter((a) => a.status === "published").map((a) => u(`/resources/${a.slug}`, 0.5)),
+    ...articles.filter(isArticleVisible).map((a) => u(`/resources/${a.slug}`, 0.5)),
     u("/about", 0.5),
     u("/demo", 0.9),
     u("/contact", 0.5),

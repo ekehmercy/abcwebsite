@@ -279,7 +279,7 @@ export function AppFrame({
   actions?: ReactNode;
 }) {
   return (
-    <div className={cn("@container overflow-hidden rounded-xl bg-n-25 text-left font-sans shadow-[0_0_0_1px_var(--n-200),var(--shadow-float)]", className)}>
+    <div className={cn("@container relative overflow-hidden rounded-xl bg-n-25 text-left font-sans shadow-[0_0_0_1px_var(--n-200),var(--shadow-float)]", className)}>
       <div className="flex min-h-full">
         <aside className="hidden w-[188px] shrink-0 flex-col border-r border-n-150 bg-n-50/80 px-2.5 py-3 @3xl:flex">
           <div className="flex items-center gap-2 rounded-md px-1.5 py-1">
@@ -345,16 +345,19 @@ export function PhoneFrame({
   time = "06:52",
   dark,
   label,
+  interactive,
 }: {
   children: ReactNode;
   className?: string;
   time?: string;
   dark?: boolean;
   label: string;
+  /** When true the screen contains real controls, so it is exposed to assistive tech as a labelled region. */
+  interactive?: boolean;
 }) {
   return (
     <div
-      role="img"
+      role={interactive ? "region" : "img"}
       aria-label={label}
       className={cn(
         "relative aspect-[9/19.2] shrink-0 rounded-[42px] bg-[#111316] p-[9px] shadow-[var(--shadow-device),inset_0_0_0_1.5px_#2a2d33]",
@@ -372,7 +375,7 @@ export function PhoneFrame({
             <svg width="22" height="10" viewBox="0 0 22 10" fill="none"><rect x="0.5" y="0.5" width="18" height="9" rx="2.5" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="12" height="6" rx="1.5" fill="currentColor"/><rect x="19.5" y="3" width="1.5" height="4" rx=".75" fill="currentColor" opacity=".4"/></svg>
           </span>
         </div>
-        <div className="relative flex min-h-0 flex-1 flex-col" aria-hidden="true">{children}</div>
+        <div className="relative flex min-h-0 flex-1 flex-col" aria-hidden={interactive ? undefined : true}>{children}</div>
         <div aria-hidden="true" className={cn("mx-auto mb-1.5 mt-1 h-[4px] w-[96px] shrink-0 rounded-full", dark ? "bg-white/60" : "bg-n-900/80")} />
       </div>
     </div>
@@ -412,7 +415,7 @@ export function IllustrativeNote({ className, dark }: { className?: string; dark
   return (
     <p className={cn("ui-sm flex items-center gap-1.5", dark ? "text-white/55" : "text-n-500", className)}>
       <Info className="size-3" aria-hidden="true" />
-      Illustrative product demonstration · fictional data
+      Demonstration data
     </p>
   );
 }

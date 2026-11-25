@@ -31,7 +31,7 @@ export function FooterRegion() {
       <p className="mt-3 text-[13px] leading-5 text-n-500" aria-live="polite">
         {entity?.verified
           ? `In ${region.name}, ${site.name} is offered by ${entity.name}.`
-          : `The contracting entity for customers in ${region.name} will be confirmed in your order form.`}
+          : `Your contracting entity is confirmed in your order form.`}
       </p>
     </div>
   );

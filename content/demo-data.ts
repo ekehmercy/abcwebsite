@@ -36,10 +36,93 @@ export type DemoProject = {
 
 export const demoProjects: DemoProject[] = [
   { id: "HPC", name: "Harbour Point Commercial Development", short: "Harbour Point", location: "Kingston, JM", phase: "Superstructure", progress: 62, labourBudgetUsed: 66, onSite: 48, planned: 52, health: "On track", manager: "Andre Campbell" },
-  { id: "CHR", name: "Cedar Heights Residential Development", short: "Cedar Heights", location: "Georgetown, GY", phase: "Foundations", progress: 38, labourBudgetUsed: 47, onSite: 31, planned: 34, health: "At risk", manager: "Natasha Singh" },
+  { id: "CHR", name: "Cedar Heights Residential Estate", short: "Cedar Heights", location: "Georgetown, GY", phase: "Foundations · Plots 9–24", progress: 38, labourBudgetUsed: 47, onSite: 31, planned: 34, health: "At risk", manager: "Natasha Singh" },
   { id: "RIP", name: "Riverside Infrastructure Project", short: "Riverside", location: "Lagos, NG", phase: "Drainage · Sections 1–6", progress: 71, labourBudgetUsed: 69, onSite: 86, planned: 90, health: "On track", manager: "Chinedu Okafor" },
-  { id: "EMO", name: "Eastgate Medical Office", short: "Eastgate", location: "Houston, US", phase: "Mobilisation", progress: 6, labourBudgetUsed: 4, onSite: 0, planned: 12, health: "On track", manager: "Elena Ramirez" },
 ];
+
+/** Per-project operational detail used by the interactive project record. */
+export const demoProjectDetail: Record<
+  string,
+  {
+    milestone: string;
+    openItems: string;
+    currency: string;
+    labourWeek: string;
+    costCodes: { code: string; name: string; used: number }[];
+    crews: { name: string; lead: string; size: number; area: string }[];
+    risks: { text: string; tone: "warn" | "bad" | "ok" }[];
+    plannedVsActual: { planned: number[]; actual: number[] };
+  }
+> = {
+  HPC: {
+    milestone: "Milestone 4 of 7 · Level 3 slab",
+    openItems: "1 incident · 4 RFIs",
+    currency: "J$",
+    labourWeek: "J$4.2m",
+    costCodes: [
+      { code: "03-200", name: "Structural works · Block B", used: 94 },
+      { code: "03-310", name: "Formwork", used: 71 },
+      { code: "05-120", name: "Structural steel", used: 58 },
+      { code: "26-050", name: "Electrical first fix", used: 33 },
+    ],
+    crews: [
+      { name: "Crew B2", lead: "Odane Morgan", size: 12, area: "Block B · Level 3" },
+      { name: "Crew S1", lead: "Rohan Thompson", size: 6, area: "Steel yard" },
+      { name: "Crew E1", lead: "Devon Fraser", size: 8, area: "Block A · services" },
+    ],
+    risks: [
+      { text: "Structural works labour at 94% of budget", tone: "warn" },
+      { text: "Y12 bar delivery short — pour moved to Thursday", tone: "warn" },
+      { text: "Expired welding certificate · Crew S1", tone: "bad" },
+    ],
+    plannedVsActual: { planned: [380, 410, 430, 450, 470, 480, 490, 500], actual: [372, 405, 441, 448, 489, 501, 512, 523] },
+  },
+  CHR: {
+    milestone: "Milestone 2 of 6 · Foundations",
+    openItems: "2 RFIs",
+    currency: "G$",
+    labourWeek: "G$5.8m",
+    costCodes: [
+      { code: "02-300", name: "Excavation and footings", used: 82 },
+      { code: "04-200", name: "Blockwork · Plots 9–16", used: 41 },
+      { code: "03-100", name: "Concrete supply and placing", used: 55 },
+      { code: "22-100", name: "Below-ground drainage", used: 28 },
+    ],
+    crews: [
+      { name: "Crew C1", lead: "Ravi Persaud", size: 9, area: "Plots 9–14" },
+      { name: "Crew C2", lead: "Natasha Singh", size: 11, area: "Plots 15–24" },
+    ],
+    risks: [
+      { text: "Two days lost to weather this week", tone: "warn" },
+      { text: "Excavation labour ahead of progress", tone: "warn" },
+      { text: "All certifications current", tone: "ok" },
+    ],
+    plannedVsActual: { planned: [210, 230, 250, 260, 270, 280, 290, 300], actual: [205, 228, 262, 271, 268, 296, 301, 322] },
+  },
+  RIP: {
+    milestone: "Milestone 5 of 7 · Sections 4–6",
+    openItems: "1 near miss",
+    currency: "₦",
+    labourWeek: "₦38.4m",
+    costCodes: [
+      { code: "33-410", name: "Storm drainage · Sections 1–3", used: 76 },
+      { code: "33-420", name: "Storm drainage · Sections 4–6", used: 52 },
+      { code: "32-100", name: "Road base and kerbs", used: 63 },
+      { code: "01-500", name: "Plant and traffic management", used: 70 },
+    ],
+    crews: [
+      { name: "Section 3", lead: "Tunde Adeyemi", size: 18, area: "Ch. 2+400 – 3+100" },
+      { name: "Section 5", lead: "Ifeoma Eze", size: 22, area: "Ch. 5+800 – 6+600" },
+      { name: "Section 6", lead: "Emeka Obi", size: 14, area: "Ch. 6+600 – 7+400" },
+    ],
+    risks: [
+      { text: "Near miss with reversing plant · Section 3", tone: "bad" },
+      { text: "Excavator licence expiring in 12 days", tone: "warn" },
+      { text: "Labour in line with programme", tone: "ok" },
+    ],
+    plannedVsActual: { planned: [820, 840, 860, 880, 900, 910, 920, 930], actual: [810, 846, 851, 879, 905, 902, 918, 926] },
+  },
+};
 
 export type DemoPerson = {
   id: string;
@@ -65,8 +148,8 @@ export const demoPeople: DemoPerson[] = [
   { id: "p11", name: "Tunde Adeyemi", role: "Plant Operator", trade: "Excavator", project: "RIP", crew: "Section 3", tone: 0 },
   { id: "p12", name: "Ifeoma Eze", role: "Section Engineer", project: "RIP", tone: 5 },
   { id: "p13", name: "Devon Fraser", role: "Electrician", trade: "Electrical", project: "CHR", crew: "Crew E1", tone: 1 },
-  { id: "p14", name: "Marcus Hill", role: "Site Supervisor", project: "EMO", tone: 2 },
-  { id: "p15", name: "Elena Ramirez", role: "Project Manager", project: "EMO", tone: 3 },
+  { id: "p14", name: "Marcus Hill", role: "Site Supervisor", project: "RIP", tone: 2 },
+  { id: "p15", name: "Elena Ramirez", role: "Commercial Manager", project: "HQ", tone: 3 },
   { id: "p16", name: "Jodi-Ann Clarke", role: "Labourer", trade: "General", project: "HPC", crew: "Crew B2", tone: 4 },
   { id: "p17", name: "Rohan Thompson", role: "Welder", trade: "Steel", project: "HPC", crew: "Crew S1", tone: 5 },
   { id: "p18", name: "Emeka Obi", role: "Labourer", trade: "Drainage", project: "RIP", crew: "Section 5", tone: 0 },

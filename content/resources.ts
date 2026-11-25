@@ -1,13 +1,14 @@
 /**
  * RESOURCE CENTRE — article registry.
  *
- * status:
- *   draft     — written but NOT approved. Visible only in development or when
- *               CONTENT_PREVIEW=true (with a "Draft — not published" badge).
+ * status (INTERNAL — never shown to visitors):
+ *   draft     — written but not yet approved. Shown in the staging release only
+ *               (or anywhere with CONTENT_PREVIEW=true); omitted from the public release.
  *   published — approved for the public website.
  *
  * Rules: no fabricated statistics, research, customer stories or testimonials.
  */
+import { isPublicRelease } from "../lib/release.ts";
 
 export type ResourceCategory =
   | "product-guides"
@@ -227,18 +228,27 @@ export const articles: Article[] = [
   },
 ];
 
-export const showDrafts = process.env.NODE_ENV !== "production" || process.env.CONTENT_PREVIEW === "true";
+/**
+ * Article `status` is INTERNAL. Staging shows every article; the public
+ * release shows published articles only. CONTENT_PREVIEW=true forces drafts on.
+ */
+export const showDrafts = !isPublicRelease || process.env.CONTENT_PREVIEW === "true";
+
+/** Whether an article may be shown in the current release stage. */
+export function isArticleVisible(a: Article): boolean {
+  return a.status === "published" || showDrafts;
+}
 
 export function visibleArticles(): Article[] {
   return articles
-    .filter((a) => a.status === "published" || showDrafts)
+    .filter(isArticleVisible)
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export function getArticle(slug: string): Article | undefined {
   const a = articles.find((x) => x.slug === slug);
   if (!a) return undefined;
-  return a.status === "published" || showDrafts ? a : undefined;
+  return isArticleVisible(a) ? a : undefined;
 }
 
 export function categoryName(id: ResourceCategory) {

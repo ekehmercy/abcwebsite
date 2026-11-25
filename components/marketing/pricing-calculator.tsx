@@ -201,7 +201,7 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
             </div>
           ) : (
             <p className="mt-2 rounded-lg bg-n-50 p-3.5 text-[14px] leading-6 text-n-600 shadow-[0_0_0_1px_var(--n-150)]">
-              Billing arrangements for {region.name} are being set as part of our market launch. We&apos;ll confirm options with you directly.
+              Your billing arrangement for {region.name} is agreed with you and set out in your order form.
             </p>
           )}
         </fieldset>
@@ -210,9 +210,7 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
       {/* Summary */}
       <div className="flex flex-col border-t border-n-150 bg-n-25 p-6 sm:p-8 lg:border-l lg:border-t-0" aria-live="polite">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-[15px] font-medium text-n-900">Your estimate</h3>
-          {model?.status === "proposed" && <span className="rounded-sm bg-accent-100/70 px-1.5 py-0.5 text-[11.5px] font-medium text-accent-700 ring-1 ring-inset ring-accent-300/60">Proposed model</span>}
-          {region.pricingModel === "under-review" && <span className="rounded-sm bg-n-100 px-1.5 py-0.5 text-[11.5px] font-medium text-n-600 ring-1 ring-inset ring-n-200">Under review</span>}
+          <h3 className="text-[15px] font-medium text-n-900">Your Axtara quote</h3>
           {preview && card && !card.approved && <span className="rounded-sm bg-bad-bg px-1.5 py-0.5 text-[11.5px] font-medium text-bad">Internal preview — unapproved rates</span>}
         </div>
 
@@ -221,7 +219,7 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
             ["Country", `${region.name} · ${region.currency.code}`],
             ["Plan", plan.name],
             ["Active workers", workers.toLocaleString("en")],
-            ["Billing", billing?.name ?? "To be confirmed"],
+            ["Billing", billing?.name ?? "Agreed in your order form"],
             ["Rate adjustment", adjustment ?? "—"],
             ["Invoiced", billing ? (billing.invoicing === "annual" ? "Once a year, in advance" : "Monthly") : "—"],
           ].map(([k, v]) => (
@@ -250,19 +248,17 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
           <div className="mt-6 rounded-xl bg-white p-5 shadow-[0_0_0_1px_var(--n-150)]">
             <p className="text-[16px] font-medium text-n-950">
               {plan.quotedOnly
-                ? "Enterprise is quoted for each organisation."
-                : region.pricingModel === "under-review"
-                  ? `The commercial model for ${region.name} is under review.`
-                  : `Pricing for ${region.name} is being finalised.`}
+                ? "Enterprise is priced for your organisation."
+                : `${plan.name} for ${workers.toLocaleString("en")} workers, quoted in ${region.currency.code}.`}
             </p>
             <p className="mt-2 text-[14px] leading-6 text-n-600">
-              Your subscription is the greater of your active workers multiplied by the plan&apos;s per-worker rate, or the plan&apos;s monthly minimum{adjustment && billing && billing.multiplier !== 1 ? `, with ${adjustment.replace(" vs standard", "")} applied for ${billing.name.toLowerCase()}` : ""}. We&apos;ll send a written quote for {workers.toLocaleString("en")} workers on {plan.name}.
+              Your subscription is the greater of your active workers multiplied by the plan&apos;s per-worker rate, or the plan&apos;s monthly minimum{adjustment && billing && billing.multiplier !== 1 ? `, with ${adjustment.replace(" vs standard", "")} applied for ${billing.name.toLowerCase()}` : ""}. Send us these details and we&apos;ll reply with a written {region.currency.code} quote.
             </p>
           </div>
         )}
 
         <div className="mt-auto flex flex-wrap gap-3 pt-6">
-          <Link href={quoteHref} className={buttonClass("primary", "md")}>Get a quote</Link>
+          <Link href={quoteHref} className={buttonClass("primary", "md")}>Get your {region.currency.code} quote</Link>
           <Link href="/demo?interest=pricing" className={buttonClass("secondary", "md")}>Request a Demo</Link>
         </div>
       </div>

@@ -12,10 +12,10 @@ const Row = ({ children, className }: { children: React.ReactNode; className?: s
 /* ── Worker: clock-in flow (hero + journey) ── */
 export type ClockStage = 0 | 1 | 2;
 
-export function MobileClockIn({ stage = 2 }: { stage?: ClockStage }) {
+export function MobileClockIn({ stage = 2, onClockIn, title = "Today" }: { stage?: ClockStage; onClockIn?: () => void; title?: string }) {
   return (
     <>
-      <MobileHeader title="Today" sub="Tue 18 Nov · Kemar Williams" />
+      <MobileHeader title={title} sub="Tue 18 Nov · Kemar Williams" />
       <div className="flex flex-1 flex-col gap-2 px-3">
         <Row>
           <p className="ui-xs font-medium uppercase tracking-[0.06em] text-n-500">Site assignment</p>
@@ -46,14 +46,20 @@ export function MobileClockIn({ stage = 2 }: { stage?: ClockStage }) {
           {stage === 2 && (<><CheckCircle2 className="size-4 text-ok" aria-hidden="true" /><span><span className="font-medium text-n-900">Clocked in 06:52</span> · inside site boundary</span></>)}
         </div>
 
-        <div
-          className={cn(
-            "mt-auto mb-2 flex h-12 items-center justify-center gap-2 rounded-xl text-[15px] font-semibold transition-colors duration-300",
-            stage === 2 ? "bg-n-100 text-n-700" : "bg-brand-600 text-white",
-          )}
-        >
-          {stage === 2 ? "Clock out" : stage === 1 ? "Verifying…" : "Clock in"}
-        </div>
+        {onClockIn && stage === 0 ? (
+          <button type="button" onClick={onClockIn} className="mt-auto mb-2 flex h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 text-[15px] font-semibold text-white ring-offset-2 transition-colors hover:bg-brand-700 focus-visible:ring-2 focus-visible:ring-brand-400">
+            Clock in
+          </button>
+        ) : (
+          <div
+            className={cn(
+              "mt-auto mb-2 flex h-12 items-center justify-center gap-2 rounded-xl text-[15px] font-semibold transition-colors duration-300",
+              stage === 2 ? "bg-n-100 text-n-700" : "bg-brand-600 text-white",
+            )}
+          >
+            {stage === 2 ? "Clock out" : stage === 1 ? "Verifying…" : "Clock in"}
+          </div>
+        )}
       </div>
       <MobileTabBar active="home" />
     </>
@@ -61,7 +67,7 @@ export function MobileClockIn({ stage = 2 }: { stage?: ClockStage }) {
 }
 
 /* ── Supervisor: approvals ── */
-export function MobileApprovals({ approved = false }: { approved?: boolean }) {
+export function MobileApprovals({ approved = false, onApprove }: { approved?: boolean; onApprove?: () => void }) {
   const rows = [
     { n: "Kemar Williams", t: 0, time: "06:52", status: approved ? "Approved" : "Pending Review" },
     { n: "Odane Morgan", t: 5, time: "06:48", status: "Pending Review" },
@@ -87,11 +93,15 @@ export function MobileApprovals({ approved = false }: { approved?: boolean }) {
             </div>
             <div className="mt-2 flex items-center justify-between">
               <StatusPill status={r.status} />
-              {i === 0 && (
+              {i === 0 && (onApprove && !approved ? (
+                <button type="button" onClick={onApprove} className="ui-xs flex items-center gap-1 rounded-md bg-brand-600 px-2.5 py-1.5 font-semibold text-white hover:bg-brand-700">
+                  <Check className="size-3" aria-hidden="true" strokeWidth={3} />Approve
+                </button>
+              ) : (
                 <span className={cn("ui-xs flex items-center gap-1 rounded-md px-2.5 py-1 font-semibold transition-colors duration-300", approved ? "bg-ok-bg text-ok" : "bg-brand-600 text-white")}>
                   <Check className="size-3" aria-hidden="true" strokeWidth={3} />{approved ? "Done" : "Approve"}
                 </span>
-              )}
+              ))}
             </div>
           </Row>
         ))}

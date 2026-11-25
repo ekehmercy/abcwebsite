@@ -1,11 +1,17 @@
 /**
- * INTEGRATION REGISTRY
- * --------------------
- * Only entries with `public: true` appear on the website. No third-party
- * vendor is named publicly unless the relationship AND the integration status
- * have been confirmed (`partnerConfirmed: true`). Entries describe integration
- * *types* until a named integration is approved.
+ * INTEGRATION REGISTRY (internal availability configuration)
+ * ----------------------------------------------------------
+ * `status`, `verified` and `partnerConfirmed` are INTERNAL fields. They feed the
+ * private publication checklist and are never rendered as labels.
+ *
+ * On the website:
+ *   - an integration is shown as "Available" only when status === "available"
+ *     and it is publishable in the current release stage (see lib/release.ts);
+ *   - every other category is presented through what connecting it does, with
+ *     a "Request this connection" path into the integration enquiry form;
+ *   - no third-party vendor is named unless `partnerConfirmed: true`.
  */
+import { isPublishable } from "../lib/release.ts";
 
 export type IntegrationCategory =
   | "accounting"
@@ -30,16 +36,17 @@ export type Integration = {
   verified: boolean;
 };
 
-export const integrationCategories: { id: IntegrationCategory; name: string; icon: string; description: string }[] = [
-  { id: "accounting", name: "Accounting", icon: "BookOpen", description: "Send approved labour and expense costs to your general ledger by project and cost code." },
-  { id: "payroll", name: "Payroll", icon: "FileSpreadsheet", description: "Hand off approved, payroll-ready information to the payroll provider you already use." },
-  { id: "payments", name: "Payment Services", icon: "Landmark", description: "Support reimbursement and payment workflows executed by licensed payment providers." },
-  { id: "identity", name: "Identity Verification", icon: "ScanFace", description: "Confirm worker identity at onboarding or clock-in through specialist providers, where lawful." },
-  { id: "estimating", name: "Estimating", icon: "Calculator", description: "Bring budgets and cost codes from estimating tools into project records." },
-  { id: "procurement", name: "Procurement", icon: "Package", description: "Connect field requests and expenses with purchasing processes." },
-  { id: "documents", name: "Document Management", icon: "FolderOpen", description: "Keep compliance and project documents in sync with your document system." },
+export const integrationCategories: { id: IntegrationCategory; name: string; icon: string; description: string; outcome: string }[] = [
+  { id: "accounting", name: "Accounting", icon: "BookOpen", description: "Approved labour and expense costs flow to your general ledger by project and cost code.", outcome: "Close the month without re-keying site costs." },
+  { id: "payroll", name: "Payroll", icon: "FileSpreadsheet", description: "Approved, payroll-ready hours and allowances reach the payroll provider you already use. Your provider runs payroll and pays your people.", outcome: "Start every payroll run from approved hours." },
+  { id: "payments", name: "Payments", icon: "Landmark", description: "Reimbursement status stays in step with payments made by your bank or licensed payment provider.", outcome: "Workers see where their claim stands." },
+  { id: "identity", name: "Identity Verification", icon: "ScanFace", description: "Specialist verification services confirm worker identity at onboarding, where lawful and with consent.", outcome: "Know who you are putting on site." },
+  { id: "estimating", name: "Estimating", icon: "Calculator", description: "Budgets and cost-code structures from your estimating tools become the baseline for each project.", outcome: "Compare actual labour against the estimate." },
+  { id: "procurement", name: "Procurement", icon: "Package", description: "Approved field requests pass into your purchasing process with the project and cost code attached.", outcome: "Materials requests arrive ready to order." },
+  { id: "documents", name: "Document Management", icon: "FolderOpen", description: "Certifications, permits and project records stay in sync with your document system.", outcome: "One version of every compliance document." },
 ];
 
+/** INTERNAL — used by the publication checklist only. Never render these labels on the website. */
 export const integrationStatusLabels: Record<IntegrationStatus, string> = {
   available: "Available",
   planned: "Planned",
@@ -48,7 +55,7 @@ export const integrationStatusLabels: Record<IntegrationStatus, string> = {
 };
 
 export const integrations: Integration[] = [
-  { id: "csv-export", name: "Spreadsheet and CSV exports", category: "accounting", description: "Export approved hours, expenses and project costs in structured files for import into accounting software.", status: "available", partnerConfirmed: true, public: true, verified: false },
+  { id: "csv-export", name: "Spreadsheet and CSV exports", category: "accounting", description: "Export approved hours, expenses and project costs in structured files ready for your accounting software.", status: "available", partnerConfirmed: true, public: true, verified: false },
   { id: "gl-sync", name: "General ledger connectors", category: "accounting", description: "Direct posting of labour and expense costs to cloud accounting platforms by project and cost code.", status: "under-evaluation", partnerConfirmed: false, public: true, verified: false },
   { id: "payroll-file", name: "Payroll provider file handoff", category: "payroll", description: "Approved payroll information formatted for import by an external payroll provider.", status: "planned", partnerConfirmed: false, public: true, verified: false },
   { id: "payroll-api", name: "Payroll provider connectors", category: "payroll", description: "Direct handoff of approved payroll data to regional payroll providers in Jamaica, Nigeria, Guyana and the United States.", status: "under-evaluation", partnerConfirmed: false, public: true, verified: false },
@@ -60,3 +67,6 @@ export const integrations: Integration[] = [
 ];
 
 export const publicIntegrations = integrations.filter((i) => i.public);
+
+/** Integrations that may be presented as available in the current release stage. */
+export const availableIntegrations = publicIntegrations.filter((i) => i.status === "available" && isPublishable(i));

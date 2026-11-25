@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Check, Minus } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { getPublicRateCards } from "@/lib/pricing-rates.server";
-import { comparison, comparisonApproved, plans, separateCharges, type PlanId } from "@/config/pricing";
+import { comparison, plans, separateCharges, type PlanId } from "@/config/pricing";
 import { SectionIntro, Eyebrow } from "@/components/ui/section";
 import { LinkButton } from "@/components/ui/button";
 import { PricingCalculator } from "@/components/marketing/pricing-calculator";
@@ -30,7 +30,7 @@ const faqs = [
   },
   {
     q: "What billing arrangements are available?",
-    a: "In Jamaica, the proposed model offers a 12-month commitment billed monthly at the standard rate, flexible month-to-month billing at a 15% premium, or annual prepayment at a 10% discount. Arrangements for other markets will be confirmed as each market launches.",
+    a: "In Jamaica you can choose a 12-month commitment billed monthly at the standard rate, flexible month-to-month billing at a 15% premium, or annual prepayment at a 10% discount. In other markets, your billing arrangement is agreed with you and set out in your order form.",
   },
   {
     q: "Is implementation included?",
@@ -77,7 +77,7 @@ export default function PricingPage() {
           <h2 id="calc-title" className="sr-only">Estimate your subscription</h2>
           <PricingCalculator rateCards={cards} preview={preview} />
           <p className="mt-4 text-[13px] text-n-500">
-            Estimates are indicative. Your subscription, term and any applicable taxes are confirmed in your order form.
+            Your subscription, term and any applicable taxes are confirmed in your order form.
           </p>
         </div>
       </section>
@@ -117,11 +117,7 @@ export default function PricingPage() {
       <section aria-labelledby="compare-title" className="py-24">
         <div className="container-x">
           <SectionIntro id="compare-title" eyebrow="Compare" title="What each plan includes." />
-          {!comparisonApproved && (
-            <p className="mt-6 flex max-w-3xl gap-2 rounded-lg bg-n-50 p-4 text-[14px] leading-6 text-n-600 shadow-[0_0_0_1px_var(--n-150)]">
-              Plan packaging shown here is indicative while plans are finalised. Your exact entitlements are confirmed in your order form.
-            </p>
-          )}
+          <p className="mt-4 text-[13.5px] text-n-500">Plan entitlements are confirmed in your order form.</p>
 
           {/* Desktop / tablet table */}
           <div className="mt-10 hidden overflow-hidden rounded-xl bg-white shadow-[0_0_0_1px_var(--n-150)] md:block">

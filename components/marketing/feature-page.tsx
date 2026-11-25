@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { ArrowUpRight, X } from "lucide-react";
-import { getModule, type ProductModule } from "@/config/features";
+import { getModule, publicCapabilities, type ProductModule } from "@/config/features";
 import { getIndustry } from "@/config/industries";
 import { screenComponents } from "@/components/product-demo/screens";
 import { IllustrativeNote } from "@/components/product-demo/primitives";
 import { LinkButton } from "@/components/ui/button";
 import { Eyebrow, SectionIntro } from "@/components/ui/section";
 import { Icon } from "@/components/ui/icon";
-import { AvailabilityBadge } from "@/components/ui/availability-badge";
 import { TrackView } from "@/components/ui/track-view";
 import { FinalCta } from "./home-sections";
 import { WorkflowSteps } from "./workflow-steps";
@@ -75,14 +74,11 @@ export function FeaturePage({ m }: { m: ProductModule }) {
       {/* Capabilities */}
       <section id="capabilities" aria-labelledby="cap-title" className="scroll-mt-20 py-20 lg:py-28">
         <div className="container-x">
-          <SectionIntro id="cap-title" eyebrow="Capabilities" title={`What ${m.shortName === "Payroll Prep" ? "payroll preparation" : m.name.toLowerCase()} covers`} lead="Availability varies by plan and market. We confirm exactly what is included for your organisation during your demo." />
+          <SectionIntro id="cap-title" eyebrow="Capabilities" title={`What ${m.shortName === "Payroll Prep" ? "payroll preparation" : m.name.toLowerCase()} covers`} lead="Everything your team needs, connected to the rest of Axtara. Your demo is tailored to the capabilities included in your plan." />
           <ul className="mt-12 grid border-t border-n-150 md:grid-cols-2 md:gap-x-12">
-            {m.capabilities.map((c) => (
+            {publicCapabilities(m).map((c) => (
               <li key={c.id} className="border-b border-n-150 py-6" data-reveal>
-                <h3 className="flex flex-wrap items-center gap-2.5 text-[17px] font-medium text-n-950">
-                  {c.name}
-                  <AvailabilityBadge cap={c} />
-                </h3>
+                <h3 className="text-[17px] font-medium text-n-950">{c.name}</h3>
                 <p className="mt-1.5 max-w-lg text-[15px] leading-6 text-n-600">{c.description}</p>
               </li>
             ))}
@@ -95,7 +91,7 @@ export function FeaturePage({ m }: { m: ProductModule }) {
         <div className="container-x">
           <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
             <SectionIntro id="wf-title" eyebrow="How it works" title={m.workflow.title} />
-            <p className="text-[13px] text-n-500">Illustrative example · fictional people and projects</p>
+            <p className="text-[13px] text-n-500">Demonstration data</p>
           </div>
           <div className="mt-12">
             <WorkflowSteps steps={m.workflow.steps} />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/config/site";
+import { indexingAllowed } from "@/lib/release";
 
 type PageMeta = {
   title: string;
@@ -31,7 +32,7 @@ export function pageMetadata({ title, description, path, noindex, ogTitle }: Pag
       description,
       images: [`/og?title=${encodeURIComponent(ogTitle ?? title)}`],
     },
-    robots: noindex ? { index: false, follow: true } : undefined,
+    robots: !indexingAllowed ? { index: false, follow: false } : noindex ? { index: false, follow: true } : undefined,
   };
 }
 

@@ -9,14 +9,14 @@ import { FinalCta } from "@/components/marketing/home-sections";
 export const metadata: Metadata = pageMetadata({
   title: "About Axtara",
   description:
-    "Axtara is a workforce and project operations platform from Anchor Bridge, built for construction and project-driven businesses in Jamaica, Nigeria, Guyana and the United States.",
+    "Axtara is the connected workforce and project operations platform from Anchor Bridge, serving construction and project-driven businesses in Jamaica, Nigeria, Guyana and the United States.",
   path: "/about",
 });
 
 const principles = [
   { title: "Start where the work happens", body: "If it doesn't work at the site gate at 6 a.m., it doesn't work. Field experiences come first." },
   { title: "One record, many people", body: "Supervisors, project managers, finance and leadership should be looking at the same approved information." },
-  { title: "Be precise about what's real", body: "We say what the product does today, what's in development and what depends on a partner — and nothing more." },
+  { title: "Say exactly what it does", body: "Plain language about what Axtara does and what it connects to. No inflated claims, no invented numbers." },
   { title: "Respect the people being recorded", body: "Attendance, location and identity features are designed around the worker's privacy and rights, not only the employer's convenience." },
 ];
 
@@ -29,7 +29,7 @@ export default function AboutPage() {
             <Eyebrow>About</Eyebrow>
             <h1 className="t-h1 mt-4 text-n-950">Software for the businesses that build things.</h1>
             <p className="t-lead mt-6 max-w-2xl text-n-600">
-              {site.name} is a workforce and project operations platform for construction and project-driven businesses. It is a product of {site.parentCompany}.
+              {site.name} connects the people doing the work with the people managing it. One platform for workforce, field operations, projects, approvals and payroll preparation — built for construction and project-driven businesses, and a product of {site.parentCompany}.
             </p>
           </div>
           <EditorialImage slot="about" variant={0} className="mt-14 aspect-[16/9] rounded-2xl sm:aspect-[21/9]" sizes="100vw" />
@@ -49,7 +49,7 @@ export default function AboutPage() {
               Large software suites were built for large enterprises in a handful of markets. Many growing contractors, subcontractors and developers — particularly in the Caribbean and West Africa — have been left choosing between tools that don&apos;t fit and processes that don&apos;t scale.
             </p>
             <p>
-              Axtara is built to close that gap: a single connected record that starts with the person doing the work and carries through to the people managing it.
+              Axtara closes that gap: a single connected record that starts with the person doing the work and carries through to the supervisors, project managers, finance teams and leaders who rely on it.
             </p>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function AboutPage() {
 
       <section aria-labelledby="principles-title" className="py-24">
         <div className="container-x">
-          <SectionIntro id="principles-title" eyebrow="How we build" title="Principles behind the product." />
+          <SectionIntro id="principles-title" eyebrow="How we build" title="The principles behind the product." />
           <ol className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
             {principles.map((p, i) => (
               <li key={p.title} className="border-t border-n-200 pt-5">
@@ -85,12 +85,11 @@ export default function AboutPage() {
                 <div key={r.code} className="grid gap-1 py-5 sm:grid-cols-[200px_1fr]">
                   <dt className="text-[14px] text-n-500">{r.name}</dt>
                   <dd className="text-[15.5px] text-n-900">
-                    {r.contractingEntity?.verified ? `Commercial operations through ${r.contractingEntity.name}` : "Market entry in preparation"}
+                    {r.contractingEntity?.verified ? `Offered by ${r.contractingEntity.name}` : "Serving construction and project-driven businesses"}
                   </dd>
                 </div>
               ))}
             </dl>
-            <p className="mt-5 text-[14px] leading-6 text-n-500">Additional markets are subject to future expansion and validation.</p>
           </div>
         </div>
       </section>

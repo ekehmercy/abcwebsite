@@ -1,23 +1,18 @@
 /**
- * PRODUCT FEATURE AVAILABILITY REGISTER
+ * PRODUCT CAPABILITY REGISTER (internal)
  * -------------------------------------
- * Every capability presented on the website is listed here with an availability
- * status. The website reads this register — capability claims are never
- * hardcoded inside components.
+ * Every capability presented on the website is listed here. The website reads
+ * this register — capability claims are never hardcoded inside components.
  *
- * status:
- *   available            — in production (must also be `verified: true` to be shown as available publicly)
- *   in-development       — actively being built
- *   planned              — on the roadmap, not yet in development
- *   integration-required — depends on a third-party service or customer system
+ * `status` and `verified` are INTERNAL fields used for the private publication
+ * checklist. They are never rendered as labels on the website.
  *
- * verified:
- *   true only when the product team has confirmed the capability is live and
- *   behaves as described. In strict claims mode (default in production),
- *   unverified "available" capabilities are shown as "Confirm availability in demo".
+ *   staging release → all capabilities are presented as part of the product
+ *   public release  → only `verified: true` capabilities are presented
  *
- * Run `npm run audit:claims` to list every capability that still needs verification.
+ * Run `npm run audit:claims` to list everything still awaiting verification.
  */
+import { isPublishable } from "../lib/release.ts";
 
 export type FeatureStatus = "available" | "in-development" | "planned" | "integration-required";
 
@@ -491,9 +486,14 @@ export function getModule(slug: string) {
   return modules.find((m) => m.slug === slug);
 }
 
-export const statusLabels: Record<FeatureStatus, string> = {
-  available: "Available",
-  "in-development": "In development",
-  planned: "Planned",
-  "integration-required": "Integration required",
-};
+/** Capabilities that may be shown in the current release stage. */
+export function publicCapabilities(m: ProductModule): Capability[] {
+  return m.capabilities.filter(isPublishable);
+}
+
+/** Look up a single capability; returns undefined if it may not be shown. */
+export function publicCapability(moduleSlug: ModuleSlug, id: string): Capability | undefined {
+  const c = getModule(moduleSlug)?.capabilities.find((x) => x.id === id);
+  return c && isPublishable(c) ? c : undefined;
+}
+

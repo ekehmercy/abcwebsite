@@ -35,12 +35,15 @@ Each entry:
 
 ## Approval
 
-- `"approved": false` — rates are ignored on the public site. The calculator
-  shows the pricing structure and a “Get a quote” path instead.
-- `"approved": true` — the calculator shows computed estimates for that market.
+- `"approved": false` — rates are never sent to the browser. The calculator
+  still works end to end (country, currency, workers, plan, billing modifiers,
+  minimum rule) and finishes with a “Get your {currency} quote” request.
+- `"approved": true` — the calculator shows the computed subscription price
+  prominently for that market (Jamaica / JMD is the priority market).
 - `PRICING_PREVIEW=true` shows unapproved rates (with an “Internal preview”
   label) on non-production deployments only. Never set it in production.
 
 Billing arrangements, plan descriptions and the plan comparison live in
-`config/pricing.ts`. Set `comparisonApproved = true` once plan packaging is
-signed off.
+`config/pricing.ts`. `comparisonApproved` and each market model's `status` are
+internal flags for the private publication checklist — they are never shown on
+the website. Set them once plan packaging and market terms are signed off.
