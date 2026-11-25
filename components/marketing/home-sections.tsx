@@ -245,7 +245,7 @@ export function FieldSection() {
           <div className="lg:col-span-5">
             <SectionIntro id="field-title" eyebrow="Mobile" title="Powerful in the office. Practical on the jobsite." lead="Simple enough to use with gloves on, at 6 a.m., at the site gate. Field workers get what they need for the day; supervisors approve without going back to the office." />
             <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2" data-reveal>
-              <div>
+              <div className={workerShown.length ? "" : "hidden"}>
                 <h3 className="text-[14px] font-medium text-n-900">For field workers</h3>
                 <ul className="mt-3 space-y-2">
                   {workerShown.map(({ label, I }) => (

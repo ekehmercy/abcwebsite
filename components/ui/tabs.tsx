@@ -35,12 +35,15 @@ export function Tabs({
   trackEvent?: "product_tour_started" | "pricing_calculator_used";
 }) {
   const [active, setActive] = useState(0);
+  // Panels mount the first time they are opened, keeping initial hydration light.
+  const [visited, setVisited] = useState<Set<number>>(() => new Set([0]));
   const uid = useId();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const tracked = useRef(false);
 
   const select = (i: number, focus = false) => {
     setActive(i);
+    setVisited((v) => (v.has(i) ? v : new Set(v).add(i)));
     if (trackEvent && !tracked.current) {
       tracked.current = true;
       track(trackEvent, { source: label });
@@ -98,7 +101,7 @@ export function Tabs({
           tabIndex={0}
           className={cn(panelClassName, i === active && "anim-fade")}
         >
-          {p}
+          {visited.has(i) ? p : null}
         </div>
       ))}
     </div>

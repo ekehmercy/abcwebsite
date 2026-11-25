@@ -13,6 +13,7 @@ import { WorkflowSteps } from "./workflow-steps";
 
 export function FeaturePage({ m }: { m: ProductModule }) {
   const Screen = screenComponents[m.screen];
+  const caps = publicCapabilities(m);
   return (
     <>
       <TrackView event="feature_page_viewed" page={m.slug} />
@@ -71,12 +72,13 @@ export function FeaturePage({ m }: { m: ProductModule }) {
         </div>
       </section>
 
-      {/* Capabilities */}
+      {/* Capabilities — omitted entirely when none may be shown in this release stage */}
+      {caps.length > 0 && (
       <section id="capabilities" aria-labelledby="cap-title" className="scroll-mt-20 py-20 lg:py-28">
         <div className="container-x">
           <SectionIntro id="cap-title" eyebrow="Capabilities" title={`What ${m.shortName === "Payroll Prep" ? "payroll preparation" : m.name.toLowerCase()} covers`} lead="Everything your team needs, connected to the rest of Axtara. Your demo is tailored to the capabilities included in your plan." />
           <ul className="mt-12 grid border-t border-n-150 md:grid-cols-2 md:gap-x-12">
-            {publicCapabilities(m).map((c) => (
+            {caps.map((c) => (
               <li key={c.id} className="border-b border-n-150 py-6" data-reveal>
                 <h3 className="text-[17px] font-medium text-n-950">{c.name}</h3>
                 <p className="mt-1.5 max-w-lg text-[15px] leading-6 text-n-600">{c.description}</p>
@@ -85,6 +87,7 @@ export function FeaturePage({ m }: { m: ProductModule }) {
           </ul>
         </div>
       </section>
+      )}
 
       {/* Workflow */}
       <section aria-labelledby="wf-title" className="border-t border-n-150 bg-white py-20 lg:py-28">

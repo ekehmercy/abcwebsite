@@ -15,6 +15,10 @@ const STEP_MS = 5200;
  */
 export function Journey({ steps, visuals }: { steps: JourneyStep[]; visuals: ReactNode[] }) {
   const [i, setI] = useState(0);
+  const [visited, setVisited] = useState<Set<number>>(() => new Set([0]));
+  useEffect(() => {
+    setVisited((v) => (v.has(i) ? v : new Set(v).add(i)));
+  }, [i]);
   const [playing, setPlaying] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
   const started = useRef(false);
@@ -143,7 +147,7 @@ export function Journey({ steps, visuals }: { steps: JourneyStep[]; visuals: Rea
           <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
           {visuals.map((v, k) => (
             <div key={k} hidden={k !== i} className={cn("relative", k === i && "anim-fade")}>
-              {v}
+              {visited.has(k) ? v : null}
             </div>
           ))}
         </div>

@@ -158,6 +158,7 @@ export default function MobilePage() {
       </section>
 
       {/* Worker app features */}
+      {workerFeatures.length > 0 && (
       <section id="features" aria-labelledby="features-title" className="scroll-mt-20 py-24 lg:py-32">
         <div className="container-x">
           <SectionIntro id="features-title" eyebrow="For field workers" title="Everything for the working day. Nothing else." lead="Choose a feature to see it in the worker app." />
@@ -174,6 +175,7 @@ export default function MobilePage() {
           />
         </div>
       </section>
+      )}
 
       {/* Supervisor app */}
       <section aria-labelledby="super-title" className="dark-surface relative overflow-hidden bg-ink-900 py-24 text-white lg:py-32">
