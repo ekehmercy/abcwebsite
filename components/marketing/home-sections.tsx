@@ -109,11 +109,12 @@ export function Problem() {
 }
 
 /* ═════════════ 4. Product explorer (dark) ═════════════ */
-const explorerOrder = ["workforce", "time-attendance", "field-operations", "project-operations", "expenses", "payroll", "compliance", "reporting"];
+const explorerOrder = ["workforce", "time-attendance", "field-operations", "bids-rfis", "project-operations", "expenses", "payroll", "inspections-handover", "compliance", "reporting"];
 
 export function ProductExplorer() {
   const ordered = explorerOrder.map((s) => modules.find((m) => m.slug === s)!);
-  const tabs = ordered.map((m) => ({ id: m.slug, label: m.shortName === "Payroll Prep" ? "Payroll Preparation" : m.name.replace("Expenses and Cost Management", "Costs").replace("Workforce Management", "Workforce").replace("Project Operations", "Projects").replace("Reporting and Analytics", "Reporting") }));
+  const tabLabel: Record<string, string> = { "time-attendance": "Attendance", "field-operations": "Field", "bids-rfis": "Bids and RFIs", "project-operations": "Projects", expenses: "Costs", payroll: "Payroll", "inspections-handover": "Handover", compliance: "Compliance", reporting: "Reporting", workforce: "Workforce" };
+  const tabs = ordered.map((m) => ({ id: m.slug, label: tabLabel[m.slug] ?? m.shortName }));
   const panels = ordered.map((m) => {
     const Screen = screenComponents[m.screen];
     return (
@@ -146,7 +147,7 @@ export function ProductExplorer() {
     <section aria-labelledby="explore-title" className="dark-surface relative overflow-hidden bg-ink-900 py-24 text-white lg:py-32">
       <div aria-hidden="true" className="grid-lines-dark pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,#000,transparent_70%)]" />
       <div className="container-x relative">
-        <SectionIntro dark id="explore-title" eyebrow="Explore the product" title="One platform. A clearer view of every operation." lead="Eight connected parts of one product. Choose an area, then use it — the previews below respond like the real application." />
+        <SectionIntro dark id="explore-title" eyebrow="Explore the product" title="One platform. A clearer view of every operation." lead="Ten connected parts of one product, from the crew on site to the package, the project and the boardroom. Choose an area, then use it — the previews respond like the real application." />
         <Tabs
           label="Product areas"
           tabs={tabs}
@@ -212,6 +213,76 @@ export function OperationalJourney() {
         </div>
         <div className="mt-12">
           <Journey steps={steps} visuals={visuals} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═════════════ 5b. Shared projects, separate companies ═════════════ */
+export function SharedProjects() {
+  const shared = ["Package scope, drawings and revisions", "Bid invitations and addenda", "Technical RFIs and change requests", "Daily reports, photos and progress", "Inspection items and handover documents"];
+  const sides = [
+    { name: "Meridian Construction Group", role: "General contractor", keeps: ["Owner contract values", "Bid comparisons", "Internal notes", "Its own crews' payroll"] },
+    { name: "Volt Line Electrical", role: "Subcontractor", keeps: ["Employees' payroll", "Labour and plant rates", "Other projects", "Other customers"] },
+  ];
+  const apps = [
+    ["GC/Developer Web", "Contractor and developer teams"],
+    ["Subcontractor Web", "Trade contractor offices"],
+    ["Supervisor Field", "Foremen and site supervisors"],
+    ["Field", "The crews doing the work"],
+  ];
+  return (
+    <section aria-labelledby="shared-title" className="border-y border-n-150 bg-white py-24 lg:py-28">
+      <div className="container-x grid gap-14 lg:grid-cols-12 lg:items-center">
+        <div className="lg:col-span-5">
+          <SectionIntro
+            id="shared-title"
+            eyebrow="Built for partners"
+            title="Shared projects. Separate companies."
+            lead="Invite subcontractors into the packages that involve them. Everyone works from the same documents, questions and reports — and every company keeps its own payroll, rates and customers to itself."
+          />
+          <p className="mt-5 max-w-md text-[15px] leading-7 text-n-600" data-reveal>
+            Subcontractors can run their own projects and crews in Axtara too, whether or not their clients use it.
+          </p>
+          <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <TextLink href="/collaboration">How shared projects work</TextLink>
+            <TextLink href="/tour">Follow one package across companies</TextLink>
+          </div>
+        </div>
+        <div className="lg:col-span-7" data-reveal>
+          <div className="grid gap-3 md:grid-cols-[1fr_1.25fr_1fr] md:items-stretch">
+            {[sides[0], null, sides[1]].map((side, i) =>
+              side ? (
+                <div key={side.name} className="rounded-xl bg-n-25 p-4 shadow-[0_0_0_1px_var(--n-150)]">
+                  <p className="text-[14px] font-medium text-n-950">{side.name}</p>
+                  <p className="text-[12.5px] text-n-500">{side.role}</p>
+                  <p className="mt-4 flex items-center gap-1.5 text-[12px] font-medium text-n-600"><Lock className="size-3" aria-hidden="true" />Stays private</p>
+                  <ul className="mt-1.5 space-y-1">
+                    {side.keeps.map((k) => <li key={k} className="text-[13.5px] text-n-700">{k}</li>)}
+                  </ul>
+                </div>
+              ) : (
+                <div key={i} className="relative rounded-xl bg-ink-900 p-4 text-white">
+                  <p className="text-[12px] font-medium text-brand-200">Shared in package E2</p>
+                  <p className="text-[14px] font-medium">Electrical rough-in, Block A</p>
+                  <ul className="mt-3 space-y-1.5">
+                    {shared.map((x) => (
+                      <li key={x} className="flex gap-2 text-[13.5px] text-white/85"><Check className="mt-0.5 size-3.5 shrink-0 text-brand-300" aria-hidden="true" />{x}</li>
+                    ))}
+                  </ul>
+                </div>
+              ),
+            )}
+          </div>
+          <ul className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-n-150 lg:grid-cols-4" aria-label="The four Axtara applications">
+            {apps.map(([a, w]) => (
+              <li key={a} className="bg-white px-4 py-3">
+                <p className="text-[13.5px] font-medium text-n-950">{a}</p>
+                <p className="text-[12.5px] text-n-500">{w}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

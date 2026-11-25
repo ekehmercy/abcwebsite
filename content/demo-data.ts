@@ -226,8 +226,8 @@ export const demoPackages: DemoPackage[] = [
 
 export const demoRfis = [
   { id: "RFI-021", title: "Conduit route clashes with Level 3 beam GL C/4", pkg: "E2", raisedBy: "Tanya Brown", company: "Volt Line Electrical", to: "Services engineer", due: "Tue 17 Nov", status: "Answered" as const, answer: "Re-route via the riser at GL C/5. Revised sketch SK-E-014 attached." },
-  { id: "RFI-024", title: "Waterproofing upstand height at podium door thresholds", pkg: "W2", raisedBy: "Shoreline Membranes", company: "Shoreline Membranes", to: "Architect", due: "Fri 20 Nov", status: "Open" as const, answer: null },
-  { id: "RFI-025", title: "Block A lintel bearing at stair core openings", pkg: "W1", raisedBy: "Keystone Masonry", company: "Keystone Masonry", to: "Structural engineer", due: "Mon 23 Nov", status: "Open" as const, answer: null },
+  { id: "RFI-024", title: "Waterproofing upstand height at podium door thresholds", pkg: "W2", raisedBy: "Leon Spence", company: "Shoreline Membranes", to: "Architect", due: "Fri 20 Nov", status: "Open" as const, answer: null },
+  { id: "RFI-025", title: "Block A lintel bearing at stair core openings", pkg: "W1", raisedBy: "Garfield Shaw", company: "Keystone Masonry", to: "Structural engineer", due: "Mon 23 Nov", status: "Open" as const, answer: null },
 ];
 
 export const demoBids = [

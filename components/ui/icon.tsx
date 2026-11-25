@@ -1,12 +1,12 @@
 import {
-  BarChart3, BookOpen, Blocks, Building, Building2, Calculator, CalendarDays, CircleHelp, Clock, FileSpreadsheet,
+  BarChart3, BookOpen, ClipboardCheck, Layers, MessagesSquare, Handshake, Map, Blocks, Building, Building2, Calculator, CalendarDays, CircleHelp, Clock, FileSpreadsheet,
   FolderOpen, HardHat, Landmark, Newspaper, Package, Receipt, Route, ScanFace, ShieldCheck, Smartphone, Users, Wrench,
   type LucideProps,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
 const icons: Record<string, ComponentType<LucideProps>> = {
-  BarChart3, BookOpen, Blocks, Building, Building2, Calculator, CalendarDays, CircleHelp, Clock, FileSpreadsheet,
+  BarChart3, BookOpen, ClipboardCheck, Layers, MessagesSquare, Handshake, Map, Blocks, Building, Building2, Calculator, CalendarDays, CircleHelp, Clock, FileSpreadsheet,
   FolderOpen, HardHat, Landmark, Newspaper, Package, Receipt, Route, ScanFace, ShieldCheck, Smartphone, Users, Wrench,
 };
 

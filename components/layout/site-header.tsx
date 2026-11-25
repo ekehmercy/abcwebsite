@@ -183,24 +183,28 @@ export function SiteHeader() {
                     ))}
                     <div className="flex flex-col rounded-lg bg-ink-900 p-4 text-white">
                       <p className="text-[12px] font-medium text-brand-200">Product tour</p>
-                      <p className="mt-1.5 text-[15px] font-medium leading-snug">Follow one clock-in from the jobsite to payroll preparation.</p>
+                      <p className="mt-1.5 text-[15px] font-medium leading-snug">Follow one package from invitation to payroll — across the GC, subcontractor and developer.</p>
                       <div className="mt-4 rounded-md bg-white/6 p-2.5 ring-1 ring-white/10" aria-hidden="true">
-                        {["Worker clocks in", "Supervisor approves", "Finance prepares payroll"].map((s, i) => (
+                        {["GC invites the partner", "Crew reports from site", "Owner sees the update"].map((s, i) => (
                           <p key={s} className="flex items-center gap-2 py-0.5 text-[12px] text-white/75">
                             <span className={cn("size-1.5 rounded-full", i === 0 ? "bg-accent-500" : "bg-brand-400")} />{s}
                           </p>
                         ))}
                       </div>
-                      <Link href="/#journey" onClick={onNavigate} className="mt-auto inline-flex items-center gap-1.5 pt-4 text-[13.5px] font-medium text-white hover:underline">
+                      <Link href="/tour" onClick={onNavigate} className="mt-auto inline-flex items-center gap-1.5 pt-4 text-[13.5px] font-medium text-white hover:underline">
                         <PlayCircle className="size-4" aria-hidden="true" />Start the tour
                       </Link>
                     </div>
                   </div>
                   <div className="mt-1 flex items-center justify-between rounded-lg bg-n-50 px-4 py-2.5">
                     <p className="text-[13px] text-n-600">See how every module connects</p>
-                    <Link href="/platform" onClick={onNavigate} className="inline-flex items-center gap-1 text-[13px] font-medium text-brand-700 hover:underline">
-                      Platform overview <ArrowRight className="size-3.5" aria-hidden="true" />
-                    </Link>
+                    <span className="flex items-center gap-5">
+                      <Link href="/collaboration" onClick={onNavigate} className="text-[13px] font-medium text-brand-700 hover:underline">Shared projects</Link>
+                      <Link href="/lifecycle" onClick={onNavigate} className="text-[13px] font-medium text-brand-700 hover:underline">Where Axtara fits</Link>
+                      <Link href="/platform" onClick={onNavigate} className="inline-flex items-center gap-1 text-[13px] font-medium text-brand-700 hover:underline">
+                        Platform overview <ArrowRight className="size-3.5" aria-hidden="true" />
+                      </Link>
+                    </span>
                   </div>
                 </Panel>
               </div>

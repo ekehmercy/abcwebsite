@@ -15,8 +15,8 @@ import { cn } from "@/lib/cn";
 import {
   demoAttendance, demoPeople, demoProjectDetail, demoProjects, type DemoStatus,
 } from "@/content/demo-data";
-import { AppFrame, Avatar, Bars, Kpi, LineChart, Meter, Panel, PhoneFrame, StatusPill, Table, Tag } from "./primitives";
-import { MobileApprovals, MobileClockIn, type ClockStage } from "./mobile-screens";
+import { AppFrame, Avatar, Bars, Kpi, LineChart, Meter, Panel, PhoneFrame, StatusPill, Table, Tag, type AppIdentity } from "./primitives";
+import { MobileApprovals, MobileClockIn, type ClockInContent, type ClockStage } from "./mobile-screens";
 
 const btn = "ui-sm inline-flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 font-medium transition-colors";
 const btnPrimary = cn(btn, "bg-brand-600 text-white hover:bg-brand-700");
@@ -342,11 +342,11 @@ export function CostsDemo({ className }: { className?: string }) {
 
 /* ══════════════ Payroll preparation — follow the approval workflow ══════════════ */
 
-export function PayrollDemo({ className }: { className?: string }) {
+export function PayrollDemo({ className, identity, crewLabel = "Harbour Point · Crews B2 and S1", people }: { className?: string; identity?: AppIdentity; crewLabel?: string; people?: { n: string; t: number; reg: string; ot: string; allw: string; flag: string | null }[] }) {
   const steps = ["Hours approved", "Rules applied", "Finance review", "Schedule prepared"];
   const [done, setDone] = useState(2);
   const [resolved, setResolved] = useState<string[]>([]);
-  const rows = [
+  const rows = people ?? [
     { n: "Kemar Williams", t: 0, reg: "80.0", ot: "6.5", allw: "Site", flag: null as string | null },
     { n: "Odane Morgan", t: 5, reg: "80.0", ot: "4.0", allw: "Site · Lead hand", flag: null },
     { n: "Jodi-Ann Clarke", t: 4, reg: "72.0", ot: "0.0", allw: "Site", flag: "1 day leave · confirm" },
@@ -354,7 +354,7 @@ export function PayrollDemo({ className }: { className?: string }) {
   ];
   const open = rows.filter((r) => r.flag && !resolved.includes(r.n)).length;
   return (
-    <AppFrame active="payroll" crumbs={["Meridian", "Payroll prep", "Period 11–24 Nov"]} className={className}>
+    <AppFrame active="payroll" crumbs={[identity?.name ?? "Meridian", "Payroll prep", "Period 11–24 Nov"]} className={className} identity={identity}>
       <ol className="grid grid-cols-2 gap-1.5 @3xl:grid-cols-4" aria-label="Payroll preparation stages">
         {steps.map((s, i) => (
           <li key={s} aria-current={i === done ? "step" : undefined} className={cn("ui-sm flex items-center gap-2 rounded-md px-2.5 py-2 transition-colors", i < done ? "bg-ok-bg text-ok" : i === done ? "bg-white font-medium text-n-900 shadow-[0_0_0_1px_var(--brand-300)]" : "bg-white text-n-500 shadow-[0_0_0_1px_var(--n-150)]")}>
@@ -366,7 +366,7 @@ export function PayrollDemo({ className }: { className?: string }) {
         ))}
       </ol>
       <div className="mt-2.5 grid gap-2.5 @4xl:grid-cols-[1.6fr_1fr]">
-        <Panel title="Harbour Point · Crews B2 and S1" meta="Approved hours only" bodyClass="pt-2.5 pb-0">
+        <Panel title={crewLabel} meta="Approved hours only" bodyClass="pt-2.5 pb-0">
           <Table head={["Employee", <span key="r" className="hidden @lg:inline">Regular</span>, "Overtime", <span key="a" className="hidden @xl:inline">Allowances</span>, "Check"]}>
             {rows.map((r) => (
               <tr key={r.n}>
@@ -616,7 +616,7 @@ export function ReportingDemo({ className }: { className?: string }) {
 /* ══════════════ Mobile: Axtara Field clock-in and supervisor approval ══════════════ */
 
 
-export function ClockInPhone({ className }: { className?: string }) {
+export function ClockInPhone({ className, content, label = "Axtara Field: Kemar Williams clocks in at Harbour Point" }: { className?: string; content?: ClockInContent; label?: string }) {
   const [stage, setStage] = useState<ClockStage>(0);
   useEffect(() => {
     if (stage !== 1) return;
@@ -625,8 +625,8 @@ export function ClockInPhone({ className }: { className?: string }) {
   }, [stage]);
   return (
     <div className={cn("flex flex-col items-center gap-3", className)}>
-      <PhoneFrame interactive label="Axtara Field: Kemar Williams clocks in at Harbour Point" className="w-[240px]">
-        <MobileClockIn stage={stage} title="Axtara Field" onClockIn={() => setStage(1)} />
+      <PhoneFrame interactive label={label} className="w-[240px]">
+        <MobileClockIn stage={stage} title="Axtara Field" onClockIn={() => setStage(1)} content={content} />
       </PhoneFrame>
       <p className="ui-sm flex h-7 items-center gap-2 text-n-600" aria-live="polite">
         {stage === 0 && "Try it: tap Clock in"}

@@ -32,7 +32,9 @@ export type ModuleSlug =
   | "payroll"
   | "expenses"
   | "compliance"
-  | "reporting";
+  | "reporting"
+  | "bids-rfis"
+  | "inspections-handover";
 
 export type ScreenKey =
   | "workforce"
@@ -42,7 +44,9 @@ export type ScreenKey =
   | "costs"
   | "payroll"
   | "compliance"
-  | "reporting";
+  | "reporting"
+  | "rfis"
+  | "inspections";
 
 export type ProductModule = {
   slug: ModuleSlug;
@@ -479,6 +483,113 @@ export const modules: ProductModule[] = [
       { industry: "real-estate", note: "Report on operational progress across the development portfolio." },
     ],
     screen: "reporting",
+  },
+  {
+    slug: "bids-rfis",
+    name: "Packages, Bids and RFIs",
+    shortName: "Bids and RFIs",
+    navGroup: "Operations",
+    icon: "MessagesSquare",
+    navDescription: "Work packages, bid invitations and technical questions",
+    seo: {
+      title: "Work Packages, Bid Invitations and RFIs for Contractors",
+      description:
+        "Organise projects into work packages, invite subcontractors to bid, and route technical RFIs to the people who can answer them — kept as separate, traceable workflows in Axtara.",
+    },
+    headline: "Every package, bid and technical question in one project record.",
+    intro:
+      "Break the project into work packages, invite the right subcontractors to price them, and route technical questions to the people who can answer. Commercial and technical conversations stay separate, so nothing gets lost in an email thread.",
+    outcome: "Each partner works from the current scope and documents — and you can see who owes an answer.",
+    problem: {
+      heading: "Bids, questions and site photos arrive in the same inbox.",
+      body:
+        "Clarifications reach some bidders and not others. Technical questions sit without an owner while the work waits. Changes agreed on site are argued about at the final account.",
+      points: [
+        "Addenda that some bidders never see",
+        "RFIs with no owner, no due date and no recorded answer",
+        "Change requests mixed into general correspondence",
+      ],
+    },
+    capabilities: [
+      c("br-packages", "Work packages", "Each package carries its scope, drawings, activities and responsible company — the unit you share, invite and report against."),
+      c("br-invites", "Partner invitations", "Invite a subcontractor's administrator to specific packages. They see those packages, and nothing else of your project."),
+      c("br-bids", "Bid invitations", "Issue a request for quotation with documents, a deadline and submission requirements to selected companies."),
+      c("br-addenda", "Addenda and clarifications", "Issue addenda to every bidder and record who has acknowledged them. Bidder clarifications stay private unless issued as a common addendum."),
+      c("br-submissions", "Bid submissions and award", "Receive prices, exclusions and documents; each bidder sees only its own submission. Award links straight to the package."),
+      c("br-rfis", "Technical RFIs", "Raise a question with photos and drawing references, route it to the right respondent with a due date and keep the answer on record."),
+      c("br-changes", "Change requests", "Track proposed scope changes as their own records with evidence and a reviewer's decision — separate from RFIs."),
+      c("br-revisions", "Document revisions", "Issued drawings versioned on the package, with superseded copies clearly marked."),
+    ],
+    workflow: {
+      title: "From bid invitation to an answered question on site",
+      steps: [
+        { actor: "Project Manager · Meridian", action: "Issues the E2 electrical bid invitation with drawings and one addendum." },
+        { actor: "Operations Manager · Volt Line", action: "Asks a clarification question and submits a price before the deadline." },
+        { actor: "Project Manager · Meridian", action: "Awards E2 and shares the current drawings and activity list." },
+        { actor: "Supervisor · Volt Line", action: "Raises RFI-021 from site: a conduit route clashes with a Level 3 beam." },
+        { actor: "Services engineer", action: "Answers the RFI. Volt Line raises change request CR-004 as its own record." },
+      ],
+    },
+    related: ["project-operations", "field-operations", "inspections-handover"],
+    industryNotes: [
+      { industry: "general-contractors", note: "Coordinate every subcontractor through packages, with bids and RFIs that never get mixed up." },
+      { industry: "subcontractors", note: "Respond to bid invitations and RFIs on the packages you're invited to — your company records stay private." },
+      { industry: "real-estate", note: "Run procurement directly when you build with your own team, or follow what your contractor shares." },
+    ],
+    screen: "rfis",
+  },
+  {
+    slug: "inspections-handover",
+    name: "Inspections and Handover",
+    shortName: "Handover",
+    navGroup: "Control",
+    icon: "ClipboardCheck",
+    navDescription: "Corrective items, closeout documents and readiness",
+    seo: {
+      title: "Construction Inspections, Corrective Items and Handover Tracking",
+      description:
+        "Record inspection findings, assign corrective items to the responsible subcontractor, collect closure evidence and track handover documents package by package.",
+    },
+    headline: "Know what's fixed, what's outstanding and what's ready to hand over.",
+    intro:
+      "Inspection findings become corrective items with an owner and a due date. Supervisors close them with photos. Handover documents are tracked package by package, so readiness is visible long before the final meeting.",
+    outcome: "Open items per partner are visible well before handover — with evidence of everything closed.",
+    problem: {
+      heading: "Defects are tracked in spreadsheets and chased by phone.",
+      body:
+        "Nobody can see what has actually been fixed. Warranties and manuals are requested again weeks after they were sent, and open items surface after the keys change hands.",
+      points: [
+        "Inspection findings with no owner or due date",
+        "Corrective work closed without evidence",
+        "Handover documents collected at the last minute",
+      ],
+    },
+    capabilities: [
+      c("ih-inspections", "Inspection records", "Record inspections with observations, photos and the responsible package."),
+      c("ih-corrective", "Corrective items", "Assign each finding to the responsible company with a due date and track it to closure."),
+      c("ih-evidence", "Closure evidence", "Supervisors close items from the field with before-and-after photos and notes for review."),
+      c("ih-punch", "Punch lists", "Defects and incomplete work assigned, evidenced and accepted package by package."),
+      c("ih-handover", "Handover document tracking", "As-built drawings, test certificates, manuals and warranties tracked against each package."),
+      c("ih-readiness", "Handover readiness", "Readiness by package and project, published to the developer when you choose."),
+      c("ih-closeout", "Closeout record", "A complete history of RFIs, issues and corrective items to refer to in disputes and when choosing partners."),
+    ],
+    workflow: {
+      title: "From inspection finding to handover",
+      steps: [
+        { actor: "Project Manager · Meridian", action: "Records the Level 2 services inspection and assigns CI-031 to Volt Line." },
+        { actor: "Supervisor · Volt Line", action: "Fixes the fire-stopping and closes the item with before-and-after photos." },
+        { actor: "Project Manager · Meridian", action: "Reviews the evidence and accepts the closure." },
+        { actor: "Operations Manager · Volt Line", action: "Uploads test certificates and as-built drawings for package E2." },
+        { actor: "Development Manager · Seabreeze", action: "Follows handover readiness for Harbour Point, package by package." },
+      ],
+    },
+    related: ["bids-rfis", "compliance", "reporting"],
+    industryNotes: [
+      { industry: "general-contractors", note: "See open corrective items per partner and handover readiness for every package." },
+      { industry: "real-estate", note: "Follow handover readiness across developments instead of waiting for the final meeting." },
+      { industry: "subcontractors", note: "A clear list of what's yours to fix — and a record of everything you closed and submitted." },
+    ],
+    screen: "inspections",
   },
 ];
 

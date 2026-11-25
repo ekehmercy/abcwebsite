@@ -11,6 +11,7 @@ const good = {
   businessType: "General Contractor",
   employees: "75–199",
   interest: "Complete Platform",
+  challenge: "Crew time and payroll preparation",
 };
 
 test("accepts a complete demo request", () => {
@@ -20,7 +21,7 @@ test("accepts a complete demo request", () => {
 
 test("flags every missing required field", () => {
   const { errors } = validate("demo", {});
-  for (const f of ["firstName", "lastName", "email", "company", "country", "businessType", "employees"]) {
+  for (const f of ["firstName", "lastName", "email", "company", "country", "businessType", "employees", "challenge"]) {
     assert.ok(errors[f], `expected error for ${f}`);
   }
 });
@@ -45,4 +46,19 @@ test("ignores non-string input safely", () => {
 test("recognises only known form ids", () => {
   assert.equal(isFormId("demo"), true);
   assert.equal(isFormId("../etc"), false);
+});
+
+test("validates partner enquiries", () => {
+  const { errors } = validate("partner", {
+    firstName: "Ada", lastName: "Obi", email: "ada@example.com", company: "Example Advisory",
+    country: "Nigeria", pathway: "Referral", orgType: "Construction adviser or consultancy", message: "We advise contractors in Lagos.",
+  });
+  assert.deepEqual(errors, {});
+  assert.ok(validate("partner", { pathway: "Commission" }).errors.pathway);
+  assert.equal(isFormId("partner"), true);
+});
+
+test("optional demo fields accept blanks but reject unknown options", () => {
+  assert.equal(validate("demo", { ...good, projects: "" }).errors.projects, undefined);
+  assert.ok(validate("demo", { ...good, ownWorkforce: "Thousands" }).errors.ownWorkforce);
 });

@@ -19,7 +19,7 @@ const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 const ROUTES = [
   "/", "/platform", "/platform/workforce", "/platform/time-attendance", "/platform/field-operations",
   "/platform/project-operations", "/platform/payroll", "/platform/expenses", "/platform/compliance",
-  "/platform/reporting", "/mobile", "/industries/general-contractors", "/industries/subcontractors",
+  "/platform/reporting", "/platform/bids-rfis", "/platform/inspections-handover", "/mobile", "/collaboration", "/lifecycle", "/tour", "/roi", "/partners", "/industries/general-contractors", "/industries/subcontractors",
   "/industries/real-estate", "/industries/infrastructure", "/pricing", "/integrations", "/security",
   "/resources", "/about", "/demo", "/contact", "/faq", "/legal/privacy", "/legal/terms",
   "/legal/subscription", "/legal/cookies", "/login",
@@ -34,7 +34,9 @@ const check = async (name, fn) => {
     await fn();
     pass(name);
   } catch (e) {
-    fail(name, String(e?.message ?? e).split("\n")[0]);
+    const msg = String(e?.message ?? e);
+    const waiting = msg.split("\n").find((l) => l.includes("waiting for")) ?? "";
+    fail(name, `${msg.split("\n")[0]} ${waiting.trim()}`);
   }
 };
 const assert = (cond, msg) => {
@@ -103,12 +105,12 @@ await check("mega menu opens with keyboard, Escape closes and returns focus", as
 
 await check("product explorer tabs switch panel and support arrow keys", async () => {
   const list = page.getByRole("tablist", { name: "Product areas" });
-  const tab = list.getByRole("tab", { name: "Payroll Preparation" });
+  const tab = list.getByRole("tab", { name: "Payroll", exact: true });
   await tab.click();
   assert((await tab.getAttribute("aria-selected")) === "true", "tab not selected");
   await page.keyboard.press("ArrowRight");
   const sel = await list.locator("[aria-selected=true]").innerText();
-  assert(sel.includes("Safety"), `arrow key moved to "${sel}"`);
+  assert(sel.includes("Handover"), `arrow key moved to "${sel}"`);
 });
 
 await check("fragmented → connected toggle works", async () => {

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock, Monitor, Smartphone } from "lucide-react";
 import { getModule } from "@/config/features";
-import type { Industry } from "@/config/industries";
+import { publicJobs, type Industry } from "@/config/industries";
+import { appById, publicApps } from "@/content/collaboration";
 import { screenComponents } from "@/components/product-demo/screens";
 import { IllustrativeNote } from "@/components/product-demo/primitives";
 import { LinkButton } from "@/components/ui/button";
@@ -14,6 +15,8 @@ import { FinalCta } from "./home-sections";
 export function IndustryPage({ ind }: { ind: Industry }) {
   const Primary = screenComponents[ind.primaryScreen];
   const Secondary = screenComponents[ind.secondaryScreen];
+  const jobs = publicJobs(ind);
+  const teamApps = ind.apps.map(appById).filter((a): a is NonNullable<typeof a> => !!a && publicApps.includes(a));
   return (
     <>
       <TrackView event="industry_page_viewed" page={ind.slug} />
@@ -84,6 +87,65 @@ export function IndustryPage({ ind }: { ind: Industry }) {
           </div>
         </div>
       </section>
+
+      {/* What you do in Axtara */}
+      {jobs.length > 0 && (
+        <section aria-labelledby="jobs-title" className="border-t border-n-150 bg-white py-20 lg:py-28">
+          <div className="container-x grid gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-4">
+              <SectionIntro id="jobs-title" eyebrow="In Axtara" title="What you do in Axtara." />
+              <p className="mt-5 flex gap-2 text-[15px] leading-7 text-n-600" data-reveal>
+                <Lock className="mt-1.5 size-4 shrink-0 text-brand-600" aria-hidden="true" />
+                {ind.dataPosition}
+              </p>
+            </div>
+            <ol className="lg:col-span-7 lg:col-start-6">
+              {jobs.map((j, i) => (
+                <li key={j.title} className="grid grid-cols-[44px_1fr] gap-4 border-t border-n-150 py-5 first:border-t-0 first:pt-0" data-reveal>
+                  <span className="font-mono text-[13px] text-n-400">0{i + 1}</span>
+                  <div>
+                    <h3 className="text-[17px] font-medium tracking-[-0.01em] text-n-950">{j.title}</h3>
+                    <p className="mt-1 text-[15px] leading-6 text-n-600">{j.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {ind.modes && (
+            <div className="container-x mt-16">
+              <h3 className="text-[13px] font-medium text-n-500">Two ways developers use Axtara</h3>
+              <div className="mt-4 grid gap-px overflow-hidden rounded-xl bg-n-150 md:grid-cols-2">
+                {ind.modes.map((m) => (
+                  <div key={m.title} className="bg-n-25 p-6 sm:p-7">
+                    <p className="text-[17px] font-medium text-n-950">{m.title}</p>
+                    <p className="mt-2 text-[15px] leading-7 text-n-600">{m.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {teamApps.length > 0 && (
+            <div className="container-x mt-14">
+              <div className="flex flex-col gap-4 border-t border-n-150 pt-8 md:flex-row md:items-center md:justify-between">
+                <p className="text-[14px] font-medium text-n-900">Apps your team uses</p>
+                <ul className="flex flex-wrap gap-2">
+                  {teamApps.map((a) => (
+                    <li key={a.id}>
+                      <Link href="/collaboration#apps" className="inline-flex items-center gap-2 rounded-md bg-n-25 px-3 py-2 text-[14px] text-n-800 shadow-[0_0_0_1px_var(--n-150)] transition-shadow hover:shadow-[0_0_0_1px_var(--brand-300)]">
+                        {a.device === "Web" ? <Monitor className="size-4 text-brand-600" aria-hidden="true" /> : <Smartphone className="size-4 text-brand-600" aria-hidden="true" />}
+                        {a.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/collaboration" className="inline-flex items-center gap-1.5 text-[14.5px] font-medium text-brand-700 hover:underline">How the apps connect <ArrowRight className="size-4" aria-hidden="true" /></Link>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Scenario */}
       <section aria-labelledby="sc-title" className="dark-surface bg-ink-900 py-20 text-white lg:py-28">

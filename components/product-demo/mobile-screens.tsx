@@ -12,18 +12,21 @@ const Row = ({ children, className }: { children: React.ReactNode; className?: s
 /* ── Worker: clock-in flow (hero + journey) ── */
 export type ClockStage = 0 | 1 | 2;
 
-export function MobileClockIn({ stage = 2, onClockIn, title = "Today" }: { stage?: ClockStage; onClockIn?: () => void; title?: string }) {
+export type ClockInContent = { worker: string; site: string; detail: string; hours: string; trade: string; time: string };
+const defaultClockIn: ClockInContent = { worker: "Kemar Williams", site: "Harbour Point · Block B", detail: "Level 3 slab · Crew B2", hours: "07:00–16:00", trade: "Rebar", time: "06:52" };
+
+export function MobileClockIn({ stage = 2, onClockIn, title = "Today", content = defaultClockIn }: { stage?: ClockStage; onClockIn?: () => void; title?: string; content?: ClockInContent }) {
   return (
     <>
-      <MobileHeader title={title} sub="Tue 18 Nov · Kemar Williams" />
+      <MobileHeader title={title} sub={`Tue 18 Nov · ${content.worker}`} />
       <div className="flex flex-1 flex-col gap-2 px-3">
         <Row>
           <p className="ui-xs font-medium uppercase tracking-[0.06em] text-n-500">Site assignment</p>
-          <p className="ui-md mt-1 font-semibold text-n-900">Harbour Point · Block B</p>
-          <p className="ui-sm text-n-600">Level 3 slab · Crew B2</p>
+          <p className="ui-md mt-1 font-semibold text-n-900">{content.site}</p>
+          <p className="ui-sm text-n-600">{content.detail}</p>
           <div className="ui-sm mt-2 flex items-center gap-3 text-n-600">
-            <span className="flex items-center gap-1"><Clock className="size-3.5" aria-hidden="true" />07:00–16:00</span>
-            <span className="flex items-center gap-1"><HardHat className="size-3.5" aria-hidden="true" />Rebar</span>
+            <span className="flex items-center gap-1"><Clock className="size-3.5" aria-hidden="true" />{content.hours}</span>
+            <span className="flex items-center gap-1"><HardHat className="size-3.5" aria-hidden="true" />{content.trade}</span>
           </div>
         </Row>
 
@@ -43,7 +46,7 @@ export function MobileClockIn({ stage = 2, onClockIn, title = "Today" }: { stage
         <div className="ui-sm flex min-h-[34px] items-center gap-2 px-1 text-n-600" aria-live="polite">
           {stage === 0 && (<><MapPin className="size-4 text-n-400" aria-hidden="true" />You are 40 m from the site entrance</>)}
           {stage === 1 && (<><Loader2 className="size-4 animate-spin text-brand-600" aria-hidden="true" />Checking your location…</>)}
-          {stage === 2 && (<><CheckCircle2 className="size-4 text-ok" aria-hidden="true" /><span><span className="font-medium text-n-900">Clocked in 06:52</span> · inside site boundary</span></>)}
+          {stage === 2 && (<><CheckCircle2 className="size-4 text-ok" aria-hidden="true" /><span><span className="font-medium text-n-900">Clocked in {content.time}</span> · inside site boundary</span></>)}
         </div>
 
         {onClockIn && stage === 0 ? (

@@ -6,6 +6,7 @@ import { demoAttendance, demoCostCodes, demoPeople, demoProjects, type DemoStatu
 import {
   AttendanceDemo, ComplianceDemo, CostsDemo, FieldDemo, PayrollDemo, ProjectsDemo, ReportingDemo, WorkforceDemo,
 } from "./interactive";
+import { InspectionsDemo, RfisDemo } from "./interactive-construction";
 import { AppFrame, Avatar, Bars, Kpi, LineChart, Meter, Panel, StatusPill, Table, Tag } from "./primitives";
 
 /* ═════════════════════ Overview — used in the hero ═════════════════════ */
@@ -533,5 +534,7 @@ export const screenComponents = {
   payroll: PayrollDemo,
   compliance: ComplianceDemo,
   reporting: ReportingDemo,
+  rfis: RfisDemo,
+  inspections: InspectionsDemo,
 } as const;
 

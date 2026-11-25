@@ -10,6 +10,9 @@ import { modules } from "../config/features.ts";
 import { integrations } from "../config/integrations.ts";
 import { securityPrinciples, trustTopics } from "../content/security.ts";
 import { articles } from "../content/resources.ts";
+import { apps, visibility, independentUse, clearLines } from "../content/collaboration.ts";
+import { stages } from "../content/lifecycle.ts";
+import { industries } from "../config/industries.ts";
 import { policies } from "../config/legal.ts";
 import { paletteVerified } from "../config/brand.ts";
 import { comparisonApproved, marketModels } from "../config/pricing.ts";
@@ -59,6 +62,26 @@ for (const r of regions) {
   if (r.complianceStatus !== "verified") item(`${r.name}: compliance status ${r.complianceStatus}`);
 }
 for (const [k, v] of Object.entries(media)) if (!v.src) item(`Photography slot "${k}" has no licensed image`);
+
+section("Shared projects and collaboration (content/collaboration.ts)");
+for (const a of apps) if (!a.verified) item(`App: ${a.name} — confirm what it contributes, reviews, sees and keeps private`);
+for (const v of visibility) if (!v.verified) item(`Visibility rule: "${v.item}" — confirm`);
+for (const x of [...independentUse, ...clearLines]) if (!x.verified) item(`${x.title} — confirm`);
+
+section("Lifecycle (content/lifecycle.ts)");
+for (const st of stages) if (!st.verified) item(`Stage ${st.n}: ${st.title} — confirm role and records`);
+
+section("Industry pages (config/industries.ts)");
+for (const ind of industries) for (const j of ind.jobs ?? []) if (!j.verified) item(`${ind.name} → ${j.title}`);
+
+section("Commercial assumptions from the reference file (docs/REFERENCE-REVIEW.md §6)");
+for (const t of [
+  "Choose the charge basis: workers-or-minimum vs base subscription with included projects/workers plus additions",
+  "Confirm billing arrangements per market (flexible +15%, annual −10% on full charge vs on base only)",
+  "Confirm markets with price books (Guyana, United States, Canada)",
+  "Approve billing rules: office users included, GC not billed for subcontractor workers, invitations don't use project allowance, one subscription per company",
+  "Approve plan entitlements (reference capability matrix rows are all 'Not validated')",
+]) item(t);
 
 section("Resources articles (content/resources.ts)");
 for (const a of articles) if (a.status !== "published") item(`"${a.title}" — review and publish`);

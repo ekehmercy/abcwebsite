@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { pageMetadata, jsonLd } from "@/lib/seo";
 import { site } from "@/config/site";
 import {
-  Hero, Segments, Problem, ProductExplorer, OperationalJourney, FieldSection, Personas, Ecosystem, SecurityTeaser,
+  Hero, Segments, Problem, ProductExplorer, OperationalJourney, SharedProjects, FieldSection, Personas, Ecosystem, SecurityTeaser,
   PricingIntro, FinalCta,
 } from "@/components/marketing/home-sections";
 
@@ -34,6 +34,7 @@ export default function HomePage() {
       <Problem />
       <ProductExplorer />
       <OperationalJourney />
+      <SharedProjects />
       <FieldSection />
       <Personas />
       <Ecosystem />

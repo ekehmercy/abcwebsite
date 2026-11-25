@@ -1,4 +1,9 @@
 import type { ModuleSlug, ScreenKey } from "./features";
+import type { AppId } from "../content/collaboration.ts";
+import { isPublishable } from "../lib/release.ts";
+
+/** A job the customer does in Axtara. `verified` is internal (see lib/release.ts). */
+export type IndustryJob = { title: string; body: string; verified: boolean };
 
 export type IndustrySlug = "general-contractors" | "subcontractors" | "real-estate" | "infrastructure";
 
@@ -28,6 +33,14 @@ export type Industry = {
   photoBrief: string;
   photoKey: string;
   modules: ModuleSlug[];
+  /** What this customer does in Axtara, step by step. */
+  jobs: IndustryJob[];
+  /** Which of the four Axtara applications this team uses. */
+  apps: AppId[];
+  /** What stays private — the data-ownership position for this customer. */
+  dataPosition: string;
+  /** Developers only: the two ways developers work with Axtara. */
+  modes?: { title: string; body: string }[];
 };
 
 export const industries: Industry[] = [
@@ -73,6 +86,16 @@ export const industries: Industry[] = [
     secondaryScreen: "attendance",
     photoBrief: "Site supervisor in correct PPE reviewing a tablet with a foreman on an active commercial structure.",
     photoKey: "gc",
+    jobs: [
+      { title: "Structure each project around work packages", body: "Every package carries its scope, documents, partner and activities, so your team and your subcontractors work from the same reference.", verified: false },
+      { title: "Invite subcontractors to the packages that involve them", body: "An invitation shares the packages you choose — never that company's payroll, private rates or other projects.", verified: false },
+      { title: "Run bid invitations and RFIs as separate workflows", body: "Bid invitations go to invited bidders with deadlines and addenda. Technical RFIs go to the people who can answer them.", verified: false },
+      { title: "Review site reports, issues and progress", body: "Supervisors report from the field. You see what was done, what is blocked and what needs a decision — and which partner reports haven't arrived.", verified: false },
+      { title: "Prepare payroll for your own crews", body: "Approve your own workforce's time and prepare the payroll schedule for your payroll provider. Your subcontractors approve theirs.", verified: false },
+      { title: "Publish updates to the developer or client", body: "Choose what the client sees: reviewed progress, milestones, documents and the decisions waiting on them.", verified: false },
+    ],
+    apps: ["gc-web", "supervisor-field", "field"],
+    dataPosition: "Your contract values, bid comparisons, internal notes and your own payroll stay in your account. Partners see only the packages you share with them, and the developer sees only what you publish.",
     modules: ["time-attendance", "field-operations", "project-operations", "reporting"],
   },
   {
@@ -117,6 +140,15 @@ export const industries: Industry[] = [
     secondaryScreen: "field",
     photoBrief: "Specialist trade crew (electrical or MEP) working at height with correct harnesses, lead hand checking a phone.",
     photoKey: "sub",
+    jobs: [
+      { title: "Run your own company in Axtara", body: "Projects, crews, timesheets and payroll preparation for every client — including clients who don't use Axtara.", verified: false },
+      { title: "Respond to bid invitations", body: "See the package, drawings and addenda, ask clarification questions and submit your price. Only the inviting GC sees your submission.", verified: false },
+      { title: "Raise and answer RFIs on shared packages", body: "Technical questions are tracked apart from commercial ones. An answer is a technical record, not a change order.", verified: false },
+      { title: "Report once per package", body: "Your supervisors submit the daily report in the GC's package. The GC reviews the work — that review never approves your payroll.", verified: false },
+      { title: "Prepare payroll for your employees", body: "Review and approve your crews' time and prepare the payroll schedule for your payroll provider.", verified: false },
+    ],
+    apps: ["sub-web", "supervisor-field", "field"],
+    dataPosition: "A GC sees only the packages it shares with you. Your employees' payroll, your labour and plant rates, your other projects and your other customers stay in your company account.",
     modules: ["workforce", "time-attendance", "field-operations", "payroll"],
   },
   {
@@ -161,6 +193,19 @@ export const industries: Industry[] = [
     secondaryScreen: "compliance",
     photoBrief: "Residential development in progress, development manager and site engineer walking the site in PPE.",
     photoKey: "re",
+    jobs: [
+      { title: "Follow reviewed progress by project", body: "Milestones and progress your contractor has reviewed and published — not raw field entries — across every development.", verified: false },
+      { title: "Answer the decisions assigned to you", body: "Finish selections, sequencing questions and other owner decisions, each with a due date and a record of your answer.", verified: false },
+      { title: "Keep development documents in one place", body: "Drawings, reports and signed documents shared with you, versioned and attributed.", verified: false },
+      { title: "Track handover readiness across schemes", body: "See outstanding items and handover documents package by package, well before the final meeting.", verified: false },
+      { title: "Run construction directly when you build yourself", body: "Developers with their own construction team use the full project portal, partner invitations and field apps.", verified: false },
+    ],
+    apps: ["gc-web"],
+    dataPosition: "When you appoint a contractor, you see what they publish to you — not their internal records or any partner's payroll. When you build with your own team, the project record is yours.",
+    modes: [
+      { title: "You appoint a contractor", body: "Your contractor runs the project in Axtara and publishes reviewed progress, milestones, documents and decisions to you. You follow every development from one owner view." },
+      { title: "You build with your own team", body: "You use the same project portal as a general contractor: work packages, partner invitations, site reporting and your own crews' time, with the Supervisor Field and Field apps on site." },
+    ],
     modules: ["project-operations", "field-operations", "expenses", "compliance"],
   },
   {
@@ -205,10 +250,25 @@ export const industries: Industry[] = [
     secondaryScreen: "compliance",
     photoBrief: "Civil works crew in high-visibility PPE on a road or drainage corridor, engineer with a tablet beside plant.",
     photoKey: "infra",
+    jobs: [
+      { title: "Split the programme into work fronts and packages", body: "Each section or work front carries its scope, drawings and activities, and its own responsible supervisor.", verified: false },
+      { title: "Allocate crews and plant across the corridor", body: "Move crews between work fronts as the programme advances, with one view of who is deployed where.", verified: false },
+      { title: "Verify attendance at each work front", body: "Clock-ins are checked against each section's boundary at that moment, with exceptions routed to the section supervisor.", verified: false },
+      { title: "Record progress against activities, not hours", body: "Supervisors log progress per section separately from time worked, so hours are never mistaken for physical progress.", verified: false },
+      { title: "Close inspection findings with evidence", body: "Findings are assigned to the responsible crew or subcontractor with due dates and closed with photos.", verified: false },
+      { title: "Report by section to the programme team", body: "Attendance, incidents, open items and labour by section, from reviewed records.", verified: false },
+    ],
+    apps: ["gc-web", "sub-web", "supervisor-field", "field"],
+    dataPosition: "Each employer on the programme keeps its own crew time and payroll. Specialist subcontractors share their section reports and progress — not their rates or other work.",
     modules: ["workforce", "time-attendance", "compliance", "reporting"],
   },
 ];
 
 export function getIndustry(slug: string) {
   return industries.find((i) => i.slug === slug);
+}
+
+/** Jobs that may be shown in the current release stage. */
+export function publicJobs(ind: Industry): IndustryJob[] {
+  return ind.jobs.filter(isPublishable);
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, Check, Hand, Languages, Lock, Smartphone, Sun } from "lucide-react";
+import { ArrowDown, ArrowRight, Check, Clock, Hand, Languages, Lock, Smartphone, Sun } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { appUrls } from "@/config/site";
 import { publicCapability, type Capability, type ModuleSlug } from "@/config/features";
@@ -16,9 +16,9 @@ import {
 import { FinalCta } from "@/components/marketing/home-sections";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Mobile Apps for Field Workers and Supervisors",
+  title: "Supervisor Field and Field — Mobile Apps for Site Teams",
   description:
-    "Axtara's mobile apps give field workers their site assignment, clock-in, reports and requests — and let supervisors approve hours and review reports from the jobsite.",
+    "Axtara's two mobile apps: Supervisor Field for foremen and site supervisors — crew sign-in, daily reports, issues and RFIs with photos, progress and time review — and Field for workers to clock in against their assignment and see their own hours.",
   path: "/mobile",
 });
 
@@ -36,11 +36,12 @@ const workerFeaturesAll = [
 ];
 
 const supervisorPointsAll = [
-  { label: "See who is on site right now, and who isn't", c: cap("time-attendance", "ta-exceptions") },
-  { label: "Approve, correct or query hours in one tap", c: cap("time-attendance", "ta-approvals") },
-  { label: "Review crew daily reports and photos", c: cap("field-operations", "fo-review") },
-  { label: "Record incidents and follow-up actions", c: cap("compliance", "cp-incidents") },
-  { label: "Approve field expenses against cost codes", c: cap("expenses", "ex-approvals") },
+  { label: "Sign the crew in and out, and see who is on site for each package", c: cap("time-attendance", "ta-clock") },
+  { label: "Write the daily report on site, with photos", c: cap("field-operations", "fo-daily") },
+  { label: "Raise issues and RFIs with photos, each with an owner and status", c: cap("field-operations", "fo-incidents") },
+  { label: "Record progress against package activities — separately from hours", c: cap("project-operations", "po-progress") },
+  { label: "Review and correct crew time before it goes to the office", c: cap("time-attendance", "ta-approvals") },
+  { label: "Close corrective items with before-and-after photos", c: cap("inspections-handover", "ih-evidence") },
 ];
 
 // Only capabilities that may be shown in this release stage.
@@ -75,7 +76,7 @@ export default function MobilePage() {
         </p>
       </div>
       <div className="flex justify-center">
-        <PhoneFrame label={`Axtara worker app: ${f.label}`} className="w-[248px]">{f.screen}</PhoneFrame>
+        <PhoneFrame label={`Axtara Field app: ${f.label}`} className="w-[248px]">{f.screen}</PhoneFrame>
       </div>
     </div>
   ));
@@ -90,7 +91,7 @@ export default function MobilePage() {
             <Eyebrow>Mobile apps</Eyebrow>
             <h1 id="mobile-title" className="t-h1 mt-4 text-n-950">The jobsite, connected to the office.</h1>
             <p className="t-lead mt-6 text-n-600">
-              A field app that does what a worker needs at 6 a.m. at the site gate — and a supervisor app that turns approvals into a tap instead of a trip to the office.
+              Two apps for the people on site. <strong className="font-medium text-n-900">Supervisor Field</strong> runs the day for foremen and site supervisors. <strong className="font-medium text-n-900">Field</strong> gives every worker their assignment, a quick clock-in and their own hours.
             </p>
             <div className="mt-8"><StoreOrInterestCtas /></div>
             <p className="mt-5 text-[14px] text-n-500">
@@ -100,9 +101,9 @@ export default function MobilePage() {
           </div>
           <div className="relative lg:col-span-7">
             <div className="flex items-start justify-center gap-4 sm:gap-6">
-              <PhoneFrame label="Worker home screen" className="hidden w-[236px] translate-y-12 sm:block"><MobileHome /></PhoneFrame>
-              <PhoneFrame label="Worker clock-in screen, clocked in at 06:52" className="w-[236px]"><MobileClockIn stage={2} /></PhoneFrame>
-              <PhoneFrame label="Supervisor approvals screen" className="hidden w-[236px] translate-y-12 md:block"><MobileApprovals /></PhoneFrame>
+              <PhoneFrame label="Field app: worker home screen" className="hidden w-[236px] translate-y-12 sm:block"><MobileHome /></PhoneFrame>
+              <PhoneFrame label="Field app: clocked in at 06:52" className="w-[236px]"><MobileClockIn stage={2} title="Field" /></PhoneFrame>
+              <PhoneFrame label="Supervisor Field app: crew time approvals" className="hidden w-[236px] translate-y-12 md:block"><MobileApprovals /></PhoneFrame>
             </div>
             <IllustrativeNote className="mt-16 justify-center" />
           </div>
@@ -112,13 +113,13 @@ export default function MobilePage() {
       {/* Flow diagram */}
       <section aria-labelledby="flow-title" className="border-y border-n-150 bg-white py-24 lg:py-28">
         <div className="container-x">
-          <SectionIntro id="flow-title" eyebrow="How it fits together" title="Three apps. One record of the work." lead="Field workers create the record, supervisors confirm it, and the office works from it — all in the same Axtara platform." />
+          <SectionIntro id="flow-title" eyebrow="How it fits together" title="Two field apps. One record of the work." lead="Workers create the record in Field, supervisors confirm it in Supervisor Field, and the office works from it in the web app — the GC/Developer Web or Subcontractor Web, depending on who employs the crew." />
           <ol className="mt-14 grid gap-4 lg:grid-cols-4">
             {[
-              { n: "01", who: "Field workers", what: "Clock in, see assignments, submit reports, expenses and requests.", where: "Worker app" },
-              { n: "02", who: "Supervisors", what: "Review attendance and exceptions, approve hours and reports on site.", where: "Supervisor app" },
-              { n: "03", who: "Axtara web platform", what: "Approved records update projects, costs and payroll preparation.", where: "Central platform" },
-              { n: "04", who: "Office administrators", what: "HR, finance and project teams manage people, rules and reporting.", where: "Web app" },
+              { n: "01", who: "Field workers", what: "Clock in and out against today's assignment, read site notices and check their own hours.", where: "Field" },
+              { n: "02", who: "Foremen and supervisors", what: "Sign the crew in, report the day, raise issues and RFIs, record progress and review crew time.", where: "Supervisor Field" },
+              { n: "03", who: "The employer's office", what: "Approves time, prepares payroll and shares package reports with the GC.", where: "Subcontractor or GC Web" },
+              { n: "04", who: "The project team", what: "Reviews reports, progress and issues across every package on the project.", where: "GC/Developer Web" },
             ].map((s, i) => (
               <li key={s.n} className="relative rounded-xl bg-n-25 p-6 shadow-[0_0_0_1px_var(--n-150)]">
                 <p className="flex items-center justify-between text-[12.5px] font-medium text-n-400"><span>{s.n}</span><span className="text-brand-700">{s.where}</span></p>
@@ -138,12 +139,12 @@ export default function MobilePage() {
             <div className="relative grid items-center gap-8 xl:grid-cols-[auto_auto_minmax(0,1fr)]">
               <div className="flex justify-center gap-5">
                 <figure>
-                  <PhoneFrame label="Field worker clocks in" className="w-[228px]"><MobileClockIn stage={2} /></PhoneFrame>
-                  <figcaption className="mt-3 text-center text-[13px] font-medium text-n-600">Field worker</figcaption>
+                  <PhoneFrame label="Field app: worker clocks in" className="w-[228px]"><MobileClockIn stage={2} title="Field" /></PhoneFrame>
+                  <figcaption className="mt-3 text-center text-[13px] font-medium text-n-600">Field</figcaption>
                 </figure>
                 <figure className="hidden sm:block">
                   <PhoneFrame label="Supervisor approves the record" className="w-[236px]"><MobileApprovals approved /></PhoneFrame>
-                  <figcaption className="mt-3 text-center text-[13px] font-medium text-n-600">Supervisor</figcaption>
+                  <figcaption className="mt-3 text-center text-[13px] font-medium text-n-600">Supervisor Field</figcaption>
                 </figure>
               </div>
               <ArrowRight className="mx-auto hidden size-5 text-brand-500 xl:block" aria-hidden="true" />
@@ -154,16 +155,27 @@ export default function MobilePage() {
             </div>
           </div>
           <IllustrativeNote className="mt-4" />
+
+          <dl className="mt-12 grid gap-px overflow-hidden rounded-xl bg-n-150 md:grid-cols-2">
+            <div className="bg-n-25 p-6">
+              <dt className="flex items-center gap-2 text-[15.5px] font-medium text-n-950"><Clock className="size-4 text-brand-600" aria-hidden="true" />Time is captured as entries</dt>
+              <dd className="mt-1.5 text-[14.5px] leading-6 text-n-600">Workers clock in and out against their assignment, and supervisors confirm or correct the entry. Location is checked at those moments only — Axtara doesn't track anyone continuously.</dd>
+            </div>
+            <div className="bg-n-25 p-6">
+              <dt className="flex items-center gap-2 text-[15.5px] font-medium text-n-950"><Lock className="size-4 text-brand-600" aria-hidden="true" />Crew time stays with the employer</dt>
+              <dd className="mt-1.5 text-[14.5px] leading-6 text-n-600">Each employer's crew time goes to that employer. A GC sees the site reports and progress a subcontractor shares on its package — never the subcontractor's crew time or payroll.</dd>
+            </div>
+          </dl>
         </div>
       </section>
 
-      {/* Worker app features */}
+      {/* Field app features */}
       {workerFeatures.length > 0 && (
       <section id="features" aria-labelledby="features-title" className="scroll-mt-20 py-24 lg:py-32">
         <div className="container-x">
-          <SectionIntro id="features-title" eyebrow="For field workers" title="Everything for the working day. Nothing else." lead="Choose a feature to see it in the worker app." />
+          <SectionIntro id="features-title" eyebrow="Field · for field workers" title="Everything for the working day. Nothing else." lead="Choose a feature to see it in the Field app. Workers see their own assignment, notices and hours — never anyone else's." />
           <Tabs
-            label="Worker app features"
+            label="Field app features"
             tabs={workerFeatures.map((f) => ({ id: f.id, label: f.label }))}
             panels={panels}
             layoutClassName="mt-12"
@@ -182,7 +194,7 @@ export default function MobilePage() {
         <div aria-hidden="true" className="grid-lines-dark pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,#000,transparent_80%)]" />
         <div className="container-x relative grid items-center gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionIntro dark id="super-title" eyebrow="For supervisors" title="Approve the work where it happens." lead="Supervisors spend their day on site. Their app puts the crew's attendance, exceptions and reports in their hand — so approvals happen the same day, not at the end of the week." />
+            <SectionIntro dark id="super-title" eyebrow="Supervisor Field · for foremen and site supervisors" title="Run the day where it happens." lead="Supervisors spend their day on site, for either side of the contract. Supervisor Field puts the crew, the package and the day's report in their hand — so the record is complete before anyone leaves site." />
             <ul className="mt-8 space-y-3">
               {supervisorPoints.map((p) => (
                 <li key={p.label} className="flex items-start gap-2.5 text-[15px] text-white/85">
@@ -193,8 +205,8 @@ export default function MobilePage() {
             </ul>
           </div>
           <div className="flex justify-center gap-6 lg:col-span-7">
-            <PhoneFrame label="Supervisor approval queue" className="w-[236px]"><MobileApprovals /></PhoneFrame>
-            <PhoneFrame label="Supervisor reviewing a daily report" className="hidden w-[236px] translate-y-10 sm:block"><MobileDailyReport /></PhoneFrame>
+            <PhoneFrame label="Supervisor Field: crew time review" className="w-[236px]"><MobileApprovals /></PhoneFrame>
+            <PhoneFrame label="Supervisor Field: daily report with photos" className="hidden w-[236px] translate-y-10 sm:block"><MobileDailyReport /></PhoneFrame>
           </div>
         </div>
       </section>
@@ -234,7 +246,7 @@ export default function MobilePage() {
             <p className="mt-3 text-[15.5px] leading-7 text-n-600">
               {appUrls.appStore || appUrls.googlePlay
                 ? "Download the Axtara app from your device's app store. Your organisation will invite you to sign in."
-                : "Axtara's mobile apps are provided to customer organisations during onboarding. App store links will appear here once public listings are available in your market."}
+                : "Supervisor Field and Field are provided to your teams during onboarding. Your organisation invites each supervisor and worker, and they sign in with the details their employer gives them."}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -244,7 +256,7 @@ export default function MobilePage() {
         </div>
       </section>
 
-      <FinalCta title="See the field app in your crew's hands." lead="We'll walk through the worker and supervisor apps using a scenario from your own sites." />
+      <FinalCta title="See Field and Supervisor Field in your crew's hands." lead="We'll walk through both apps using a scenario from your own sites — on either side of the contract." />
     </>
   );
 }

@@ -63,6 +63,21 @@ in the file named. In the public release, anything still unverified is omitted a
 - [ ] Reporting and Analytics → Labour cost insights (internal status: available)
 - [ ] Reporting and Analytics → Operational exceptions (internal status: available)
 - [ ] Reporting and Analytics → Management dashboards (internal status: available)
+- [ ] Packages, Bids and RFIs → Work packages (internal status: available)
+- [ ] Packages, Bids and RFIs → Partner invitations (internal status: available)
+- [ ] Packages, Bids and RFIs → Bid invitations (internal status: available)
+- [ ] Packages, Bids and RFIs → Addenda and clarifications (internal status: available)
+- [ ] Packages, Bids and RFIs → Bid submissions and award (internal status: available)
+- [ ] Packages, Bids and RFIs → Technical RFIs (internal status: available)
+- [ ] Packages, Bids and RFIs → Change requests (internal status: available)
+- [ ] Packages, Bids and RFIs → Document revisions (internal status: available)
+- [ ] Inspections and Handover → Inspection records (internal status: available)
+- [ ] Inspections and Handover → Corrective items (internal status: available)
+- [ ] Inspections and Handover → Closure evidence (internal status: available)
+- [ ] Inspections and Handover → Punch lists (internal status: available)
+- [ ] Inspections and Handover → Handover document tracking (internal status: available)
+- [ ] Inspections and Handover → Handover readiness (internal status: available)
+- [ ] Inspections and Handover → Closeout record (internal status: available)
 
 ## Integrations (config/integrations.ts)
 
@@ -105,7 +120,6 @@ in the file named. In the public release, anything still unverified is omitted a
 
 ## Brand, pricing, regions, media
 
-- [ ] Brand palette is provisional (config/brand.ts)
 - [ ] Plan comparison entitlements not approved (config/pricing.ts)
 - [ ] Commercial model for JM is proposed
 - [ ] Jamaica: compliance status in-review
@@ -121,6 +135,75 @@ in the file named. In the public release, anything still unverified is omitted a
 - [ ] Photography slot "re" has no licensed image
 - [ ] Photography slot "infra" has no licensed image
 - [ ] Photography slot "about" has no licensed image
+
+## Shared projects and collaboration (content/collaboration.ts)
+
+- [ ] App: GC/Developer Web — confirm what it contributes, reviews, sees and keeps private
+- [ ] App: Subcontractor Web — confirm what it contributes, reviews, sees and keeps private
+- [ ] App: Supervisor Field — confirm what it contributes, reviews, sees and keeps private
+- [ ] App: Field — confirm what it contributes, reviews, sees and keeps private
+- [ ] Visibility rule: "Documents for the packages you're invited to" — confirm
+- [ ] Visibility rule: "RFIs on those packages" — confirm
+- [ ] Visibility rule: "Your bid submission for their invitation" — confirm
+- [ ] Visibility rule: "Site reports you submit on their package" — confirm
+- [ ] Visibility rule: "Your employees' payroll" — confirm
+- [ ] Visibility rule: "Your private labour and plant rates" — confirm
+- [ ] Visibility rule: "Your other projects" — confirm
+- [ ] Visibility rule: "Your relationships with other customers" — confirm
+- [ ] Subscribe as a company, on your own terms — confirm
+- [ ] Join a GC's project without opening your books — confirm
+- [ ] Invite partners without asking them to buy — confirm
+- [ ] One company identity across every relationship — confirm
+- [ ] Bids and RFIs are separate — confirm
+- [ ] An RFI answer is a technical record — confirm
+- [ ] A report review isn't a payroll approval — confirm
+- [ ] Your payroll provider runs payroll — confirm
+- [ ] Hours are time, not progress — confirm
+- [ ] Specialist tools stay in charge — confirm
+
+## Lifecycle (content/lifecycle.ts)
+
+- [ ] Stage 1: Package preparation — confirm role and records
+- [ ] Stage 2: Bid invitation and submission — confirm role and records
+- [ ] Stage 3: Award and agreed scope — confirm role and records
+- [ ] Stage 4: Mobilisation and crew assignment — confirm role and records
+- [ ] Stage 5: Execution and project control — confirm role and records
+- [ ] Stage 6: Inspection and corrective work — confirm role and records
+- [ ] Stage 7: Handover — confirm role and records
+- [ ] Stage 8: Closeout and lessons — confirm role and records
+
+## Industry pages (config/industries.ts)
+
+- [ ] General Contractors → Structure each project around work packages
+- [ ] General Contractors → Invite subcontractors to the packages that involve them
+- [ ] General Contractors → Run bid invitations and RFIs as separate workflows
+- [ ] General Contractors → Review site reports, issues and progress
+- [ ] General Contractors → Prepare payroll for your own crews
+- [ ] General Contractors → Publish updates to the developer or client
+- [ ] Subcontractors → Run your own company in Axtara
+- [ ] Subcontractors → Respond to bid invitations
+- [ ] Subcontractors → Raise and answer RFIs on shared packages
+- [ ] Subcontractors → Report once per package
+- [ ] Subcontractors → Prepare payroll for your employees
+- [ ] Real Estate Developers → Follow reviewed progress by project
+- [ ] Real Estate Developers → Answer the decisions assigned to you
+- [ ] Real Estate Developers → Keep development documents in one place
+- [ ] Real Estate Developers → Track handover readiness across schemes
+- [ ] Real Estate Developers → Run construction directly when you build yourself
+- [ ] Infrastructure and Civil Engineering → Split the programme into work fronts and packages
+- [ ] Infrastructure and Civil Engineering → Allocate crews and plant across the corridor
+- [ ] Infrastructure and Civil Engineering → Verify attendance at each work front
+- [ ] Infrastructure and Civil Engineering → Record progress against activities, not hours
+- [ ] Infrastructure and Civil Engineering → Close inspection findings with evidence
+- [ ] Infrastructure and Civil Engineering → Report by section to the programme team
+
+## Commercial assumptions from the reference file (docs/REFERENCE-REVIEW.md §6)
+
+- [ ] Choose the charge basis: workers-or-minimum vs base subscription with included projects/workers plus additions
+- [ ] Confirm billing arrangements per market (flexible +15%, annual −10% on full charge vs on base only)
+- [ ] Confirm markets with price books (Guyana, United States, Canada)
+- [ ] Approve billing rules: office users included, GC not billed for subcontractor workers, invitations don't use project allowance, one subscription per company
+- [ ] Approve plan entitlements (reference capability matrix rows are all 'Not validated')
 
 ## Resources articles (content/resources.ts)
 
@@ -138,4 +221,4 @@ in the file named. In the public release, anything still unverified is omitted a
 - [ ] Customer login URL — set NEXT_PUBLIC_APP_LOGIN_URL
 - [ ] Public sales email — set NEXT_PUBLIC_SALES_EMAIL
 
-**111 item(s) outstanding.**
+**182 item(s) outstanding.**

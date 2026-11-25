@@ -22,6 +22,8 @@ export type Plan = {
   summary: string;
   /** Indicative worker range used to suggest a plan in the calculator. */
   suggestedWorkers: [number, number | null];
+  /** Indicative range of company-managed active projects, used to suggest a plan. */
+  suggestedProjects: [number, number | null];
   highlights: string[];
   /** Enterprise is always quoted individually. */
   quotedOnly: boolean;
@@ -35,6 +37,7 @@ export const plans: Plan[] = [
     summary:
       "Workforce records, verified attendance and supervisor approvals for businesses replacing paper and spreadsheets.",
     suggestedWorkers: [1, 75],
+    suggestedProjects: [0, 3],
     highlights: ["Workforce records", "Mobile clock-in", "Supervisor approvals", "Standard reports"],
     quotedOnly: false,
   },
@@ -45,6 +48,7 @@ export const plans: Plan[] = [
     summary:
       "Everything in Core, with project operations, field reporting, expenses and payroll preparation across multiple sites.",
     suggestedWorkers: [76, 400],
+    suggestedProjects: [4, 10],
     highlights: ["Everything in Core", "Project and cost-code allocation", "Daily reports and expenses", "Payroll preparation"],
     quotedOnly: false,
   },
@@ -55,9 +59,18 @@ export const plans: Plan[] = [
     summary:
       "Everything in Scale, with advanced permissions, governance, multi-entity reporting and integration support.",
     suggestedWorkers: [401, null],
+    suggestedProjects: [11, null],
     highlights: ["Everything in Scale", "Advanced roles and permissions", "Multi-entity reporting", "Integration support"],
     quotedOnly: true,
   },
+];
+
+/** Company types for sizing a subscription. One company, one subscription. */
+export type CompanyTypeId = "gc" | "sub" | "developer";
+export const companyTypes: { id: CompanyTypeId; label: string; short: string; crews: "always" | "ask"; sizing: string }[] = [
+  { id: "gc", label: "General contractor", short: "General contractor", crews: "ask", sizing: "Projects your company manages, plus your own site crews if you employ them." },
+  { id: "sub", label: "Subcontractor or specialty trade", short: "Subcontractor", crews: "always", sizing: "Your own projects and the crews you employ. Work on a GC's shared packages happens in their project workspace." },
+  { id: "developer", label: "Real estate developer", short: "Developer", crews: "ask", sizing: "Developments your team manages, plus any site workforce you employ directly." },
 ];
 
 export type BillingArrangement = {

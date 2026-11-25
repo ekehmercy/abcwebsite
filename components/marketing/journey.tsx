@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight, Pause, Play, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock, Pause, Play, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
 
-export type JourneyStep = { title: string; actor: string; person: string; detail: string };
+export type JourneyStep = { title: string; actor: string; person: string; detail: string; app?: string; note?: string };
 
 const STEP_MS = 5200;
 
@@ -114,6 +114,7 @@ export function Journey({ steps, visuals }: { steps: JourneyStep[]; visuals: Rea
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-[14px] text-n-600" aria-live="polite">
             <span className="font-medium text-n-950">Step {i + 1} of {n}</span> · {s.person}
+            {s.app && <span className="ml-2 rounded-[5px] bg-brand-50 px-1.5 py-0.5 text-[12px] font-medium text-brand-800">{s.app}</span>}
           </p>
           <div className="flex items-center gap-1.5">
             <button type="button" onClick={() => userGo(i - 1)} disabled={i === 0} className="inline-flex size-9 items-center justify-center rounded-md bg-white text-n-700 shadow-[0_0_0_1px_var(--n-200)] hover:text-n-950 disabled:opacity-40" aria-label="Previous step">
@@ -152,6 +153,12 @@ export function Journey({ steps, visuals }: { steps: JourneyStep[]; visuals: Rea
           ))}
         </div>
         <p className="mt-4 max-w-2xl text-[15px] leading-6 text-n-600">{s.detail}</p>
+        {s.note && (
+          <p className="mt-3 flex max-w-2xl gap-2 rounded-lg bg-white px-3.5 py-2.5 text-[14px] leading-6 text-n-700 shadow-[0_0_0_1px_var(--n-150)]">
+            <Lock className="mt-1 size-3.5 shrink-0 text-brand-600" aria-hidden="true" />
+            <span><span className="font-medium text-n-900">Who sees what · </span>{s.note}</span>
+          </p>
+        )}
       </div>
     </div>
   );
