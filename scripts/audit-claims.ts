@@ -74,15 +74,13 @@ for (const st of stages) if (!st.verified) item(`Stage ${st.n}: ${st.title} — 
 section("Industry pages (config/industries.ts)");
 for (const ind of industries) for (const j of ind.jobs ?? []) if (!j.verified) item(`${ind.name} → ${j.title}`);
 
-section("Commercial assumptions from the reference file (docs/REFERENCE-REVIEW.md §6)");
+section("Pricing (published 25 Nov 2026 from the reference price books)");
 for (const t of [
-  "Choose the charge basis: workers-or-minimum vs base subscription with included projects/workers plus additions",
-  "Confirm billing arrangements per market (flexible +15%, annual −10% on full charge vs on base only)",
-  "Confirm markets with price books (Guyana, United States, Canada)",
-  "Approve billing rules: office users included, GC not billed for subcontractor workers, invitations don't use project allowance, one subscription per company",
-  "Approve plan entitlements (reference capability matrix rows are all 'Not validated')",
-  "Approve the 'How subscriptions are sized' explainer on /pricing (partner crews belong to their employer; one company, one account)",
-  "Approve plan-suggestion thresholds in the calculator (projects 0–3 / 4–10 / 11+; workers 1–75 / 76–400 / 401+)",
+  "Guyana has no price book — publish a GYD price book or keep quoting",
+  "Approve plan entitlements against the comparison table (reference capability matrix rows are 'Not validated')",
+  "Approve plan-suggestion thresholds in the estimator (projects 0–3 / 4–10 / 11+; workers 1–75 / 76–400 / 401+)",
+  "Publish monthly measurement and proration rules for active projects and workers",
+  "Define storage, retention, API and support allowances per plan",
   "Confirm partner programme pathways, markets and process on /partners",
   "Provide an SVG master of the Axtara logo (PNG currently used)",
 ]) item(t);

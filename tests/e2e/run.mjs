@@ -144,7 +144,10 @@ await check("pricing calculator responds to worker count and billing", async () 
   await page.waitForTimeout(150);
   const text = await page.locator("main").innerText();
   assert(/Scale/.test(text), "Scale plan not suggested for 250 workers");
-  const quote = page.locator("a[href*='/demo?']").filter({ hasText: /quote/i }).first();
+  // Jamaica (default market), Scale, 250 workers, 3 projects: J$49,900 + 150 × J$300 = J$94,900 a month.
+  assert(/J\$94,900/.test(text), "published Jamaica Scale price not calculated");
+  assert(/J\$19,900/.test(text), "Core price not shown on the plan card");
+  const quote = page.locator("a[href*='/demo?'][href*='interest=pricing']").first();
   const href = await quote.getAttribute("href");
   assert(href && href.includes("workers=250"), `quote link does not carry worker count: ${href}`);
 });

@@ -19,6 +19,8 @@ export type PricingModel = "max-of-workers-or-minimum" | "base-plus-allowance";
 
 export type WorkerMinimumRates = { perWorkerMonthly: number; minimumMonthly: number };
 export type BaseAllowanceRates = {
+  /** Enterprise prices are starting points: the estimate is indicative and confirmed by quote. */
+  indicative?: boolean;
   baseMonthly: number;
   includedProjects: number;
   includedWorkers: number;
@@ -39,6 +41,7 @@ export type RateCard = {
   plans: {
     core?: WorkerMinimumRates | BaseAllowanceRates;
     scale?: WorkerMinimumRates | BaseAllowanceRates;
+    enterprise?: WorkerMinimumRates | BaseAllowanceRates;
   };
 };
 
@@ -153,8 +156,15 @@ export function suggestPlan(
   return match?.id ?? plans[plans.length - 1].id;
 }
 
+const currencySymbols: Record<string, string> = { USD: "US$", JMD: "J$", NGN: "₦", GYD: "G$" };
+
+/** Formats an amount with the market's currency symbol, e.g. J$19,900 or US$199. */
 export function formatMoney(amount: number, currency: string, locale = "en"): string {
-  return new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
+  const symbol = currencySymbols[currency];
+  if (!symbol) return new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
+  const whole = Math.abs(amount - Math.round(amount)) < 1e-9;
+  const n = Math.abs(amount).toLocaleString(locale, { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 });
+  return `${amount < 0 ? "−" : ""}${symbol}${n}`;
 }
 
 /** Validates an untrusted rate-card object (e.g. from env JSON). */
@@ -169,12 +179,13 @@ export function parseRateCards(raw: unknown): RateCard[] {
     const num = (v: unknown) => typeof v === "number" && Number.isFinite(v) && v >= 0;
     const plans: RateCard["plans"] = {};
     const p = (rc.plans ?? {}) as Record<string, unknown>;
-    for (const id of ["core", "scale"] as const) {
+    for (const id of ["core", "scale", "enterprise"] as const) {
       const v = p[id] as Record<string, unknown> | undefined;
       if (!v) continue;
       if (model === "base-plus-allowance") {
         if ([v.baseMonthly, v.includedProjects, v.includedWorkers, v.perExtraProjectMonthly, v.perExtraWorkerMonthly].every(num)) {
           plans[id] = {
+            ...(v.indicative === true ? { indicative: true } : {}),
             baseMonthly: v.baseMonthly as number,
             includedProjects: v.includedProjects as number,
             includedWorkers: v.includedWorkers as number,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { pageMetadata, jsonLd } from "@/lib/seo";
 import { site } from "@/config/site";
+import { publishedRateCards } from "@/config/pricing/published-rates";
 import {
   Hero, Segments, Problem, ProductExplorer, OperationalJourney, SharedProjects, FieldSection, Personas, Ecosystem, SecurityTeaser,
   PricingIntro, FinalCta,
@@ -39,7 +40,7 @@ export default function HomePage() {
       <Personas />
       <Ecosystem />
       <SecurityTeaser />
-      <PricingIntro />
+      <PricingIntro rateCards={publishedRateCards} />
       <FinalCta />
     </>
   );

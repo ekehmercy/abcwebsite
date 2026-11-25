@@ -23,6 +23,8 @@ import { HeroDemo } from "./hero-demo";
 import { Fragmented } from "./fragmented";
 import { Journey, type JourneyStep } from "./journey";
 import { Logo } from "@/components/layout/logo";
+import { PlanPrice } from "./plan-price";
+import type { RateCard } from "@/lib/pricing-engine";
 import { cn } from "@/lib/cn";
 
 const cap = (moduleSlug: ModuleSlug, id: string) => publicCapability(moduleSlug, id);
@@ -495,15 +497,15 @@ export function SecurityTeaser() {
 }
 
 /* ═════════════ 10. Pricing intro ═════════════ */
-export function PricingIntro() {
+export function PricingIntro({ rateCards }: { rateCards: RateCard[] }) {
   return (
     <section aria-labelledby="pricing-title" className="border-t border-n-150 bg-white py-24 lg:py-28">
       <div className="container-x">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
-          <SectionIntro id="pricing-title" eyebrow="Pricing" title="Subscriptions that grow with your workforce." lead="Priced by active workers, with plans for every stage — from replacing paper attendance to running complex, multi-entity operations." />
+          <SectionIntro id="pricing-title" eyebrow="Pricing" title="Subscriptions that grow with your workforce." lead="Sized by the projects your company manages and your own active workers. Published prices for the United States, Jamaica and Nigeria — change your region in the footer." />
           <div className="flex shrink-0 flex-wrap gap-3">
-            <LinkButton href="/pricing" variant="secondary" arrow>See pricing</LinkButton>
-            <LinkButton href="/demo?interest=pricing">Get a quote</LinkButton>
+            <LinkButton href="/pricing#plans-title" variant="secondary" arrow>Compare plans</LinkButton>
+            <LinkButton href="/pricing">Estimate your subscription</LinkButton>
           </div>
         </div>
         <ol className="mt-14 grid gap-px overflow-hidden rounded-xl bg-n-150 md:grid-cols-3" data-reveal>
@@ -513,10 +515,11 @@ export function PricingIntro() {
                 {p.name}
                 <span className="text-[12px] font-medium tracking-normal text-n-400">0{i + 1}</span>
               </p>
-              <p className="mt-2 text-[14.5px] font-medium text-n-700">{p.forWhom}</p>
-              <p className="mt-3 text-[14.5px] leading-6 text-n-600">{p.summary}</p>
+              <PlanPrice plan={p.id} rateCards={rateCards} compact className="mt-4" />
+              <p className="mt-4 text-[14.5px] font-medium text-n-700">{p.forWhom}</p>
+              <p className="mt-2 text-[14.5px] leading-6 text-n-600">{p.summary}</p>
               <Link href={`/pricing#plan-${p.id}`} className="mt-auto inline-flex items-center gap-1 pt-6 text-[14px] font-medium text-brand-700 hover:underline">
-                {p.quotedOnly ? "Talk to us" : "View plan"} <ArrowRight className="size-3.5" aria-hidden="true" />
+                {p.quotedOnly ? "Enterprise details" : "View plan"} <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>
             </li>
           ))}

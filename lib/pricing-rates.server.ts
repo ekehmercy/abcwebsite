@@ -2,11 +2,13 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 import { parseRateCards, type RateCard } from "./pricing-engine";
+import { publishedRateCards } from "@/config/pricing/published-rates";
 
 /**
- * Loads rate cards on the server only. Sources (first found wins):
+ * Loads rate cards on the server. Sources, per market (first found wins):
  *   1. PRICING_RATES_JSON environment variable
  *   2. config/pricing/rates.private.json (gitignored)
+ *   3. config/pricing/published-rates.ts (approved, published price books)
  *
  * Only APPROVED rate cards are returned, unless PRICING_PREVIEW=true — which
  * is intended for internal preview deployments and must never be set in production.
@@ -24,6 +26,8 @@ export function getPublicRateCards(): { cards: RateCard[]; preview: boolean } {
   } catch {
     raw = [];
   }
-  const cards = parseRateCards(raw).filter((c) => c.approved || preview);
+  const overrides = parseRateCards(raw);
+  const merged = [...overrides, ...publishedRateCards.filter((p) => !overrides.some((o) => o.region === p.region))];
+  const cards = merged.filter((c) => c.approved || preview);
   return { cards, preview: preview && cards.some((c) => !c.approved) };
 }

@@ -76,7 +76,9 @@ The reference was used as a source of **product intelligence only**. Its stylesh
 | Plan entitlements | Indicative three-tier comparison | 138-row proposed capability matrix. Every row is "Not validated"; payroll preparation starts on Scale (Core exports approved time) | **Conflict** with the current comparison table (payroll on Scale — consistent; others differ) |
 | Partner terms | — | "No commissions, discounts or free licences offered or promised" | Adopted as the public position |
 
-**How the site handles this now:**
+**Resolution (25 Nov 2026):** Axtara approved publishing the reference price books. The site now uses the base-plus-allowance structure for the United States, Jamaica and Nigeria, with monthly or annual billing (10% off the base). The brief's +15% month-to-month option is withdrawn. Guyana is quoted until a price book is supplied.
+
+**Previous handling, kept for reference:**
 - The pricing engine supports **both** structures. The model, rates, allowances and modifiers are set per market in the private, gitignored rate card.
 - The calculator still never displays a price unless a rate card is `approved: true`.
 - All items above are listed in `docs/PUBLICATION-CHECKLIST.md`.

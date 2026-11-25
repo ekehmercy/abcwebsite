@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Check, Minus } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { getPublicRateCards } from "@/lib/pricing-rates.server";
-import { comparison, plans, separateCharges, type PlanId } from "@/config/pricing";
+import { billingRules, comparison, plans, pricingDisclosures, separateCharges, type PlanId } from "@/config/pricing";
+import { PlanPrice } from "@/components/marketing/plan-price";
 import { SectionIntro, Eyebrow } from "@/components/ui/section";
 import { LinkButton } from "@/components/ui/button";
 import { PricingCalculator } from "@/components/marketing/pricing-calculator";
@@ -12,7 +13,7 @@ import { cn } from "@/lib/cn";
 export const metadata: Metadata = pageMetadata({
   title: "Pricing",
   description:
-    "Axtara subscriptions are priced by active workers, with Core, Scale and Enterprise plans and flexible billing arrangements. Estimate your plan and request a quote.",
+    "Axtara plans from US$199, J$19,900 or ₦99,000 a month. Core, Scale and Enterprise are sized by the projects your company manages and your own active workers — estimate your subscription by market.",
   path: "/pricing",
 });
 
@@ -21,28 +22,32 @@ export const dynamic = "force-dynamic";
 
 const faqs = [
   {
-    q: "What counts as an active worker?",
-    a: "Anyone who records time, attendance or field activity in Axtara during a billing month. How office-based users who only review and approve are treated is confirmed in your order form.",
-  },
-  {
     q: "How is the monthly charge calculated?",
-    a: "Your subscription is the greater of two amounts: your active workers multiplied by the plan's per-worker rate, or the plan's monthly minimum. The minimum keeps pricing predictable for smaller teams.",
+    a: "Each plan has a monthly base that includes a number of company-managed active projects and your own active workers. Additional projects and workers are charged per month at your market's published rate.",
   },
   {
-    q: "What billing arrangements are available?",
-    a: "In Jamaica you can choose a 12-month commitment billed monthly at the standard rate, flexible month-to-month billing at a 15% premium, or annual prepayment at a 10% discount. In other markets, your billing arrangement is agreed with you and set out in your order form.",
+    q: "What counts as an active worker?",
+    a: "Your own employees who record time or activity in Axtara during the month. Office users and invited collaborators are included, and a GC isn't billed for its subcontractors' workers.",
+  },
+  {
+    q: "How does annual prepayment work?",
+    a: "Paying the base subscription a year in advance takes 10% off the base. Any additional projects or workers are still billed monthly at the standard rate.",
+  },
+  {
+    q: "If a GC invites us, can they see our payroll?",
+    a: "No. An invitation shares the packages the GC chooses with you. Your employees' payroll, your private rates, your other projects and your other customer relationships stay in your company account.",
+  },
+  {
+    q: "Which plan includes payroll preparation?",
+    a: "Core includes an export of approved time. Scale adds payroll calculation, review, approval and payroll-schedule export. Enterprise includes everything in Scale and adds entity payroll controls. On every plan, your payroll provider runs payroll.",
   },
   {
     q: "Is implementation included?",
-    a: "Implementation, data migration and training are scoped for each customer and quoted separately, so you only pay for the support your team needs.",
+    a: "Implementation, data migration, training beyond standard onboarding and integrations are scoped for each customer and quoted separately.",
   },
   {
     q: "Does Axtara pay our workers?",
     a: "No. Axtara prepares approved payroll information. Wages are paid by your payroll provider or bank under your own arrangements. Axtara does not hold funds or transfer wages.",
-  },
-  {
-    q: "Can we change plans later?",
-    a: "Yes. As your workforce or requirements grow, you can move to a different plan. Changes to term commitments are set out in your order form.",
   },
 ];
 
@@ -77,26 +82,23 @@ export default function PricingPage() {
           <h2 id="calc-title" className="sr-only">Estimate your subscription</h2>
           <PricingCalculator rateCards={cards} preview={preview} />
           <p className="mt-4 text-[13px] text-n-500">
-            Your subscription, term and any applicable taxes are confirmed in your order form.
+            Prices exclude applicable taxes. Your subscription is confirmed in your order form.
           </p>
 
           <div className="mt-16 grid gap-10 border-t border-n-150 pt-12 lg:grid-cols-12">
             <div className="lg:col-span-4">
               <h3 className="t-h3 text-n-950">How subscriptions are sized</h3>
               <p className="mt-3 text-[15px] leading-6 text-n-600">Built around how construction companies actually work together.</p>
+              <ul className="mt-6 space-y-2 text-[13.5px] leading-5 text-n-500">
+                {pricingDisclosures.map((d) => <li key={d}>{d}</li>)}
+              </ul>
             </div>
             <dl className="grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:col-span-8">
-              {[
-                ["Projects your company manages", "Each active project your team runs in Axtara. Archived projects stay available without counting as active."],
-                ["Your own active workers", "Employees of your company who record time or activity during the month. Partner crews belong to their own employer's account."],
-                ["Partners join your project workspace", "Subcontractors you invite work on the packages you share with them, and keep their own company records private."],
-                ["One company, one account", "A company that works as both a GC and a specialty contractor runs everything from one Axtara account."],
-              ].map(([t, d]) => (
+              {billingRules.map(({ t, d }) => (
                 <div key={t} className="border-l-2 border-brand-200 pl-5">
                   <dt className="text-[15.5px] font-medium text-n-950">{t}</dt>
                   <dd className="mt-1.5 text-[14.5px] leading-6 text-n-600">{d}</dd>
-                </div>
-              ))}
+                </div>              ))}
             </dl>
           </div>
         </div>
@@ -112,9 +114,7 @@ export default function PricingPage() {
                 <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-n-950">{p.name}</h3>
                 <p className="mt-2 text-[15px] font-medium text-n-700">{p.forWhom}</p>
                 <p className="mt-3 text-[14.5px] leading-6 text-n-600">{p.summary}</p>
-                <p className="mt-5 text-[13px] text-n-500">
-                  Typical team: {p.suggestedWorkers[1] ? `${p.suggestedWorkers[0]}–${p.suggestedWorkers[1]}` : `${p.suggestedWorkers[0]}+`} active workers
-                </p>
+                <PlanPrice plan={p.id} rateCards={cards} className="mt-6" />
                 <ul className="mt-5 space-y-2.5 border-t border-n-150 pt-5">
                   {p.highlights.map((h) => (
                     <li key={h} className="flex gap-2.5 text-[14.5px] text-n-700"><Check className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden="true" />{h}</li>
@@ -122,9 +122,9 @@ export default function PricingPage() {
                 </ul>
                 <div className="mt-auto pt-8">
                   {p.quotedOnly ? (
-                    <LinkButton href="/demo?interest=enterprise" variant="primary" arrow className="w-full">Discuss Enterprise</LinkButton>
+                    <LinkButton href="/demo?interest=enterprise" variant="primary" arrow className="w-full">Get an Enterprise quote</LinkButton>
                   ) : (
-                    <LinkButton href={`/demo?interest=pricing&plan=${p.id}`} variant="secondary" className="w-full">Get a {p.name} quote</LinkButton>
+                    <LinkButton href={`/demo?interest=pricing&plan=${p.id}`} variant="secondary" className="w-full">Start with {p.name}</LinkButton>
                   )}
                 </div>
               </article>

@@ -1,13 +1,9 @@
 /**
  * PUBLIC PRICING CONFIGURATION
  * ----------------------------
- * Plans, billing arrangements and market commercial models. This file contains
- * NO monetary values. Rate cards (per-worker prices and plan minimums) are
- * loaded on the server from `config/pricing/rates.private.json` (gitignored) or
- * the PRICING_RATES_JSON environment variable, and are only sent to the browser
- * for markets whose rate card is marked `"approved": true`.
- *
- * See config/pricing/rates.example.json for the expected shape.
+ * Plans, billing arrangements and market commercial models. Monetary values
+ * live in config/pricing/published-rates.ts (approved price books for the
+ * United States, Jamaica and Nigeria). Markets without a price book are quoted.
  */
 
 import type { RegionCode } from "./regions";
@@ -33,34 +29,34 @@ export const plans: Plan[] = [
   {
     id: "core",
     name: "Core",
-    forWhom: "For foundational workforce and operational management",
+    forWhom: "For a company starting with a few active projects and its own crews",
     summary:
-      "Workforce records, verified attendance and supervisor approvals for businesses replacing paper and spreadsheets.",
+      "Projects, partner packages, daily reports, RFIs and bids, with workforce records, mobile clock-in, supervisor time review and approved-time export.",
     suggestedWorkers: [1, 75],
     suggestedProjects: [0, 3],
-    highlights: ["Workforce records", "Mobile clock-in", "Supervisor approvals", "Standard reports"],
+    highlights: ["Projects, packages, RFIs and bids", "Daily reports and site photos", "Mobile clock-in and supervisor time review", "Approved-time export"],
     quotedOnly: false,
   },
   {
     id: "scale",
     name: "Scale",
-    forWhom: "For growing businesses managing multiple sites, crews and projects",
+    forWhom: "For a company running several projects with consistent processes across sites",
     summary:
-      "Everything in Core, with project operations, field reporting, expenses and payroll preparation across multiple sites.",
+      "Everything in Core, plus payroll calculation, review, approval and schedule export, lookahead planning, cost codes and change controls, and a portfolio dashboard.",
     suggestedWorkers: [76, 400],
     suggestedProjects: [4, 10],
-    highlights: ["Everything in Core", "Project and cost-code allocation", "Daily reports and expenses", "Payroll preparation"],
+    highlights: ["Payroll calculation, review, approval and schedule export", "Lookahead planning and trade readiness", "Cost codes, change orders and approval stages", "Portfolio dashboard and client updates"],
     quotedOnly: false,
   },
   {
     id: "enterprise",
     name: "Enterprise",
-    forWhom: "For complex organisations needing governance, advanced permissions and integrations",
+    forWhom: "For a larger organisation that needs controls across teams, projects and entities",
     summary:
-      "Everything in Scale, with advanced permissions, governance, multi-entity reporting and integration support.",
+      "Everything in Scale, plus organisational controls: multi-entity governance, single sign-on, API access, an executive portfolio dashboard and a scoped rollout.",
     suggestedWorkers: [401, null],
     suggestedProjects: [11, null],
-    highlights: ["Everything in Scale", "Advanced roles and permissions", "Multi-entity reporting", "Integration support"],
+    highlights: ["Multi-entity governance and entity payroll controls", "Cross-project schedule oversight", "Single sign-on, API and webhooks", "Executive portfolio dashboard"],
     quotedOnly: true,
   },
 ];
@@ -88,48 +84,58 @@ export type BillingArrangement = {
 export type MarketModel = {
   status: "proposed" | "approved" | "under-review";
   billing: BillingArrangement[];
-  /** "max" = charge the greater of (workers × per-worker rate) or the plan minimum. */
-  chargeBasis: "max-of-workers-or-minimum";
+  /** Commercial structure used in this market. */
+  chargeBasis: "max-of-workers-or-minimum" | "base-plus-allowance";
   notes: string[];
 };
 
-const jamaicaBilling: BillingArrangement[] = [
+/** Billing for markets on the published base-plus-allowance price books. */
+export const baseAllowanceBilling: BillingArrangement[] = [
   {
     id: "commitment-monthly",
-    name: "12-month commitment, billed monthly",
-    description: "Standard rate with a 12-month subscription term, invoiced monthly.",
+    name: "Monthly",
+    description: "Base subscription and any additional projects or workers, invoiced monthly.",
     multiplier: 1,
-    invoicing: "monthly",
-    termMonths: 12,
-  },
-  {
-    id: "flexible-monthly",
-    name: "Flexible month-to-month",
-    description: "No long-term commitment. Priced at a 15% premium to the standard rate.",
-    multiplier: 1.15,
     invoicing: "monthly",
     termMonths: null,
   },
   {
     id: "annual-prepaid",
     name: "Annual prepayment",
-    description: "Twelve months paid in advance at a 10% discount to the standard rate.",
-    multiplier: 0.9,
+    description: "The base subscription paid a year in advance with 10% off. Additional projects and workers are invoiced monthly at the standard rate.",
+    multiplier: 1,
     invoicing: "annual",
     termMonths: 12,
   },
 ];
 
+const published = (): MarketModel => ({ status: "approved", billing: baseAllowanceBilling, chargeBasis: "base-plus-allowance", notes: [] });
+
+/** Markets with a published price book. Other markets are quoted. */
 export const marketModels: Partial<Record<RegionCode, MarketModel>> = {
-  JM: {
-    status: "proposed",
-    billing: jamaicaBilling,
-    chargeBasis: "max-of-workers-or-minimum",
-    notes: [
-      "Final terms are confirmed in your order form.",
-    ],
-  },
+  US: published(),
+  JM: published(),
+  NG: published(),
 };
+
+/** How subscriptions are billed — published with the price books. */
+export const billingRules = [
+  { t: "Office users and invited collaborators are included", d: "Plans are priced by company, projects and your own workers — not by office seats." },
+  { t: "Supervisors don't need a separate mobile subscription", d: "The Supervisor Field app is part of the employer's plan." },
+  { t: "A GC isn't billed for its subcontractors' workers", d: "Own active workers means your company's own workforce only." },
+  { t: "Invitations don't use your project allowance", d: "Only projects your company manages count as company-managed active projects." },
+  { t: "A subcontractor subscribes for its own work", d: "To manage its own projects and workforce. Taking part in a GC's shared workspace is through the GC's invitation." },
+  { t: "One company, one subscription", d: "A company working as both a GC and a specialty contractor uses one subscription, sized by the projects it manages and its own workers." },
+];
+
+/** Pricing disclosures shown beneath the price books. */
+export const pricingDisclosures = [
+  "Prices exclude taxes, which are added where applicable.",
+  "Implementation, data migration, training beyond standard onboarding and integrations are separately scoped services, quoted on their own.",
+  "Each market has its own price book. Prices in one market aren't exchange-rate conversions of another.",
+  "Enterprise prices are starting points. Enterprise estimates are indicative and confirmed by quote.",
+  "Markets without a published price book — including Guyana — are quoted in local currency.",
+];
 
 /** Charges that sit outside the subscription. Shown on the pricing page. */
 export const separateCharges = [

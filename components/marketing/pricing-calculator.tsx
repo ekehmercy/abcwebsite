@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import { ChevronDown, Info } from "lucide-react";
 import { getRegion, regions, type RegionCode } from "@/config/regions";
-import { companyTypes, marketModels, plans, type BillingArrangement, type CompanyTypeId, type PlanId } from "@/config/pricing";
+import { baseAllowanceBilling, companyTypes, marketModels, plans, type BillingArrangement, type CompanyTypeId, type PlanId } from "@/config/pricing";
 import {
   calculateBaseQuote, calculateQuote, formatMoney, isBaseAllowance, suggestPlan, type RateCard,
 } from "@/lib/pricing-engine";
@@ -19,21 +19,6 @@ const fieldLabel = "block text-[13px] font-medium text-n-800";
 const selectClass =
   "mt-2 h-11 w-full appearance-none rounded-md bg-white px-3 text-[15px] text-n-900 shadow-[0_0_0_1px_var(--n-200)] hover:shadow-[0_0_0_1px_var(--n-300)]";
 const numberClass = "h-10 w-28 rounded-md bg-white px-3 text-right text-[15px] tabular-nums text-n-900 shadow-[0_0_0_1px_var(--n-200)]";
-
-/** Billing options for markets priced on the base-plus-allowance structure. */
-const baseAllowanceBilling = (discount?: number): BillingArrangement[] => [
-  { id: "commitment-monthly", name: "Monthly", description: "Base subscription and any additional projects or workers, invoiced monthly.", multiplier: 1, invoicing: "monthly", termMonths: null },
-  {
-    id: "annual-prepaid",
-    name: "Annual prepayment",
-    description: discount
-      ? `The base subscription paid a year in advance with ${Math.round(discount * 100)}% off. Additional projects and workers are invoiced monthly.`
-      : "The base subscription paid a year in advance. Additional projects and workers are invoiced monthly.",
-    multiplier: 1,
-    invoicing: "annual",
-    termMonths: 12,
-  },
-];
 
 const rank = (id: PlanId) => plans.findIndex((p) => p.id === id);
 
@@ -66,13 +51,13 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
 
   const card = rateCards.find((c) => c.region === region.code);
   const billingOptions: BillingArrangement[] =
-    card?.model === "base-plus-allowance" ? baseAllowanceBilling(card.annualBaseDiscount) : (marketModels[region.code]?.billing ?? []);
+    card?.model === "base-plus-allowance" ? baseAllowanceBilling : (marketModels[region.code]?.billing ?? []);
 
   const suggested = suggestFor(effectiveWorkers, projects);
   const planId = planOverride ?? suggested;
   const plan = plans.find((p) => p.id === planId)!;
   const billing = billingOptions.find((b) => b.id === billingId) ?? billingOptions[0] ?? null;
-  const rates = plan.quotedOnly ? undefined : card?.plans[planId as "core" | "scale"];
+  const rates = card?.plans[planId];
 
   const quote = useMemo(() => {
     if (!rates || !billing) return null;
@@ -87,7 +72,7 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
       return {
         kind: "base" as const,
         headline: billing.invoicing === "annual" ? q.annualBase ?? 0 : q.monthlyCharge,
-        headlineLabel: billing.invoicing === "annual" ? "Base, paid annually in advance" : "Per month",
+        headlineLabel: `${rates.indicative ? "From · " : ""}${billing.invoicing === "annual" ? "Base, paid annually in advance" : "Per month"}`,
         rows: [
           ["Base subscription", formatMoney(q.base, region.currency.code) + " / month"],
           [`Additional projects (${q.extraProjects})`, formatMoney(q.projectAdditions, region.currency.code) + " / month"],
@@ -95,7 +80,9 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
           ["Effective monthly, year one", formatMoney(q.effectiveMonthly, region.currency.code)],
           ["Year-one total", formatMoney(q.yearOne, region.currency.code)],
         ],
-        note: `${plan.name} includes ${rates.includedProjects} company-managed projects and ${rates.includedWorkers} of your own workers.`,
+        note: rates.indicative
+          ? `Enterprise starts from ${rates.includedProjects} company-managed projects and ${rates.includedWorkers} of your own workers. This estimate is indicative — capacity and terms are confirmed in your quote.`
+          : `${plan.name} includes ${rates.includedProjects} company-managed projects and ${rates.includedWorkers} of your own workers.${billing.invoicing === "annual" ? " Additional projects and workers are invoiced monthly." : ""}`,
       };
     }
     const q = calculateQuote({
@@ -406,7 +393,7 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
         )}
 
         <div className="mt-auto flex flex-wrap gap-3 pt-6">
-          <Link href={quoteHref} className={buttonClass("primary", "md")}>Get your {region.currency.code} quote</Link>
+          <Link href={quoteHref} className={buttonClass("primary", "md")}>{quote && !(rates && isBaseAllowance(rates) && rates.indicative) ? "Request a Demo" : `Get your ${region.currency.code} quote`}</Link>
           <Link href="/roi" className={buttonClass("secondary", "md")}>Estimate the value</Link>
         </div>
       </div>
