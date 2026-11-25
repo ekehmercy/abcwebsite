@@ -185,7 +185,17 @@ await check("interactive product demos respond like the application", async () =
   await j.getByText("Cedar Heights Residential Estate").waitFor();
   await j.getByRole("button", { name: /Prepare payroll/ }).click();
   const rev = j.getByRole("button", { name: "Review", exact: true });
-  for (let k = 0; k < 5 && (await rev.count()); k++) await rev.first().click();
+  // Resolve each variance and wait for the UI to register it before the next click.
+  for (let k = 0; k < 6; k++) {
+    const before = await rev.count();
+    if (!before) break;
+    await rev.first().click();
+    await page.waitForFunction(
+      ([n]) => document.querySelectorAll("#journey button").length >= 0 && [...document.querySelectorAll("#journey button")].filter((b) => b.textContent?.trim() === "Review").length < n,
+      [before],
+      { timeout: 5000 },
+    );
+  }
   await j.getByRole("button", { name: "Approve and prepare schedule" }).click();
   await j.getByText("Schedule ready for your payroll provider").waitFor();
   const ex = page.locator("section[aria-labelledby=explore-title]");
