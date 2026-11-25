@@ -213,7 +213,7 @@ export function SiteHeader() {
           {(
             [
               ["solutions", "Solutions", solutionsMenu],
-              ["industries", "Who is this for", industriesMenu],
+              ["industries", "Who It’s For", industriesMenu],
             ] as const
           ).map(([id, label, links]) => (
             <div key={id} className="relative">
@@ -303,7 +303,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   const groups: { label: string; links: NavLink[] }[] = [
     { label: "Platform", links: [{ label: "Platform overview", href: "/platform", icon: "Blocks", description: "How every module connects" }, ...platformMenu.flatMap((g) => g.links).filter((l) => !l.href.includes("#"))] },
     { label: "Solutions", links: solutionsMenu },
-    { label: "Who is this for", links: industriesMenu },
+    { label: "Who It’s For", links: industriesMenu },
     { label: "Resources", links: resourcesMenu },
   ];
 

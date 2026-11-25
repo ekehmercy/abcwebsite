@@ -65,7 +65,7 @@ export const footerNav: NavGroup[] = [
     ],
   },
   {
-    label: "Who is this for",
+    label: "Who It’s For",
     links: [
       { label: "General Contractors", href: "/industries/general-contractors" },
       { label: "Subcontractors", href: "/industries/subcontractors" },
