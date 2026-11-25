@@ -51,7 +51,7 @@ export function HeroDemo() {
       {/* Composition */}
       <div className="relative mx-auto max-w-[1180px] lg:pl-[218px]">
         {/* Mobile: the field app leads, the management view follows */}
-        <div className="mb-5 flex justify-center sm:hidden">
+        <div className="mb-5 flex justify-center lg:hidden">
           <PhoneFrame label="Axtara mobile app: Kemar Williams clocks in at Harbour Point, Block B" className="w-[224px]">
             <MobileClockIn stage={phone} title="Axtara Field" />
           </PhoneFrame>
@@ -61,7 +61,7 @@ export function HeroDemo() {
         </div>
 
         {/* Phone: stacked above on mobile, overlapping the dashboard on large screens */}
-        <div className="pointer-events-none absolute -bottom-10 left-1/2 hidden -translate-x-1/2 sm:block lg:bottom-[-48px] lg:left-0 lg:translate-x-0">
+        <div className="pointer-events-none absolute bottom-[-48px] left-0 hidden lg:block">
           <PhoneFrame label="Axtara mobile app: Kemar Williams clocks in at Harbour Point, Block B" className="w-[218px] lg:w-[236px]">
             <MobileClockIn stage={phone} title="Axtara Field" />
           </PhoneFrame>
@@ -77,7 +77,7 @@ export function HeroDemo() {
       </div>
 
       {/* Caption + controls */}
-      <div className="relative mx-auto mt-6 flex max-w-[1180px] flex-col gap-3 sm:mt-16 lg:mt-20 lg:flex-row lg:items-center lg:justify-between lg:pl-[218px]">
+      <div className="relative mx-auto mt-6 flex max-w-[1180px] flex-col gap-3 lg:mt-20 lg:flex-row lg:items-center lg:justify-between lg:pl-[218px]">
         <ol className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2 xl:flex xl:flex-nowrap" aria-label="What this demonstration shows">
           {captions.map((c, n) => (
             <li key={c} className={cn("flex items-center gap-2 text-[13.5px] transition-colors duration-300", n === step ? "text-n-950" : "text-n-400", "whitespace-nowrap")}>

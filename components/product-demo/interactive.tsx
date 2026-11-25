@@ -367,11 +367,11 @@ export function PayrollDemo({ className }: { className?: string }) {
       </ol>
       <div className="mt-2.5 grid gap-2.5 @4xl:grid-cols-[1.6fr_1fr]">
         <Panel title="Harbour Point · Crews B2 and S1" meta="Approved hours only" bodyClass="pt-2.5 pb-0">
-          <Table head={["Employee", "Regular", "Overtime", <span key="a" className="hidden @xl:inline">Allowances</span>, "Check"]}>
+          <Table head={["Employee", <span key="r" className="hidden @lg:inline">Regular</span>, "Overtime", <span key="a" className="hidden @xl:inline">Allowances</span>, "Check"]}>
             {rows.map((r) => (
               <tr key={r.n}>
                 <td><span className="flex items-center gap-2"><Avatar name={r.n} tone={r.t} size={22} /><span className="truncate font-medium text-n-900">{r.n}</span></span></td>
-                <td className="tabular-nums">{r.reg}</td>
+                <td className="hidden tabular-nums @lg:table-cell">{r.reg}</td>
                 <td className="tabular-nums">{r.ot}</td>
                 <td className="hidden text-n-600 @xl:table-cell">{r.allw}</td>
                 <td>
