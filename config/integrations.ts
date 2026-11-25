@@ -36,14 +36,33 @@ export type Integration = {
   verified: boolean;
 };
 
-export const integrationCategories: { id: IntegrationCategory; name: string; icon: string; description: string; outcome: string }[] = [
-  { id: "accounting", name: "Accounting", icon: "BookOpen", description: "Approved labour and expense costs flow to your general ledger by project and cost code.", outcome: "Close the month without re-keying site costs." },
-  { id: "payroll", name: "Payroll", icon: "FileSpreadsheet", description: "Approved, payroll-ready hours and allowances reach the payroll provider you already use. Your provider runs payroll and pays your people.", outcome: "Start every payroll run from approved hours." },
-  { id: "payments", name: "Payments", icon: "Landmark", description: "Reimbursement status stays in step with payments made by your bank or licensed payment provider.", outcome: "Workers see where their claim stands." },
-  { id: "identity", name: "Identity Verification", icon: "ScanFace", description: "Specialist verification services confirm worker identity at onboarding, where lawful and with consent.", outcome: "Know who you are putting on site." },
-  { id: "estimating", name: "Estimating", icon: "Calculator", description: "Budgets and cost-code structures from your estimating tools become the baseline for each project.", outcome: "Compare actual labour against the estimate." },
-  { id: "procurement", name: "Procurement", icon: "Package", description: "Approved field requests pass into your purchasing process with the project and cost code attached.", outcome: "Materials requests arrive ready to order." },
-  { id: "documents", name: "Document Management", icon: "FolderOpen", description: "Certifications, permits and project records stay in sync with your document system.", outcome: "One version of every compliance document." },
+export type IntegrationCategoryDef = {
+  id: IntegrationCategory;
+  name: string;
+  icon: string;
+  description: string;
+  outcome: string;
+  /** What stays in the specialist tool. */
+  stays: string;
+  /** What moves between that tool and Axtara. */
+  flows: string;
+};
+
+export const integrationCategories: IntegrationCategoryDef[] = [
+  { id: "accounting", name: "Accounting", icon: "BookOpen", description: "Approved labour and expense costs flow to your general ledger by project and cost code.", outcome: "Close the month without re-keying site costs.", stays: "Ledgers, invoicing, budgets and final accounts.", flows: "Cost codes, approved hours, approved expenses and change-request status from Axtara." },
+  { id: "payroll", name: "Payroll", icon: "FileSpreadsheet", description: "Approved, payroll-ready hours and allowances reach the payroll provider you already use. Your provider runs payroll and pays your people.", outcome: "Start every payroll run from approved hours.", stays: "Running payroll and paying your employees.", flows: "An employer-approved payroll schedule, prepared from reviewed time in Axtara." },
+  { id: "payments", name: "Payments", icon: "Landmark", description: "Reimbursement status stays in step with payments made by your bank or licensed payment provider.", outcome: "Workers see where their claim stands.", stays: "Moving money — wages and reimbursements.", flows: "Approved expense claims out; reimbursement status back in." },
+  { id: "identity", name: "Identity Verification", icon: "ScanFace", description: "Specialist verification services confirm worker identity at onboarding, where lawful and with consent.", outcome: "Know who you are putting on site.", stays: "Identity checks and the evidence behind them.", flows: "A verification result attached to the employee record." },
+  { id: "estimating", name: "Estimating", icon: "Calculator", description: "Budgets and cost-code structures from your estimating tools become the baseline for each project.", outcome: "Compare actual labour against the estimate.", stays: "Takeoff, quantities, rates and prices.", flows: "Cost-code structures and approved budget references in; bid documents recorded against each package." },
+  { id: "procurement", name: "Procurement", icon: "Package", description: "Approved field requests pass into your purchasing process with the project and cost code attached.", outcome: "Materials requests arrive ready to order.", stays: "Purchase orders, suppliers and payments to them.", flows: "Approved field requests with project, package and cost code attached." },
+  { id: "documents", name: "Document Management", icon: "FolderOpen", description: "Certifications, permits and project records stay in sync with your document system.", outcome: "One version of every compliance document.", stays: "Authoring and controlling drawings, models and company documents.", flows: "Issued documents shared and versioned on packages, with superseded copies marked." },
+];
+
+/** Specialist tools Axtara works alongside without replacing. */
+export const adjacentTools: { name: string; stays: string; axtara: string }[] = [
+  { name: "Specialist scheduling", stays: "The critical-path programme and its logic.", axtara: "Activities, progress entries, milestones and lookahead commitments referenced against it." },
+  { name: "Design and drawings", stays: "Authoring drawings and models.", axtara: "Issued drawings shared on packages, versioned, with superseded copies marked." },
+  { name: "Takeoff and estimating", stays: "Quantities, rates and prices.", axtara: "Bid invitations, addenda and submissions recorded per package; the awarded scope." },
 ];
 
 /** INTERNAL — used by the publication checklist only. Never render these labels on the website. */

@@ -6,7 +6,7 @@
 
 import { regions } from "../config/regions.ts";
 
-export type FormId = "demo" | "contact" | "integration-request" | "security-contact";
+export type FormId = "demo" | "contact" | "integration-request" | "security-contact" | "partner";
 
 export const businessTypes = [
   "General Contractor",
@@ -28,6 +28,35 @@ export const interestAreas = [
 ] as const;
 
 export const employeeRanges = ["1–24", "25–74", "75–199", "200–499", "500–999", "1,000+"] as const;
+
+/** Main operational challenge — drives the personalised demo agenda. */
+export const demoChallenges = [
+  "Chasing partner reports and daily logs",
+  "RFIs, bids and responsibilities",
+  "Crew time and payroll preparation",
+  "Owner reporting and decisions",
+  "Inspections, issues, changes and closeout",
+  "Visibility across projects",
+  "Something else",
+] as const;
+
+export const projectRanges = ["1 to 3", "4 to 10", "11 to 25", "More than 25"] as const;
+
+export const workforceRanges = ["None of our own", "Under 25", "25 to 100", "101 to 250", "More than 250"] as const;
+
+export const partnerCountries = ["Nigeria", "Jamaica", "Wider Caribbean", "United States", "Other"] as const;
+
+export const partnerPathwayOptions = ["Referral", "Reseller and regional", "Implementation", "Technology and integration", "Not sure yet"] as const;
+
+export const partnerOrgTypes = [
+  "Construction adviser or consultancy",
+  "Accounting or quantity surveying firm",
+  "Industry association",
+  "Software reseller or distributor",
+  "Implementation or services firm",
+  "Software provider",
+  "Other",
+] as const;
 
 export const countryOptions = [...regions.map((r) => r.name), "Other"] as const;
 
@@ -66,7 +95,9 @@ const workEmail: FieldDef = { name: "email", label: "Work email", type: "email",
 const company: FieldDef = { name: "company", label: "Company name", type: "text", required: true, max: 120, autoComplete: "organization" };
 const message = (label = "Message", required = false): FieldDef => ({ name: "message", label, type: "textarea", required, max: 2000 });
 
-export const forms: Record<FormId, { fields: FieldDef[]; submitLabel: string; subject: string }> = {
+export type FormDef = { fields: FieldDef[]; submitLabel: string; subject: string };
+
+export const forms: Record<FormId, FormDef> = {
   demo: {
     subject: "Demo request",
     submitLabel: "Request a Demo",
@@ -79,7 +110,10 @@ export const forms: Record<FormId, { fields: FieldDef[]; submitLabel: string; su
       { name: "businessType", label: "Business type", type: "select", required: true, max: 60, options: businessTypes, half: true },
       { name: "employees", label: "Number of employees", type: "select", required: true, max: 20, options: employeeRanges, half: true },
       { name: "interest", label: "Area of interest", type: "select", required: true, max: 60, options: interestAreas, half: true },
-      { ...message("Anything we should know? (optional)"), hint: "For example, how many sites you run or what you use today." },
+      { name: "challenge", label: "Main challenge", type: "select", required: true, max: 80, options: demoChallenges },
+      { name: "projects", label: "Active projects (optional)", type: "select", max: 30, options: projectRanges, half: true },
+      { name: "ownWorkforce", label: "Your own site workforce (optional)", type: "select", max: 30, options: workforceRanges, half: true },
+      { ...message("Anything we should know? (optional)"), hint: "For example, the tools you use today or a project you'd like us to model." },
     ],
   },
   contact: {
@@ -116,6 +150,20 @@ export const forms: Record<FormId, { fields: FieldDef[]; submitLabel: string; su
       { ...company, required: false, label: "Organisation (optional)" },
       { name: "topic", label: "Topic", type: "select", required: true, max: 60, options: securityTopics },
       { ...message("Details", true), hint: "Please don't include passwords or other secrets. For vulnerabilities, describe the issue and how to reproduce it." },
+    ],
+  },
+  partner: {
+    subject: "Partner enquiry",
+    submitLabel: "Send enquiry",
+    fields: [
+      name("firstName", "First name", "given-name"),
+      name("lastName", "Last name", "family-name"),
+      workEmail,
+      { ...company, label: "Organisation" },
+      { name: "country", label: "Country or region", type: "select", required: true, max: 40, options: partnerCountries, half: true },
+      { name: "pathway", label: "Partnership pathway", type: "select", required: true, max: 40, options: partnerPathwayOptions, half: true },
+      { name: "orgType", label: "Organisation type", type: "select", required: true, max: 60, options: partnerOrgTypes },
+      { ...message("How you'd like to work together", true), hint: "Your customers or markets, and what you'd bring. Please don't include customer records or financial documents." },
     ],
   },
 };

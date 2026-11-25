@@ -78,3 +78,46 @@ One fictional organisation is used throughout: **Meridian Construction Group**, 
 ## 7. Verification results
 
 See the final summary in the session. Tests are in `tests/`; run `npm test` and `npm run test:e2e`.
+
+---
+
+# Update 3 — Brand palette, original logo and product intelligence from the reference
+
+The existing design (layouts, typography, components, interactions) is retained. The changes are the mandatory brand colours and the original logo, plus richer construction product knowledge. A full comparison with the reference is in `docs/REFERENCE-REVIEW.md`.
+
+## Brand
+
+- **Palette:** the specified palette is applied through tokens (`config/brand.ts`):
+  - teal `#009DA5`, turquoise `#00BEC4`, deep teal `#07575E`
+  - navy `#02102B`, off-white `#F7F7F2`
+  - text `#111111` / `#242424`
+  - supporting colours `#007C84`, `#E6F7F7`, `#C3EBE8`, `#64748B`, `#DDE7E7`, `#061F29`
+- **Accessibility:** white text sits on `#007C84` rather than `#009DA5` (see `docs/BRAND-COLOUR-REPORT.md`). The reference's alternative scheme was not adopted.
+- **Logo:** the original logo is extracted from the reference with a transparent background, plus a light-wordmark variant, a favicon and a touch icon. It is used in the header, footer, mobile menu, integrations hub and social images.
+
+## New product knowledge
+
+| Addition | Where |
+| --- | --- |
+| Four connected applications (GC/Developer Web, Subcontractor Web, Supervisor Field, Field) | `/collaboration`, homepage, `/mobile`, industry pages |
+| Cross-company collaboration, independent use and data ownership | `/collaboration` ("What can the GC see?" explorer), homepage "Shared projects. Separate companies." |
+| Work packages, bid invitations, addenda, RFIs, change requests | New module `/platform/bids-rfis` with an interactive preview (answer an RFI, chase an addendum, award a bid) |
+| Inspections, corrective items, handover readiness | New module `/platform/inspections-handover` with an interactive preview (accept closure evidence, request documents, publish readiness) |
+| Construction lifecycle (8 stages, GC and subcontractor views, adjacent tools) | `/lifecycle` |
+| Industry value propositions | Industry pages gain "What you do in Axtara", the apps each team uses, data position; developers get both delivery modes |
+| Cross-company product tour | `/tour`: seven interactive moments across Meridian (GC), Volt Line Electrical (subcontractor) and Seabreeze Developments (developer), each with a "Who sees what" note |
+| ROI calculator | `/roi`: presets per business type, hours recovered, value, net of subscription, payback. Visitor-entered costs only. |
+| Pricing estimator | Company type, own crews and active projects inputs; the engine supports both proposed commercial structures; still no prices unless a rate card is approved |
+| Partner programme | `/partners`: referral, reseller and regional, implementation, technology pathways, with a working enquiry form |
+| Integration ecosystem | Each category states what stays in the specialist tool and what flows with Axtara |
+| Personalised demo | Business type and challenge drive a live "Your demo agenda" |
+
+## Consolidation
+
+- The four-app model, product boundaries and privacy rules are written **once**, on `/collaboration`; other pages link to it.
+- The homepage gains one compact section. Lifecycle, tour, ROI and partners live on inner pages.
+- The explorer covers ten modules, using short tab labels so they fit on one row.
+
+## Release gating
+
+Every new product claim carries an internal `verified` flag. Staging shows the complete product; the public release omits anything unverified. The private checklist (`npm run audit:claims` → `docs/PUBLICATION-CHECKLIST.md`) now lists 186 items, including the commercial conflicts between the original brief and the reference.

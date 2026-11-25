@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import { ChevronDown, Info } from "lucide-react";
 import { getRegion, regions, type RegionCode } from "@/config/regions";
-import { marketModels, plans, type BillingId, type PlanId } from "@/config/pricing";
-import { calculateQuote, formatMoney, suggestPlan, type RateCard } from "@/lib/pricing-engine";
+import { companyTypes, marketModels, plans, type BillingArrangement, type CompanyTypeId, type PlanId } from "@/config/pricing";
+import {
+  calculateBaseQuote, calculateQuote, formatMoney, isBaseAllowance, suggestPlan, type RateCard,
+} from "@/lib/pricing-engine";
 import { useRegion } from "@/lib/use-region";
 import { track } from "@/lib/analytics";
 import { buttonClass } from "@/components/ui/button";
@@ -16,14 +18,40 @@ const MAX_SLIDER = 600;
 const fieldLabel = "block text-[13px] font-medium text-n-800";
 const selectClass =
   "mt-2 h-11 w-full appearance-none rounded-md bg-white px-3 text-[15px] text-n-900 shadow-[0_0_0_1px_var(--n-200)] hover:shadow-[0_0_0_1px_var(--n-300)]";
+const numberClass = "h-10 w-28 rounded-md bg-white px-3 text-right text-[15px] tabular-nums text-n-900 shadow-[0_0_0_1px_var(--n-200)]";
+
+/** Billing options for markets priced on the base-plus-allowance structure. */
+const baseAllowanceBilling = (discount?: number): BillingArrangement[] => [
+  { id: "commitment-monthly", name: "Monthly", description: "Base subscription and any additional projects or workers, invoiced monthly.", multiplier: 1, invoicing: "monthly", termMonths: null },
+  {
+    id: "annual-prepaid",
+    name: "Annual prepayment",
+    description: discount
+      ? `The base subscription paid a year in advance with ${Math.round(discount * 100)}% off. Additional projects and workers are invoiced monthly.`
+      : "The base subscription paid a year in advance. Additional projects and workers are invoiced monthly.",
+    multiplier: 1,
+    invoicing: "annual",
+    termMonths: 12,
+  },
+];
+
+const rank = (id: PlanId) => plans.findIndex((p) => p.id === id);
+
+function suggestFor(workers: number, projects: number): PlanId {
+  const byWorkers = suggestPlan(Math.max(1, workers), plans) as PlanId;
+  const byProjects = (plans.find((p) => projects >= p.suggestedProjects[0] && (p.suggestedProjects[1] === null || projects <= p.suggestedProjects[1]))?.id ?? "enterprise") as PlanId;
+  return rank(byProjects) > rank(byWorkers) ? byProjects : byWorkers;
+}
 
 export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[]; preview: boolean }) {
   const [regionCode, setRegion] = useRegion();
   const region = getRegion(regionCode);
-  const model = marketModels[region.code];
+  const [companyType, setCompanyType] = useState<CompanyTypeId>("gc");
+  const [ownCrews, setOwnCrews] = useState(true);
   const [workers, setWorkers] = useState(60);
+  const [projects, setProjects] = useState(3);
   const [planOverride, setPlanOverride] = useState<PlanId | null>(null);
-  const [billingId, setBillingId] = useState<BillingId>("commitment-monthly");
+  const [billingId, setBillingId] = useState<string>("commitment-monthly");
   const tracked = useRef(false);
 
   const interact = () => {
@@ -32,26 +60,65 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
     track("pricing_calculator_used", { region: region.code });
   };
 
-  const suggested = suggestPlan(workers, plans) as PlanId;
-  const planId = planOverride ?? suggested;
-  const plan = plans.find((p) => p.id === planId)!;
-  const billing = model?.billing.find((b) => b.id === billingId) ?? model?.billing[0] ?? null;
+  const type = companyTypes.find((t) => t.id === companyType)!;
+  const hasCrews = type.crews === "always" || ownCrews;
+  const effectiveWorkers = hasCrews ? workers : 0;
 
   const card = rateCards.find((c) => c.region === region.code);
+  const billingOptions: BillingArrangement[] =
+    card?.model === "base-plus-allowance" ? baseAllowanceBilling(card.annualBaseDiscount) : (marketModels[region.code]?.billing ?? []);
+
+  const suggested = suggestFor(effectiveWorkers, projects);
+  const planId = planOverride ?? suggested;
+  const plan = plans.find((p) => p.id === planId)!;
+  const billing = billingOptions.find((b) => b.id === billingId) ?? billingOptions[0] ?? null;
   const rates = plan.quotedOnly ? undefined : card?.plans[planId as "core" | "scale"];
 
   const quote = useMemo(() => {
     if (!rates || !billing) return null;
-    return calculateQuote({
-      workers,
+    if (isBaseAllowance(rates)) {
+      const q = calculateBaseQuote({
+        ...rates,
+        projects,
+        workers: effectiveWorkers,
+        billing: billing.invoicing === "annual" ? "annual" : "monthly",
+        annualBaseDiscount: card?.annualBaseDiscount,
+      });
+      return {
+        kind: "base" as const,
+        headline: billing.invoicing === "annual" ? q.annualBase ?? 0 : q.monthlyCharge,
+        headlineLabel: billing.invoicing === "annual" ? "Base, paid annually in advance" : "Per month",
+        rows: [
+          ["Base subscription", formatMoney(q.base, region.currency.code) + " / month"],
+          [`Additional projects (${q.extraProjects})`, formatMoney(q.projectAdditions, region.currency.code) + " / month"],
+          [`Additional workers (${q.extraWorkers})`, formatMoney(q.workerAdditions, region.currency.code) + " / month"],
+          ["Effective monthly, year one", formatMoney(q.effectiveMonthly, region.currency.code)],
+          ["Year-one total", formatMoney(q.yearOne, region.currency.code)],
+        ],
+        note: `${plan.name} includes ${rates.includedProjects} company-managed projects and ${rates.includedWorkers} of your own workers.`,
+      };
+    }
+    const q = calculateQuote({
+      workers: effectiveWorkers,
       perWorkerMonthly: rates.perWorkerMonthly,
       minimumMonthly: rates.minimumMonthly,
       multiplier: billing.multiplier,
       invoicing: billing.invoicing,
     });
-  }, [rates, billing, workers]);
+    return {
+      kind: "workers" as const,
+      headline: q.perInvoice,
+      headlineLabel: billing.invoicing === "annual" ? "Per annual invoice" : "Per month",
+      rows: [
+        ["Monthly equivalent", formatMoney(q.monthly, region.currency.code)],
+        ["Annual total", formatMoney(q.annualTotal, region.currency.code)],
+        ["Effective per worker", formatMoney(q.effectivePerWorker, region.currency.code)],
+      ],
+      note: q.minimumApplied ? `The ${plan.name} plan minimum applies at this team size.` : null,
+    };
+  }, [rates, billing, effectiveWorkers, projects, card, plan.name, region.currency.code]);
 
-  const adjustment = billing
+  const adjustment = billing && card?.model !== "base-plus-allowance"
     ? billing.multiplier === 1
       ? "Standard rate"
       : billing.multiplier > 1
@@ -61,38 +128,77 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
 
   const quoteHref = `/demo?${new URLSearchParams({
     interest: "pricing",
+    business: companyType,
+    type: type.short,
     plan: planId,
-    workers: String(workers),
+    workers: String(effectiveWorkers),
+    projects: String(projects),
+    ...(type.crews === "ask" ? { crews: ownCrews ? "yes" : "no" } : {}),
     region: region.code,
     ...(billing ? { billing: billing.id } : {}),
   }).toString()}`;
 
+  const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, Math.round(Number.isFinite(v) ? v : min)));
   const setW = (v: number) => {
     interact();
-    setWorkers(Math.max(1, Math.min(10000, Math.round(Number.isFinite(v) ? v : 1))));
+    setWorkers(clamp(v, 1, 10000));
+  };
+  const setP = (v: number) => {
+    interact();
+    setProjects(clamp(v, 0, 500));
   };
 
   return (
     <div className="grid overflow-hidden rounded-2xl bg-white shadow-[0_0_0_1px_var(--n-150),var(--shadow-card)] lg:grid-cols-[1.1fr_1fr]">
       {/* Inputs */}
       <form className="space-y-7 p-6 sm:p-8" onSubmit={(e) => e.preventDefault()} aria-label="Pricing calculator">
+        <fieldset>
+          <legend className={fieldLabel}>Your company</legend>
+          <div className="mt-2 grid gap-1 rounded-lg bg-n-100 p-1 sm:grid-cols-3">
+            {companyTypes.map((t) => (
+              <label
+                key={t.id}
+                className={cn(
+                  "relative flex min-h-10 cursor-pointer items-center justify-center rounded-md px-2 py-1.5 text-center text-[13.5px] font-medium leading-tight transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand-500",
+                  t.id === companyType ? "bg-white text-n-950 shadow-[0_0_0_1px_var(--n-150)]" : "text-n-600 hover:text-n-900",
+                )}
+              >
+                <input
+                  type="radio"
+                  name="calc-type"
+                  value={t.id}
+                  checked={t.id === companyType}
+                  onChange={() => {
+                    interact();
+                    setCompanyType(t.id);
+                    setPlanOverride(null);
+                  }}
+                  className="sr-only"
+                />
+                {t.label}
+              </label>
+            ))}
+          </div>
+          <p className="mt-2 text-[13px] text-n-500">{type.sizing}</p>
+        </fieldset>
+
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="calc-region" className={fieldLabel}>Country</label>
             <div className="relative">
-            <select
-              id="calc-region"
-              className={cn(selectClass, "pr-9")}
-              value={region.code}
-              onChange={(e) => {
-                interact();
-                setRegion(e.target.value as RegionCode);
-                setBillingId("commitment-monthly");
-              }}
-            >
-              {regions.map((r) => <option key={r.code} value={r.code}>{r.name}</option>)}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-[calc(50%+4px)] size-4 -translate-y-1/2 text-n-500" aria-hidden="true" />
+              <select
+                id="calc-region"
+                className={cn(selectClass, "pr-9")}
+                value={region.code}
+                onChange={(e) => {
+                  interact();
+                  setRegion(e.target.value as RegionCode);
+                  setBillingId("commitment-monthly");
+                }}
+              >
+                {regions.map((r) => <option key={r.code} value={r.code}>{r.name}</option>)}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-[calc(50%+4px)] size-4 -translate-y-1/2 text-n-500" aria-hidden="true" />
             </div>
           </div>
           <div>
@@ -103,32 +209,70 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
           </div>
         </div>
 
-        <div>
-          <div className="flex items-end justify-between gap-4">
-            <label htmlFor="calc-workers" className={fieldLabel}>Active workers</label>
+        {type.crews === "ask" && (
+          <fieldset>
+            <legend className={fieldLabel}>Do you employ your own site crews?</legend>
+            <div className="mt-2 inline-flex rounded-lg bg-n-100 p-1">
+              {[
+                [true, "Yes"],
+                [false, "No"],
+              ].map(([v, l]) => (
+                <label
+                  key={String(v)}
+                  className={cn(
+                    "relative flex h-9 min-w-16 cursor-pointer items-center justify-center rounded-md px-4 text-[14px] font-medium has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand-500",
+                    ownCrews === v ? "bg-white text-n-950 shadow-[0_0_0_1px_var(--n-150)]" : "text-n-600 hover:text-n-900",
+                  )}
+                >
+                  <input
+                    type="radio"
+                    name="calc-crews"
+                    checked={ownCrews === v}
+                    onChange={() => {
+                      interact();
+                      setOwnCrews(v as boolean);
+                      setPlanOverride(null);
+                    }}
+                    className="sr-only"
+                  />
+                  {l as string}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        )}
+
+        {hasCrews ? (
+          <div>
+            <div className="flex items-end justify-between gap-4">
+              <label htmlFor="calc-workers" className={fieldLabel}>Your own active workers</label>
+              <input id="calc-workers" type="number" inputMode="numeric" min={1} max={10000} value={workers} onChange={(e) => setW(Number(e.target.value))} className={numberClass} />
+            </div>
             <input
-              id="calc-workers"
-              type="number"
-              inputMode="numeric"
+              type="range"
               min={1}
-              max={10000}
-              value={workers}
+              max={MAX_SLIDER}
+              value={Math.min(workers, MAX_SLIDER)}
               onChange={(e) => setW(Number(e.target.value))}
-              className="h-10 w-28 rounded-md bg-white px-3 text-right text-[15px] tabular-nums text-n-900 shadow-[0_0_0_1px_var(--n-200)]"
+              aria-label="Your own active workers"
+              aria-valuetext={`${workers} workers`}
+              className="mt-4 h-2 w-full cursor-pointer accent-[var(--brand-600)]"
             />
+            <p className="mt-1.5 flex justify-between text-[12.5px] text-n-500"><span>1</span><span>{MAX_SLIDER}+ — type a larger number above</span></p>
+            <p className="mt-2 text-[13px] text-n-500">Your own employees who record time or activity in Axtara during the month. Partner companies&apos; workers belong to their own employer.</p>
           </div>
-          <input
-            type="range"
-            min={1}
-            max={MAX_SLIDER}
-            value={Math.min(workers, MAX_SLIDER)}
-            onChange={(e) => setW(Number(e.target.value))}
-            aria-label="Active workers slider"
-            aria-valuetext={`${workers} workers`}
-            className="mt-4 h-2 w-full cursor-pointer accent-[var(--brand-600)]"
-          />
-          <p className="mt-1.5 flex justify-between text-[12.5px] text-n-500"><span>1</span><span>{MAX_SLIDER}+ — type a larger number above</span></p>
-          <p className="mt-2 text-[13px] text-n-500">An active worker is anyone who records time or activity in Axtara during the billing month.</p>
+        ) : (
+          <p className="rounded-lg bg-n-50 p-3.5 text-[14px] leading-6 text-n-600 shadow-[0_0_0_1px_var(--n-150)]">
+            Without your own crews, your plan is sized by the projects you manage. Partners you invite record their crews in their own company accounts.
+          </p>
+        )}
+
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <label htmlFor="calc-projects" className={fieldLabel}>Active projects your company manages</label>
+            <p className="mt-1 text-[13px] text-n-500">Projects you&apos;re invited to by a GC aren&apos;t included here.</p>
+          </div>
+          <input id="calc-projects" type="number" inputMode="numeric" min={0} max={500} value={projects} onChange={(e) => setP(Number(e.target.value))} className={numberClass} />
         </div>
 
         <fieldset>
@@ -160,20 +304,20 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
           <p className="mt-2 text-[13px] text-n-500" aria-live="polite">
             {planOverride && planOverride !== suggested ? (
               <>
-                Suggested for {workers} workers: {plans.find((p) => p.id === suggested)!.name}.{" "}
+                Suggested for your size: {plans.find((p) => p.id === suggested)!.name}.{" "}
                 <button type="button" className="font-medium text-brand-700 underline underline-offset-2" onClick={() => setPlanOverride(null)}>Use suggestion</button>
               </>
             ) : (
-              <>Suggested for {workers} workers based on typical team size.</>
+              <>Suggested for {projects} project{projects === 1 ? "" : "s"}{hasCrews ? ` and ${workers} own workers` : ""}.</>
             )}
           </p>
         </fieldset>
 
         <fieldset>
           <legend className={fieldLabel}>Billing arrangement</legend>
-          {model ? (
+          {billingOptions.length ? (
             <div className="mt-2 space-y-2">
-              {model.billing.map((b) => (
+              {billingOptions.map((b) => (
                 <label
                   key={b.id}
                   className={cn(
@@ -216,12 +360,13 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
 
         <dl className="mt-5 divide-y divide-n-150 text-[14.5px]">
           {[
+            ["Company", type.label],
             ["Country", `${region.name} · ${region.currency.code}`],
             ["Plan", plan.name],
-            ["Active workers", workers.toLocaleString("en")],
+            ["Projects you manage", projects.toLocaleString("en")],
+            ["Your own active workers", hasCrews ? workers.toLocaleString("en") : "None"],
             ["Billing", billing?.name ?? "Agreed in your order form"],
-            ["Rate adjustment", adjustment ?? "—"],
-            ["Invoiced", billing ? (billing.invoicing === "annual" ? "Once a year, in advance" : "Monthly") : "—"],
+            ...(adjustment ? [["Rate adjustment", adjustment]] : []),
           ].map(([k, v]) => (
             <div key={k} className="flex justify-between gap-4 py-2.5">
               <dt className="text-n-500">{k}</dt>
@@ -232,15 +377,18 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
 
         {quote ? (
           <div className="mt-6 rounded-xl bg-white p-5 shadow-[0_0_0_1px_var(--n-150)]">
-            <p className="text-[13px] text-n-500">{billing?.invoicing === "annual" ? "Per annual invoice" : "Per month"}</p>
-            <p className="mt-1 text-[34px] font-semibold tracking-[-0.03em] text-n-950 tabular-nums">{formatMoney(quote.perInvoice, region.currency.code)}</p>
-            <dl className="mt-3 grid grid-cols-2 gap-y-1.5 text-[13.5px]">
-              <dt className="text-n-500">Monthly equivalent</dt><dd className="text-right tabular-nums text-n-900">{formatMoney(quote.monthly, region.currency.code)}</dd>
-              <dt className="text-n-500">Annual total</dt><dd className="text-right tabular-nums text-n-900">{formatMoney(quote.annualTotal, region.currency.code)}</dd>
-              <dt className="text-n-500">Effective per worker</dt><dd className="text-right tabular-nums text-n-900">{formatMoney(quote.effectivePerWorker, region.currency.code)}</dd>
+            <p className="text-[13px] text-n-500">{quote.headlineLabel}</p>
+            <p className="mt-1 text-[34px] font-semibold tracking-[-0.03em] text-n-950 tabular-nums">{formatMoney(quote.headline, region.currency.code)}</p>
+            <dl className="mt-3 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1.5 text-[13.5px]">
+              {quote.rows.map(([k, v]) => (
+                <div key={k} className="contents">
+                  <dt className="text-n-500">{k}</dt>
+                  <dd className="text-right tabular-nums text-n-900">{v}</dd>
+                </div>
+              ))}
             </dl>
-            {quote.minimumApplied && (
-              <p className="mt-3 flex gap-2 rounded-md bg-n-50 p-2.5 text-[13px] text-n-600"><Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />The {plan.name} plan minimum applies at this team size.</p>
+            {quote.note && (
+              <p className="mt-3 flex gap-2 rounded-md bg-n-50 p-2.5 text-[13px] text-n-600"><Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />{quote.note}</p>
             )}
             <p className="mt-3 text-[12.5px] text-n-500">Excludes implementation, third-party software and applicable taxes.</p>
           </div>
@@ -249,17 +397,17 @@ export function PricingCalculator({ rateCards, preview }: { rateCards: RateCard[
             <p className="text-[16px] font-medium text-n-950">
               {plan.quotedOnly
                 ? "Enterprise is priced for your organisation."
-                : `${plan.name} for ${workers.toLocaleString("en")} workers, quoted in ${region.currency.code}.`}
+                : `${plan.name} for ${projects} project${projects === 1 ? "" : "s"}${hasCrews ? ` and ${workers.toLocaleString("en")} of your own workers` : ""}, quoted in ${region.currency.code}.`}
             </p>
             <p className="mt-2 text-[14px] leading-6 text-n-600">
-              Your subscription is the greater of your active workers multiplied by the plan&apos;s per-worker rate, or the plan&apos;s monthly minimum{adjustment && billing && billing.multiplier !== 1 ? `, with ${adjustment.replace(" vs standard", "")} applied for ${billing.name.toLowerCase()}` : ""}. Send us these details and we&apos;ll reply with a written {region.currency.code} quote.
+              Your subscription is sized by the projects your company manages and your own active workers{adjustment && billing && billing.multiplier !== 1 ? `, with ${adjustment.replace(" vs standard", "")} applied for ${billing.name.toLowerCase()}` : ""}. Send us these details and we&apos;ll reply with a written {region.currency.code} quote.
             </p>
           </div>
         )}
 
         <div className="mt-auto flex flex-wrap gap-3 pt-6">
           <Link href={quoteHref} className={buttonClass("primary", "md")}>Get your {region.currency.code} quote</Link>
-          <Link href="/demo?interest=pricing" className={buttonClass("secondary", "md")}>Request a Demo</Link>
+          <Link href="/roi" className={buttonClass("secondary", "md")}>Estimate the value</Link>
         </div>
       </div>
     </div>

@@ -81,6 +81,10 @@ for (const t of [
   "Confirm markets with price books (Guyana, United States, Canada)",
   "Approve billing rules: office users included, GC not billed for subcontractor workers, invitations don't use project allowance, one subscription per company",
   "Approve plan entitlements (reference capability matrix rows are all 'Not validated')",
+  "Approve the 'How subscriptions are sized' explainer on /pricing (partner crews belong to their employer; one company, one account)",
+  "Approve plan-suggestion thresholds in the calculator (projects 0–3 / 4–10 / 11+; workers 1–75 / 76–400 / 401+)",
+  "Confirm partner programme pathways, markets and process on /partners",
+  "Provide an SVG master of the Axtara logo (PNG currently used)",
 ]) item(t);
 
 section("Resources articles (content/resources.ts)");

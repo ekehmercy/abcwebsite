@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, Check } from "lucide-react";
-import { integrationCategories, type Integration, type IntegrationCategory } from "@/config/integrations";
+import { adjacentTools, integrationCategories, type Integration, type IntegrationCategory } from "@/config/integrations";
 import { Icon } from "@/components/ui/icon";
 import { LeadForm } from "@/components/forms/lead-form";
 import { cn } from "@/lib/cn";
@@ -53,6 +53,16 @@ export function IntegrationDirectory({ available }: { available: Integration[] }
               </div>
               <div>
                 <p className="text-[15px] leading-6 text-n-600">{c.description}</p>
+                <dl className="mt-4 grid gap-3 text-[14px] leading-6 sm:grid-cols-2">
+                  <div className="rounded-lg bg-n-50 px-3.5 py-3">
+                    <dt className="text-[12.5px] font-medium text-n-500">Stays in your {c.name.toLowerCase()} tool</dt>
+                    <dd className="mt-0.5 text-n-800">{c.stays}</dd>
+                  </div>
+                  <div className="rounded-lg bg-brand-50 px-3.5 py-3">
+                    <dt className="text-[12.5px] font-medium text-brand-800">Moves with Axtara</dt>
+                    <dd className="mt-0.5 text-n-800">{c.flows}</dd>
+                  </div>
+                </dl>
                 {items.length > 0 && (
                   <ul className="mt-4 space-y-2">
                     {items.map((i) => (
@@ -81,6 +91,20 @@ export function IntegrationDirectory({ available }: { available: Integration[] }
           );
         })}
       </ul>
+
+      <div className="mt-12">
+        <h3 className="text-[17px] font-medium tracking-[-0.01em] text-n-950">Also alongside your specialist tools</h3>
+        <p className="mt-1.5 max-w-2xl text-[14.5px] leading-6 text-n-600">Axtara keeps the field and project record. The specialist work stays where it belongs.</p>
+        <ul className="mt-6 grid gap-px overflow-hidden rounded-xl bg-n-150 md:grid-cols-3">
+          {adjacentTools.map((t) => (
+            <li key={t.name} className="bg-white p-5">
+              <p className="text-[15px] font-medium text-n-950">{t.name}</p>
+              <p className="mt-2 text-[13.5px] leading-5 text-n-500">Stays there: {t.stays}</p>
+              <p className="mt-2 text-[14px] leading-6 text-n-700">In Axtara: {t.axtara}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

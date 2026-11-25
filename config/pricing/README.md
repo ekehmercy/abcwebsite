@@ -13,13 +13,15 @@ Use **one** of:
 2. **Local file** — copy `rates.example.json` to `rates.private.json` in this
    folder. The file is gitignored and must never be committed.
 
-Each entry:
+Each entry chooses one of two commercial structures with `model`
+(see `rates.example.json` for complete examples):
+
+### Model A — `"max-of-workers-or-minimum"` (default)
 
 ```json
 {
-  "region": "JM",
-  "currency": "JMD",
-  "approved": false,
+  "region": "JM", "currency": "JMD", "approved": false,
+  "model": "max-of-workers-or-minimum",
   "plans": {
     "core":  { "perWorkerMonthly": 0, "minimumMonthly": 0 },
     "scale": { "perWorkerMonthly": 0, "minimumMonthly": 0 }
@@ -27,11 +29,44 @@ Each entry:
 }
 ```
 
+The monthly charge is the **greater** of `own active workers × perWorkerMonthly`
+or `minimumMonthly`, then the billing multiplier for the market from
+`config/pricing.ts` is applied (Jamaica: ×1.15 flexible month-to-month,
+×0.9 annual prepayment, 12-month commitment at the standard rate).
+
+### Model B — `"base-plus-allowance"`
+
+```json
+{
+  "region": "NG", "currency": "NGN", "approved": false,
+  "model": "base-plus-allowance",
+  "annualBaseDiscount": 0.1,
+  "plans": {
+    "core":  { "baseMonthly": 0, "includedProjects": 0, "includedWorkers": 0, "perExtraProjectMonthly": 0, "perExtraWorkerMonthly": 0 },
+    "scale": { "baseMonthly": 0, "includedProjects": 0, "includedWorkers": 0, "perExtraProjectMonthly": 0, "perExtraWorkerMonthly": 0 }
+  }
+}
+```
+
+The monthly charge is the plan base (which includes `includedProjects`
+company-managed active projects and `includedWorkers` of the company's own
+workers) plus additional projects and workers at the per-unit rates. With
+annual prepayment, `annualBaseDiscount` applies to the **base only**; additions
+stay monthly. The calculator then offers "Monthly" and "Annual prepayment"
+instead of the market's multiplier-based arrangements.
+
+### Common rules
+
 - `region` must match a code in `config/regions.ts` (`JM`, `NG`, `GY`, `US`).
 - Enterprise is always quoted individually and has no rate card.
-- The monthly charge is the **greater** of `workers × perWorkerMonthly` or
-  `minimumMonthly`, then the billing multiplier from `config/pricing.ts`
-  (e.g. ×1.15 flexible, ×0.9 annual prepayment) is applied.
+- Plans with the wrong shape for the chosen model are ignored.
+- The calculator collects company type, own site crews, company-managed
+  projects and own active workers for both models and passes them to the
+  quote request.
+
+**Which model applies to which market is a commercial decision that has not
+been approved.** See `docs/REFERENCE-REVIEW.md` §6 for the conflict between
+the original brief (Model A) and the reference concept (Model B).
 
 ## Approval
 

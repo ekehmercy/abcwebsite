@@ -3,7 +3,7 @@ import { CalendarCheck, MessagesSquare, MonitorPlay } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { contact } from "@/config/site";
 import { industries } from "@/config/industries";
-import { LeadForm } from "@/components/forms/lead-form";
+import { DemoAgenda, DemoRequestForm } from "@/components/marketing/demo-agenda";
 import { Eyebrow } from "@/components/ui/section";
 import { MobileApprovals } from "@/components/product-demo/mobile-screens";
 import { IllustrativeNote, PhoneFrame } from "@/components/product-demo/primitives";
@@ -17,7 +17,7 @@ export const metadata: Metadata = pageMetadata({
 
 const expect = [
   { I: MessagesSquare, title: "Your operation, first", body: "We start with how your sites, crews and approvals run today — so everything you see reflects your business, not a generic script." },
-  { I: MonitorPlay, title: "The product, end to end", body: "Watch a worker clock in on site, a supervisor resolve an exception, approved hours land on a project and payroll preparation come together — on the web and mobile apps." },
+  { I: MonitorPlay, title: "The product, end to end", body: "Follow your own kind of project across the web and mobile apps — from a package or crew assignment on site to reviewed reports, approved time and the update your client sees." },
   { I: CalendarCheck, title: "A clear plan and quote", body: "Leave with a recommended plan, an implementation outline and a quote in your local currency." },
 ];
 
@@ -35,11 +35,12 @@ export default function DemoPage() {
         </div>
 
         <div className="lg:col-span-7 lg:row-span-2">
-          <LeadForm form="demo" fallbackEmail={contact.salesEmail} />
+          <DemoRequestForm fallbackEmail={contact.salesEmail} />
         </div>
 
         <div className="lg:col-span-5">
-          <ol className="space-y-6">
+          <DemoAgenda />
+          <ol className="mt-12 space-y-6">
             {expect.map(({ I, title, body }, i) => (
               <li key={title} className="flex gap-4">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-white text-brand-600 shadow-[0_0_0_1px_var(--n-150)]">

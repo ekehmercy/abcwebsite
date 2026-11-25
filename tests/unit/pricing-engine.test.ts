@@ -57,3 +57,48 @@ test("parses untrusted rate cards and keeps approval flag strict", () => {
   assert.deepEqual(cards[0].plans.core, { perWorkerMonthly: 1, minimumMonthly: 2 });
   assert.deepEqual(parseRateCards(null), []);
 });
+
+/* ── base-plus-allowance model (test values only — not Axtara prices) ── */
+import { calculateBaseQuote, isBaseAllowance } from "../../lib/pricing-engine.ts";
+
+const baseRates = { baseMonthly: 500, includedProjects: 10, includedWorkers: 100, perExtraProjectMonthly: 30, perExtraWorkerMonthly: 3 };
+
+test("base-plus-allowance: within allowance charges the base only", () => {
+  const q = calculateBaseQuote({ ...baseRates, projects: 8, workers: 80, billing: "monthly" });
+  assert.equal(q.additions, 0);
+  assert.equal(q.monthlyCharge, 500);
+  assert.equal(q.yearOne, 6000);
+});
+
+test("base-plus-allowance: extra projects and workers are added monthly", () => {
+  const q = calculateBaseQuote({ ...baseRates, projects: 12, workers: 130, billing: "monthly" });
+  assert.equal(q.extraProjects, 2);
+  assert.equal(q.extraWorkers, 30);
+  assert.equal(q.additions, 2 * 30 + 30 * 3);
+  assert.equal(q.monthlyCharge, 500 + 150);
+});
+
+test("base-plus-allowance: annual discount applies to the base only", () => {
+  const q = calculateBaseQuote({ ...baseRates, projects: 12, workers: 130, billing: "annual", annualBaseDiscount: 0.1 });
+  assert.equal(q.annualBase, 5400);
+  assert.equal(q.monthlyCharge, 150);
+  assert.equal(q.yearOne, 5400 + 150 * 12);
+  assert.equal(q.effectiveMonthly, (5400 + 1800) / 12);
+});
+
+test("base-plus-allowance: rejects invalid configuration", () => {
+  assert.throws(() => calculateBaseQuote({ ...baseRates, baseMonthly: -1, projects: 1, workers: 1, billing: "monthly" }));
+  assert.throws(() => calculateBaseQuote({ ...baseRates, projects: 1, workers: 1, billing: "annual", annualBaseDiscount: 1 }));
+});
+
+test("parses base-plus-allowance rate cards and defaults the model", () => {
+  const [a, b] = parseRateCards([
+    { region: "JM", currency: "JMD", approved: true, model: "base-plus-allowance", annualBaseDiscount: 0.1, plans: { scale: baseRates, core: { perWorkerMonthly: 1, minimumMonthly: 2 } } },
+    { region: "NG", currency: "NGN", approved: false, plans: { core: { perWorkerMonthly: 1, minimumMonthly: 2 } } },
+  ]);
+  assert.equal(a.model, "base-plus-allowance");
+  assert.ok(isBaseAllowance(a.plans.scale));
+  assert.equal(a.plans.core, undefined, "wrong-shape plan is dropped");
+  assert.equal(a.annualBaseDiscount, 0.1);
+  assert.equal(b.model, "max-of-workers-or-minimum");
+});

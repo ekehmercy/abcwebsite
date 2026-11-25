@@ -16,12 +16,19 @@ const successCopy: Record<FormId, { title: string; body: string }> = {
   contact: { title: "Thanks — your message has been sent.", body: "We'll reply to the email address you provided." },
   "integration-request": { title: "Thanks — your request has been recorded.", body: "Integration requests help us decide what to build next. We may contact you to understand your requirements." },
   "security-contact": { title: "Thanks — your message reached the security team.", body: "We'll respond to the email address you provided. If you reported a vulnerability, please don't disclose it publicly while we investigate." },
+  partner: { title: "Thanks — your enquiry has been received.", body: "Our partnerships team will review it and get in touch to arrange a fit discussion." },
 };
 
 const interestAliases: Record<string, string> = {
   pricing: "Complete Platform",
   platform: "Complete Platform",
   workforce: "Workforce Management",
+  roi: "Complete Platform",
+  mobile: "Field Operations",
+  "bids-rfis": "Projects",
+  "inspections-handover": "Compliance",
+  expenses: "Projects",
+  reporting: "Complete Platform",
   attendance: "Attendance",
   "time-attendance": "Attendance",
   field: "Field Operations",
@@ -57,17 +64,59 @@ function prefillFromUrl(form: FormId): Values {
     const opt = forms[form].fields.find((f) => f.name === "category")?.options?.find((o) => o.toLowerCase().startsWith(category.toLowerCase()));
     if (opt) out.category = opt;
   }
+  const pathway = p.get("pathway");
+  if (pathway && fieldNames.has("pathway")) {
+    const opt = forms[form].fields.find((f) => f.name === "pathway")?.options?.find((o) => o.toLowerCase().replace(/[^a-z]/g, "").startsWith(pathway.toLowerCase().replace(/[^a-z]/g, "")));
+    if (opt) out.pathway = opt;
+  }
+  const business = p.get("business")?.toLowerCase();
+  if (business && fieldNames.has("businessType")) {
+    const map: Record<string, string> = {
+      "general-contractors": "General Contractor", gc: "General Contractor", "general-contractor": "General Contractor",
+      subcontractors: "Subcontractor", sub: "Subcontractor", subcontractor: "Subcontractor",
+      "real-estate": "Real Estate Developer", developer: "Real Estate Developer", developers: "Real Estate Developer",
+      infrastructure: "Civil Engineering Contractor", civil: "Civil Engineering Contractor",
+      specialist: "Specialist Contractor",
+    };
+    if (map[business]) out.businessType = map[business];
+  }
+  const challenge = p.get("challenge")?.toLowerCase();
+  if (challenge && fieldNames.has("challenge")) {
+    const opt = forms[form].fields.find((f) => f.name === "challenge")?.options?.find((o) => o.toLowerCase().startsWith(challenge.replace(/-/g, " ")) || o.toLowerCase().includes(challenge.replace(/-/g, " ")));
+    if (opt) out.challenge = opt;
+  }
+  const projectsParam = p.get("projects");
+  const companyType = p.get("type");
+  const crews = p.get("crews");
   const plan = p.get("plan");
   const workers = p.get("workers");
   const billing = p.get("billing");
   if ((plan || workers) && fieldNames.has("message")) {
-    const bits = [plan && `${plan.charAt(0).toUpperCase()}${plan.slice(1)} plan`, workers && `about ${workers.replace(/\D/g, "")} active workers`, billing && `billing: ${billing.replace(/-/g, " ")}`].filter(Boolean);
+    const bits = [
+      companyType && companyType.replace(/-/g, " "),
+      plan && `${plan.charAt(0).toUpperCase()}${plan.slice(1)} plan`,
+      workers && `about ${workers.replace(/\D/g, "")} own active workers`,
+      projectsParam && `${projectsParam.replace(/\D/g, "")} company-managed projects`,
+      crews && `own site crews: ${crews === "yes" ? "yes" : "no"}`,
+      billing && `billing: ${billing.replace(/-/g, " ")}`,
+    ].filter(Boolean);
     out.message = `Pricing enquiry — ${bits.join(", ")}.`;
   }
   return out;
 }
 
-export function LeadForm({ form, fallbackEmail, className }: { form: FormId; fallbackEmail?: string | null; className?: string }) {
+export function LeadForm({
+  form,
+  fallbackEmail,
+  className,
+  onValuesChange,
+}: {
+  form: FormId;
+  fallbackEmail?: string | null;
+  className?: string;
+  /** Optional: notified whenever field values change (e.g. to personalise surrounding content). */
+  onValuesChange?: (values: Values) => void;
+}) {
   const def = forms[form];
   const [values, setValues] = useState<Values>({});
   const [errors, setErrors] = useState<Errors>({});
@@ -84,6 +133,12 @@ export function LeadForm({ form, fallbackEmail, className }: { form: FormId; fal
     startedAt.current = Date.now();
     setValues((v) => ({ ...prefillFromUrl(form), ...v }));
   }, [form]);
+
+  const onValuesChangeRef = useRef(onValuesChange);
+  onValuesChangeRef.current = onValuesChange;
+  useEffect(() => {
+    onValuesChangeRef.current?.(values);
+  }, [values]);
 
   useEffect(() => {
     if (showSummary) summaryRef.current?.focus();
@@ -146,6 +201,7 @@ export function LeadForm({ form, fallbackEmail, className }: { form: FormId; fal
         if (form === "demo") track("demo_form_submitted", { interest: values.interest ?? "", country: values.country ?? "" });
         if (form === "integration-request") track("integration_request_submitted", { category: values.category ?? "" });
         if (form === "contact") track("contact_form_submitted", { topic: values.topic ?? "" });
+        if (form === "partner") track("partner_enquiry_submitted", { pathway: values.pathway ?? "" });
         return;
       }
       if (res.status === 422 && data.errors) {

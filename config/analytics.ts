@@ -24,4 +24,6 @@ export type AnalyticsEvent =
   | "feature_page_viewed"
   | "industry_page_viewed"
   | "integration_request_submitted"
-  | "contact_form_submitted";
+  | "contact_form_submitted"
+  | "partner_enquiry_submitted"
+  | "roi_calculator_used";

@@ -66,7 +66,7 @@ export default function PricingPage() {
             as="h1"
             eyebrow="Pricing"
             title="Pay for the workforce you run, not the seats you fill."
-            lead="Axtara is priced by active workers, with plans for every stage — from replacing paper attendance to running complex, multi-entity operations."
+            lead="Plans are sized by the projects your company manages and your own active workers — for general contractors, subcontractors and developers, from a first project to multi-entity operations."
           />
         </div>
       </section>
@@ -79,6 +79,26 @@ export default function PricingPage() {
           <p className="mt-4 text-[13px] text-n-500">
             Your subscription, term and any applicable taxes are confirmed in your order form.
           </p>
+
+          <div className="mt-16 grid gap-10 border-t border-n-150 pt-12 lg:grid-cols-12">
+            <div className="lg:col-span-4">
+              <h3 className="t-h3 text-n-950">How subscriptions are sized</h3>
+              <p className="mt-3 text-[15px] leading-6 text-n-600">Built around how construction companies actually work together.</p>
+            </div>
+            <dl className="grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:col-span-8">
+              {[
+                ["Projects your company manages", "Each active project your team runs in Axtara. Archived projects stay available without counting as active."],
+                ["Your own active workers", "Employees of your company who record time or activity during the month. Partner crews belong to their own employer's account."],
+                ["Partners join your project workspace", "Subcontractors you invite work on the packages you share with them, and keep their own company records private."],
+                ["One company, one account", "A company that works as both a GC and a specialty contractor runs everything from one Axtara account."],
+              ].map(([t, d]) => (
+                <div key={t} className="border-l-2 border-brand-200 pl-5">
+                  <dt className="text-[15.5px] font-medium text-n-950">{t}</dt>
+                  <dd className="mt-1.5 text-[14.5px] leading-6 text-n-600">{d}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </section>
 
