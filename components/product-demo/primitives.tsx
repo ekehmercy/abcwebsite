@@ -87,7 +87,7 @@ export function Panel({
     <section className={cn("min-w-0 rounded-[10px] bg-white shadow-[0_0_0_1px_var(--n-150),0_1px_2px_rgb(12_13_13/0.03)]", className)}>
       {title && (
         <header className="flex items-center justify-between gap-3 border-b border-n-100 px-3.5 py-2.5">
-          <h4 className="ui-md truncate font-semibold text-n-900">{title}</h4>
+          <p className="ui-md truncate font-semibold text-n-900">{title}</p>
           {meta && <div className="ui-sm shrink-0 text-n-500">{meta}</div>}
         </header>
       )}

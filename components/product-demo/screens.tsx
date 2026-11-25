@@ -26,7 +26,7 @@ export function OverviewScreen({ stage = 3, className }: { stage?: HeroStage; cl
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <p className="ui-sm text-n-500">Tuesday, 18 November</p>
-          <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-n-950">Good morning, Shanice</h3>
+          <p className="text-[17px] font-semibold tracking-[-0.01em] text-n-950">Good morning, Shanice</p>
         </div>
         <div className="ui-sm hidden items-center gap-1.5 @xl:flex">
           <Tag>All projects</Tag>
@@ -279,7 +279,7 @@ export function ProjectsScreen({ className }: { className?: string }) {
   return (
     <AppFrame active="projects" crumbs={["Meridian", "Projects", p.short]} className={className}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <h3 className="text-[16px] font-semibold tracking-[-0.01em] text-n-950">{p.name}</h3>
+        <p className="text-[16px] font-semibold tracking-[-0.01em] text-n-950">{p.name}</p>
         <Tag tone="ok"><CheckCircle2 className="size-3" aria-hidden="true" />{p.health}</Tag>
         <span className="ui-sm text-n-500">{p.location} · {p.phase}</span>
       </div>
