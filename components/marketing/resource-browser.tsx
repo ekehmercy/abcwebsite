@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowUpRight, Search, X } from "lucide-react";
 import type { ResourceCategory } from "@/content/resources";
 import { cn } from "@/lib/cn";
@@ -28,6 +28,12 @@ export function ResourceBrowser({ articles, categories }: { articles: ArticleCar
     categories.some((c) => c.id === initial) ? (initial as ResourceCategory) : "all",
   );
   const [query, setQuery] = useState(params.get("q") ?? "");
+
+  // Keep the filter in sync when the URL changes (e.g. the nav's "Product Guides" link while already here).
+  useEffect(() => {
+    const c = params.get("category");
+    setCategory(categories.some((x) => x.id === c) ? (c as ResourceCategory) : "all");
+  }, [params, categories]);
 
   const choose = (c: ResourceCategory | "all") => {
     setCategory(c);

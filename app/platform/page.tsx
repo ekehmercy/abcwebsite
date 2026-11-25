@@ -94,7 +94,7 @@ export default function PlatformPage() {
             lead="Select any module to explore it. Records are captured in the field, approved by the right person, and only then used for project, cost and payroll decisions. Payment itself happens outside Axtara."
           />
 
-          <div className="mt-14 grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,0.8fr)_auto_minmax(0,1fr)_auto_minmax(0,0.85fr)] xl:items-stretch" data-reveal>
+          <div className="mt-14 grid grid-cols-1 gap-3 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,0.8fr)_auto_minmax(0,1fr)_auto_minmax(0,0.85fr)] xl:items-stretch" data-reveal>
             <Lane n="01" kind="Operational records" title="Captured in the field" className="bg-n-50">
               <Node slug="workforce" />
               <Node slug="time-attendance" />
