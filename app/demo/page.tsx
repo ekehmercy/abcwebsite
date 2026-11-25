@@ -54,7 +54,7 @@ export default function DemoPage() {
           </ol>
 
           <div className="mt-12 hidden items-end gap-6 lg:flex">
-            <PhoneFrame label="Supervisor approving attendance in the Axtara mobile app" className="w-[210px]">
+            <PhoneFrame label="Supervisor approving attendance in the Axtara mobile app" className="w-[240px]">
               <MobileApprovals approved />
             </PhoneFrame>
             <div className="pb-6">

@@ -51,8 +51,8 @@ function Lane({ n, title, kind, children, className }: { n: string; title: strin
 
 const Arrow = () => (
   <div aria-hidden="true" className="flex items-center justify-center text-brand-400">
-    <ArrowRight className="hidden size-5 lg:block" />
-    <ArrowDown className="size-5 lg:hidden" />
+    <ArrowRight className="hidden size-5 xl:block" />
+    <ArrowDown className="size-5 xl:hidden" />
   </div>
 );
 
@@ -94,7 +94,7 @@ export default function PlatformPage() {
             lead="Select any module to explore it. Records are captured in the field, approved by the right person, and only then used for project, cost and payroll decisions. Payment itself happens outside Axtara."
           />
 
-          <div className="mt-14 grid gap-3 lg:grid-cols-[1fr_auto_0.8fr_auto_1fr_auto_0.85fr] lg:items-stretch" data-reveal>
+          <div className="mt-14 grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,0.8fr)_auto_minmax(0,1fr)_auto_minmax(0,0.85fr)] xl:items-stretch" data-reveal>
             <Lane n="01" kind="Operational records" title="Captured in the field" className="bg-n-50">
               <Node slug="workforce" />
               <Node slug="time-attendance" />

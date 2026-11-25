@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og";
 import { palette } from "@/config/brand";
 
-export const runtime = "edge";
 
 /** Social sharing image: /og?title=... — rendered on demand, cached by the CDN. */
 export function GET(req: Request) {

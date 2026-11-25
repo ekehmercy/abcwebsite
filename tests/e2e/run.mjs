@@ -115,7 +115,7 @@ await check("fragmented → connected toggle works", async () => {
   const btn = page.getByRole("button", { name: "With Axtara" });
   await btn.click();
   assert((await btn.getAttribute("aria-pressed")) === "true", "not pressed");
-  await page.getByText("Payroll preparation", { exact: true }).first().waitFor();
+  await page.getByText(/One record moves from the site/).waitFor();
 });
 
 await check("journey next / previous / restart controls", async () => {
