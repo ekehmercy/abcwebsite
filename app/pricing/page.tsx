@@ -108,18 +108,14 @@ export default function PricingPage() {
       <section aria-labelledby="plans-title" className="border-t border-n-150 bg-white py-24">
         <div className="container-x">
           <SectionIntro id="plans-title" eyebrow="Plans" title="Three plans. One connected platform." />
-          <div className="mt-12 grid gap-px overflow-hidden rounded-xl bg-n-150 md:grid-cols-3">
+          <div className="mt-12 grid overflow-hidden rounded-xl border border-n-200 bg-white md:grid-cols-3 md:divide-x md:divide-n-200 max-md:divide-y max-md:divide-n-200">
             {plans.map((p, i) => (
               <article key={p.id} id={`plan-${p.id}`} className={cn("flex scroll-mt-24 flex-col p-7 sm:p-8", i === 1 ? "bg-n-25" : "bg-white")}>
                 <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-n-950">{p.name}</h3>
                 <p className="mt-2 text-[15px] font-medium text-n-700">{p.forWhom}</p>
-                <p className="mt-3 text-[14.5px] leading-6 text-n-600">{p.summary}</p>
                 <PlanPrice plan={p.id} rateCards={cards} className="mt-6" />
-                <ul className="mt-5 space-y-2.5 border-t border-n-150 pt-5">
-                  {p.highlights.map((h) => (
-                    <li key={h} className="flex gap-2.5 text-[14.5px] text-n-700"><Check className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden="true" />{h}</li>
-                  ))}
-                </ul>
+                <p className="mt-5 border-t border-n-150 pt-5 text-[14.5px] leading-6 text-n-600">{p.summary}</p>
+
                 <div className="mt-auto pt-8">
                   {p.quotedOnly ? (
                     <LinkButton href="/demo?interest=enterprise" variant="primary" arrow className="w-full">Get an Enterprise quote</LinkButton>
@@ -137,30 +133,42 @@ export default function PricingPage() {
       <section aria-labelledby="compare-title" className="py-24">
         <div className="container-x">
           <SectionIntro id="compare-title" eyebrow="Compare" title="What each plan includes." />
-          <p className="mt-4 text-[13.5px] text-n-500">Plan entitlements are confirmed in your order form.</p>
+          <p className="mt-4 text-[13.5px] text-n-500">Scale includes everything in Core; Enterprise includes everything in Scale. Entitlements are confirmed in your order form.</p>
 
-          {/* Desktop / tablet table */}
-          <div className="mt-10 hidden overflow-hidden rounded-xl bg-white shadow-[0_0_0_1px_var(--n-150)] md:block">
-            <table className="w-full border-collapse text-left">
+          {/* Desktop / tablet table — fully bordered */}
+          <div className="mt-10 hidden overflow-hidden rounded-xl border border-n-200 bg-white md:block">
+            <table className="w-full border-collapse text-left [&_td]:border [&_td]:border-n-150 [&_th]:border [&_th]:border-n-150">
               <caption className="sr-only">Plan comparison</caption>
               <thead>
-                <tr className="border-b border-n-150">
-                  <th scope="col" className="w-[40%] px-6 py-4 text-[13px] font-medium text-n-500">Capability</th>
-                  {plans.map((p) => (
-                    <th key={p.id} scope="col" className="px-6 py-4 text-center text-[15px] font-semibold text-n-950">{p.name}</th>
+                <tr className="bg-n-25">
+                  <th scope="col" className="w-[34%] border-t-0 border-l-0 px-5 py-4 align-bottom text-[13px] font-medium text-n-500">Capability</th>
+                  {plans.map((p, i) => (
+                    <th key={p.id} scope="col" className={cn("border-t-0 px-5 py-4 align-top", i === plans.length - 1 && "border-r-0")}>
+                      <span className="block text-[17px] font-semibold text-n-950">{p.name}</span>
+                      <PlanPrice plan={p.id} rateCards={cards} compact className="mt-1.5 font-normal" />
+                    </th>
+                  ))}
+                </tr>
+                <tr>
+                  <th scope="row" className="border-l-0 px-5 py-4 align-top text-[13.5px] font-medium text-n-800">Plan summary</th>
+                  {plans.map((p, i) => (
+                    <td key={p.id} className={cn("px-5 py-4 align-top text-[13.5px] leading-[1.55] text-n-700", i === plans.length - 1 && "border-r-0")}>
+                      <span className="block font-medium text-n-900">{p.forWhom}.</span>
+                      <span className="mt-1 block">{p.summary}</span>
+                    </td>
                   ))}
                 </tr>
               </thead>
               {groups.map((g) => (
                 <tbody key={g}>
                   <tr>
-                    <th colSpan={4} scope="colgroup" className="bg-n-25 px-6 pb-2 pt-5 text-[12.5px] font-medium text-n-500">{g}</th>
+                    <th colSpan={4} scope="colgroup" className="border-x-0 bg-n-50 px-5 py-2.5 text-[12.5px] font-semibold uppercase tracking-[0.04em] text-n-600">{g}</th>
                   </tr>
                   {comparison.filter((r) => r.group === g).map((r) => (
-                    <tr key={r.name} className="border-t border-n-100">
-                      <th scope="row" className="px-6 py-3 text-[14.5px] font-normal text-n-800">{r.name}</th>
-                      {plans.map((p) => (
-                        <td key={p.id} className="px-6 py-3 text-center"><Cell v={r.values[p.id as PlanId]} /></td>
+                    <tr key={r.name}>
+                      <th scope="row" className="border-l-0 px-5 py-3 text-[14px] font-normal text-n-800">{r.name}</th>
+                      {plans.map((p, i) => (
+                        <td key={p.id} className={cn("px-5 py-3 text-center", i === plans.length - 1 && "border-r-0")}><Cell v={r.values[p.id as PlanId]} /></td>
                       ))}
                     </tr>
                   ))}
@@ -172,17 +180,22 @@ export default function PricingPage() {
           {/* Mobile: stacked per plan */}
           <div className="mt-8 space-y-4 md:hidden">
             {plans.map((p) => (
-              <details key={p.id} className="group rounded-xl bg-white shadow-[0_0_0_1px_var(--n-150)]" open={p.id === "scale"}>
+              <details key={p.id} className="group rounded-xl border border-n-200 bg-white" open={p.id === "scale"}>
                 <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-5 py-4 text-[16px] font-semibold text-n-950">
                   {p.name}
                   <span className="text-[13px] font-normal text-n-500 group-open:hidden">Show</span>
                   <span className="hidden text-[13px] font-normal text-n-500 group-open:inline">Hide</span>
                 </summary>
-                <ul className="border-t border-n-150 px-5 py-3">
+                <div className="border-t border-n-150 px-5 py-4">
+                  <PlanPrice plan={p.id} rateCards={cards} compact />
+                  <p className="mt-3 text-[13.5px] font-medium text-n-900">{p.forWhom}.</p>
+                  <p className="mt-1 text-[13.5px] leading-[1.55] text-n-700">{p.summary}</p>
+                </div>
+                <ul className="divide-y divide-n-150 border-t border-n-150 px-5">
                   {comparison.map((r) => {
                     const v = r.values[p.id as PlanId];
                     return (
-                      <li key={r.name} className="flex items-center justify-between gap-4 py-2 text-[14px]">
+                      <li key={r.name} className="flex items-center justify-between gap-4 py-2.5 text-[14px]">
                         <span className={v === false ? "text-n-400" : "text-n-800"}>{r.name}</span>
                         <span className="shrink-0"><Cell v={v} /></span>
                       </li>

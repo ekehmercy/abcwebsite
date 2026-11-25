@@ -34,10 +34,9 @@ export function PlanPrice({ plan, rateCards, compact, className }: { plan: PlanI
         <span className="text-[13.5px] text-n-500">/ month</span>
       </p>
       {compact ? (
-        <p className="mt-0.5 text-[12.5px] text-n-500">{region.name} · {rates.includedProjects} projects · {rates.includedWorkers} own workers</p>
+        <p className="mt-0.5 text-[12.5px] text-n-500">{region.name} · {region.currency.code}</p>
       ) : (
         <ul className="mt-2 space-y-0.5 text-[13px] text-n-600">
-          <li>Includes {rates.includedProjects} active projects and {rates.includedWorkers} of your own workers</li>
           <li>+{money(rates.perExtraProjectMonthly)} per additional project · +{money(rates.perExtraWorkerMonthly)} per additional worker</li>
           <li className="text-n-500">{region.name} · {region.currency.code} · 10% off the base when paid annually</li>
         </ul>
