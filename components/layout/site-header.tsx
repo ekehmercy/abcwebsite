@@ -37,8 +37,8 @@ function Panel({ id, children, wide }: { id: string; children: ReactNode; wide?:
     <div
       id={id}
       className={cn(
-        "absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 rounded-xl bg-white p-2 shadow-[0_0_0_1px_var(--n-150),0_24px_48px_-12px_rgb(14_26_63/0.18)] anim-fade",
-        wide ? "w-[min(920px,calc(100vw-32px))]" : "w-[380px]",
+        "absolute top-full z-50 mt-2 rounded-xl bg-white p-2 shadow-[0_0_0_1px_var(--n-150),0_24px_48px_-12px_rgb(14_26_63/0.18)] anim-fade",
+        wide ? "left-0 w-[min(940px,calc(100vw-48px))]" : "left-1/2 w-[380px] -translate-x-1/2",
       )}
     >
       {children}
@@ -165,7 +165,7 @@ export function SiteHeader() {
           }}
           onMouseEnter={() => window.clearTimeout(hoverTimer.current)}
         >
-          <div className="relative">
+          <div>
             {trigger("platform", "Platform")}
             {open === "platform" && (
               <div onKeyDown={onPanelKey("platform")}>

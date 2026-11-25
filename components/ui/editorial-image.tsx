@@ -22,15 +22,16 @@ export function EditorialImage({
   variant?: number;
 }) {
   const m = media[slot];
+  const pos = /(^|\s)absolute(\s|$)/.test(className ?? "") ? "" : "relative";
   if (m?.src) {
     return (
-      <div className={cn("relative overflow-hidden bg-n-100", className)}>
+      <div className={cn(pos, "overflow-hidden bg-n-100", className)}>
         <Image src={m.src} alt={m.alt} fill sizes={sizes} priority={priority} className="object-cover" />
       </div>
     );
   }
   return (
-    <div role="img" aria-label={m?.alt ?? "Construction site"} className={cn("relative overflow-hidden bg-[#1a2130]", className)}>
+    <div role="img" aria-label={m?.alt ?? "Construction site"} className={cn(pos, "overflow-hidden bg-[#1a2130]", className)}>
       <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_80%_0%,#3a4a6b_0%,#1a2130_55%,#0f141f_100%)]" />
       <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" className="absolute inset-0 size-full opacity-[0.55]" aria-hidden="true">
         <g stroke="#8fa6d6" strokeWidth="0.8" fill="none" opacity="0.55">

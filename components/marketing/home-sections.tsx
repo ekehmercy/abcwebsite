@@ -272,10 +272,10 @@ export function FieldSection() {
           </div>
           <div className="relative h-[560px] overflow-hidden rounded-2xl sm:h-[640px] lg:col-span-7 lg:h-auto lg:min-h-[700px]" data-reveal>
             <EditorialImage slot="field" className="absolute inset-0" />
-            <div className="absolute inset-x-0 top-14 flex items-start justify-center gap-5 px-4 sm:top-20">
-              <PhoneFrame label="Field worker home screen" className="hidden w-[208px] translate-y-16 md:block"><MobileHome /></PhoneFrame>
-              <PhoneFrame label="Daily report on mobile" className="w-[228px] sm:w-[240px]"><MobileDailyReport /></PhoneFrame>
-              <PhoneFrame label="Weekly shift schedule" className="hidden w-[208px] translate-y-16 sm:block"><MobileSchedule /></PhoneFrame>
+            <div className="absolute inset-x-0 top-16 flex items-start justify-center px-4 sm:top-24">
+              <PhoneFrame label="Field worker home screen" className="-mr-10 hidden w-[244px] origin-top translate-y-14 scale-[0.84] md:block"><MobileHome /></PhoneFrame>
+              <PhoneFrame label="Daily report on mobile" className="relative z-10 w-[244px]"><MobileDailyReport /></PhoneFrame>
+              <PhoneFrame label="Weekly shift schedule" className="-ml-10 hidden w-[244px] origin-top translate-y-14 scale-[0.84] md:block"><MobileSchedule /></PhoneFrame>
             </div>
           </div>
         </div>

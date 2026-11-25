@@ -357,7 +357,9 @@ export function PhoneFrame({
       role="img"
       aria-label={label}
       className={cn(
-        "relative aspect-[9/19.2] w-[260px] shrink-0 rounded-[42px] bg-[#111316] p-[9px] shadow-[var(--shadow-device),inset_0_0_0_1.5px_#2a2d33]",
+        "relative aspect-[9/19.2] shrink-0 rounded-[42px] bg-[#111316] p-[9px] shadow-[var(--shadow-device),inset_0_0_0_1.5px_#2a2d33]",
+        // Default width only when the caller does not set one (avoids conflicting width utilities).
+        !/(^|\s)w-\[/.test(className ?? "") && "w-[260px]",
         className,
       )}
     >
