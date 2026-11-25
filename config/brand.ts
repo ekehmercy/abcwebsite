@@ -1,38 +1,50 @@
 /**
  * AXTARA DESIGN TOKENS — single source of truth for colour.
  *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ BRAND COLOUR STATUS: AWAITING VERIFIED EXTRACTION                   │
- * │ The official reference is https://www.axtara.com/. It could not be  │
- * │ reached from the build environment (DNS / proxy blocked), and no    │
- * │ original Axtara logo or brand asset exists in this repository.      │
- * │ `brandSource.primary` and `brandSource.accent` below are therefore  │
- * │ PROVISIONAL placeholders — not official Axtara colours.             │
- * │                                                                     │
- * │ To apply the verified colours:                                      │
- * │   node scripts/extract-brand-colours.cjs   (needs network access    │
- * │   to www.axtara.com) → docs/BRAND-COLOUR-REPORT.md                  │
- * │ then set the two HEX values below and `paletteVerified = true`.     │
- * │ Every brand tint, shade, hover and active state is derived from     │
- * │ them automatically.                                                 │
- * └─────────────────────────────────────────────────────────────────────┘
+ * BRAND PALETTE (specified by Axtara, screenshot-derived — applied as mandatory):
+ *   Primary teal      #009DA5     Bright turquoise  #00BEC4
+ *   Deep teal         #07575E     Brand navy        #02102B
+ *   Warm off-white    #F7F7F2     White             #FFFFFF
+ *   Primary text      #111111     Secondary text    #242424
+ * SUPPORTING UI (specified):
+ *   Dark teal hover   #007C84     Light teal surface #E6F7F7
+ *   Pale turquoise    #C3EBE8     Muted text        #64748B
+ *   Subtle border     #DDE7E7     Dark section bg   #061F29
+ *
+ * Accessibility adjustments (documented in docs/BRAND-COLOUR-REPORT.md):
+ *   • White text on #009DA5 is 3.3:1 (fails WCAG AA for normal text), so filled
+ *     buttons and small interactive labels use #007C84 (4.98:1) as their base,
+ *     with #066A71 / deep teal on hover. #009DA5 is used for brand accents,
+ *     icons, charts, focus rings and large display elements.
+ *   • #64748B on #F7F7F2 is 4.43:1, so small muted text uses #5F6F84 (AA);
+ *     #64748B remains the semantic "muted" value on white surfaces.
  */
 
-export const paletteVerified = false;
-export const paletteSource =
-  "Provisional — official values pending extraction from www.axtara.com (site unreachable from build environment).";
+export const paletteVerified = true;
+export const paletteSource = "Axtara-specified brand palette (screenshot-derived), supplied by Axtara.";
 
-/** BRAND (extracted values go here). */
+/** BRAND SOURCE VALUES */
 export const brandSource = {
-  /** Axtara primary brand colour. Provisional until extracted. */
-  primary: "#244BCC",
-  /** Axtara accent colour, used sparingly (field / attention moments). Provisional until extracted. */
-  accent: "#E39B2D",
-  /** Secondary brand colour, if the extraction finds one. null = not used. */
-  secondary: null as string | null,
+  primary: "#009DA5",
+  brightTurquoise: "#00BEC4",
+  deepTeal: "#07575E",
+  navy: "#02102B",
+  offWhite: "#F7F7F2",
+  white: "#FFFFFF",
+  textPrimary: "#111111",
+  textSecondary: "#242424",
+  darkTealHover: "#007C84",
+  lightTeal: "#E6F7F7",
+  paleTurquoise: "#C3EBE8",
+  muted: "#64748B",
+  border: "#DDE7E7",
+  darkSection: "#061F29",
+  /** Kept for compatibility with older references. */
+  accent: "#00BEC4",
+  secondary: "#07575E" as string | null,
 };
 
-/* ── colour maths: derive tints / shades from a single brand HEX ── */
+/* ── colour maths for intermediate steps only ── */
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "");
   return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)) as [number, number, number];
@@ -46,60 +58,60 @@ export function mix(hex: string, target: string, amount: number): string {
   const b = hexToRgb(target);
   return rgbToHex(a.map((v, i) => v + (b[i] - v) * amount));
 }
-function scaleFrom(base: string) {
-  const w = "#FFFFFF";
-  const k = "#0A0D18";
-  return {
-    50: mix(base, w, 0.93),
-    100: mix(base, w, 0.86),
-    200: mix(base, w, 0.72),
-    300: mix(base, w, 0.52),
-    400: mix(base, w, 0.3),
-    500: mix(base, w, 0.12),
-    600: base,
-    700: mix(base, k, 0.18),
-    800: mix(base, k, 0.34),
-    900: mix(base, k, 0.5),
-    950: mix(base, k, 0.68),
-  } as const;
-}
+
+const B = brandSource;
 
 export const palette = {
-  /** Derived from brandSource.primary. */
-  brand: scaleFrom(brandSource.primary),
-  /** Derived from brandSource.accent. */
+  /**
+   * Brand teal scale. 500 = primary teal; 600 = dark teal (accessible base for
+   * filled buttons and links); 800 = deep teal; 50/100 = light teal / pale turquoise.
+   */
+  brand: {
+    50: B.lightTeal,
+    100: B.paleTurquoise,
+    200: mix(B.paleTurquoise, B.brightTurquoise, 0.35),
+    300: mix(B.paleTurquoise, B.brightTurquoise, 0.7),
+    400: B.brightTurquoise,
+    500: B.primary,
+    600: B.darkTealHover,
+    700: mix(B.darkTealHover, B.deepTeal, 0.5),
+    800: B.deepTeal,
+    900: mix(B.deepTeal, B.navy, 0.35),
+    950: mix(B.deepTeal, B.navy, 0.7),
+  },
+  /** Accent = bright turquoise, used sparingly for live / highlight moments. */
   accent: {
-    100: mix(brandSource.accent, "#FFFFFF", 0.84),
-    300: mix(brandSource.accent, "#FFFFFF", 0.4),
-    500: brandSource.accent,
-    600: mix(brandSource.accent, "#000000", 0.15),
-    700: mix(brandSource.accent, "#000000", 0.32),
+    100: B.lightTeal,
+    300: mix(B.brightTurquoise, "#FFFFFF", 0.4),
+    500: B.brightTurquoise,
+    600: B.primary,
+    700: B.darkTealHover,
   },
-  /** NEUTRALS — newly designed (not brand colours). Slightly warm, editorial. */
+  /** NEUTRALS — off-white base, teal-grey borders, specified text colours. */
   neutral: {
-    0: "#FFFFFF",
-    25: "#FBFBFA",
-    50: "#F6F6F4",
-    100: "#EEEEEB",
-    150: "#E5E5E1",
-    200: "#D9D9D4",
-    300: "#BDBDB7",
-    400: "#93948F",
-    500: "#6C6E6A",
-    600: "#51534F",
-    700: "#3A3C39",
-    800: "#252725",
-    900: "#161817",
-    950: "#0C0D0D",
+    0: B.white,
+    25: B.offWhite,
+    50: "#F0F2ED",
+    100: "#E8EEEC",
+    150: B.border,
+    200: "#CBD7D7",
+    300: "#A8B5B8",
+    400: "#8391A0",
+    500: "#5F6F84",
+    600: "#3D4653",
+    700: "#2E333A",
+    800: B.textSecondary,
+    900: "#1A1A1A",
+    950: B.textPrimary,
   },
-  /** DARK SURFACES — newly designed, tinted toward the brand primary. */
+  /** DARK SURFACES — navy and the specified dark section background. */
   ink: {
-    950: mix(brandSource.primary, "#05070D", 0.93),
-    900: mix(brandSource.primary, "#090D1A", 0.9),
-    850: mix(brandSource.primary, "#0E1326", 0.88),
-    800: mix(brandSource.primary, "#131A31", 0.86),
-    700: mix(brandSource.primary, "#212842", 0.84),
-    600: mix(brandSource.primary, "#333B58", 0.82),
+    950: B.navy,
+    900: B.darkSection,
+    850: mix(B.darkSection, B.deepTeal, 0.12),
+    800: mix(B.darkSection, B.deepTeal, 0.22),
+    700: mix(B.darkSection, B.deepTeal, 0.4),
+    600: mix(B.darkSection, B.deepTeal, 0.6),
   },
   /** FUNCTIONAL STATUS — newly designed. Always paired with text/icon, never colour alone. */
   status: {
@@ -109,37 +121,39 @@ export const palette = {
     warningBg: "#FDF1DE",
     danger: "#B4321F",
     dangerBg: "#FCE9E5",
-    info: brandSource.primary,
-    infoBg: mix(brandSource.primary, "#FFFFFF", 0.92),
-    neutral: "#51534F",
-    neutralBg: "#EEEEEB",
+    info: B.darkTealHover,
+    infoBg: B.lightTeal,
+    neutral: "#3D4653",
+    neutralBg: "#E8EEEC",
   },
 };
 
 /**
  * SEMANTIC TOKENS — what components should reach for.
- * `source`: "brand" = derived from extracted brand values; "designed" = new neutral/functional value.
+ * `source`: "brand" = specified Axtara value; "designed" = derived or functional value.
  */
 export const semantic = {
-  primary: { value: palette.brand[600], source: "brand" },
-  primaryHover: { value: palette.brand[700], source: "brand" },
-  primaryActive: { value: palette.brand[800], source: "brand" },
-  secondary: { value: brandSource.secondary ?? palette.ink[900], source: brandSource.secondary ? "brand" : "designed" },
-  accent: { value: palette.accent[500], source: "brand" },
-  tint: { value: palette.brand[50], source: "brand" },
-  shade: { value: palette.brand[900], source: "brand" },
-  background: { value: palette.neutral[25], source: "designed" },
-  backgroundAlt: { value: palette.neutral[0], source: "designed" },
-  backgroundDark: { value: palette.ink[900], source: "designed" },
-  textPrimary: { value: palette.neutral[950], source: "designed" },
-  textSecondary: { value: palette.neutral[600], source: "designed" },
-  textMuted: { value: palette.neutral[500], source: "designed" },
-  border: { value: palette.neutral[150], source: "designed" },
-  divider: { value: palette.neutral[100], source: "designed" },
-  success: { value: palette.status.success, source: "designed" },
-  warning: { value: palette.status.warning, source: "designed" },
-  error: { value: palette.status.danger, source: "designed" },
-  info: { value: palette.status.info, source: "brand" },
+  primary: { value: B.primary, source: "brand" },
+  primaryHover: { value: B.darkTealHover, source: "brand" },
+  primaryActive: { value: B.deepTeal, source: "brand" },
+  secondary: { value: B.deepTeal, source: "brand" },
+  accent: { value: B.brightTurquoise, source: "brand" },
+  navy: { value: B.navy, source: "brand" },
+  tint: { value: B.lightTeal, source: "brand" },
+  paleTint: { value: B.paleTurquoise, source: "brand" },
+  shade: { value: B.deepTeal, source: "brand" },
+  background: { value: B.offWhite, source: "brand" },
+  backgroundAlt: { value: B.white, source: "brand" },
+  backgroundDark: { value: B.darkSection, source: "brand" },
+  textPrimary: { value: B.textPrimary, source: "brand" },
+  textSecondary: { value: B.textSecondary, source: "brand" },
+  textMuted: { value: B.muted, source: "brand" },
+  border: { value: B.border, source: "brand" },
+  divider: { value: "#E8EEEC", source: "designed" },
+  success: { value: "#16794A", source: "designed" },
+  warning: { value: "#A15C07", source: "designed" },
+  error: { value: "#B4321F", source: "designed" },
+  info: { value: B.darkTealHover, source: "brand" },
 } as const;
 
 export const radii = { xs: "4px", sm: "6px", md: "8px", lg: "12px", xl: "16px" } as const;

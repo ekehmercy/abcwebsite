@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import {
   BarChart3, Bell, Building2, CheckCircle2, Clock, FileSpreadsheet, HardHat, Home, Receipt, Search, ShieldCheck,
-  Users, AlertTriangle, CircleDashed, CalendarClock, Info, ChevronsUpDown,
+  Users, AlertTriangle, CircleDashed, CalendarClock, Info, ChevronsUpDown, Layers, MessagesSquare, ClipboardCheck, FileText,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { demoOrg, type DemoStatus } from "@/content/demo-data";
@@ -9,11 +9,11 @@ import { demoOrg, type DemoStatus } from "@/content/demo-data";
 /* ───────────────────────── Avatar ───────────────────────── */
 
 const tones = [
-  "bg-[#E7EDFB] text-[#1E3CA3]",
+  "bg-[#E6F7F7] text-[#07575E]",
   "bg-[#FBEFD9] text-[#8A560E]",
   "bg-[#E3F1EA] text-[#155E3B]",
   "bg-[#F1E7F6] text-[#6B3285]",
-  "bg-[#E8EEF0] text-[#2E4F5C]",
+  "bg-[#E8EEF3] text-[#2E4060]",
   "bg-[#F7E6E2] text-[#8E3423]",
 ];
 
@@ -125,7 +125,7 @@ export function Kpi({
 }
 
 export function Meter({ value, tone = "brand", className, label }: { value: number; tone?: "brand" | "warn" | "bad" | "ok" | "neutral"; className?: string; label?: string }) {
-  const color = { brand: "bg-brand-500", warn: "bg-accent-500", bad: "bg-bad", ok: "bg-ok", neutral: "bg-n-400" }[tone];
+  const color = { brand: "bg-brand-500", warn: "bg-warn", bad: "bg-bad", ok: "bg-ok", neutral: "bg-n-400" }[tone];
   return (
     <div
       className={cn("h-1.5 w-full overflow-hidden rounded-full bg-n-100", className)}
@@ -247,19 +247,40 @@ export function LineChart({
 
 /* ───────────────────────── App frame (desktop web app) ───────────────────────── */
 
-export type AppSection = "home" | "workforce" | "attendance" | "field" | "projects" | "costs" | "payroll" | "compliance" | "reporting";
+export type AppSection = "home" | "workforce" | "attendance" | "field" | "projects" | "costs" | "payroll" | "compliance" | "reporting" | "packages" | "rfis" | "inspections" | "bids" | "crews" | "timesheets";
 
-const nav: { id: AppSection; label: string; Icon: typeof Home; count?: number }[] = [
+type NavItem = { id: AppSection; label: string; Icon: typeof Home; count?: number };
+
+/** GC / developer web application navigation. */
+const nav: NavItem[] = [
   { id: "home", label: "Overview", Icon: Home },
+  { id: "packages", label: "Packages", Icon: Layers },
+  { id: "rfis", label: "RFIs and bids", Icon: MessagesSquare, count: 2 },
   { id: "workforce", label: "Workforce", Icon: Users },
   { id: "attendance", label: "Attendance", Icon: Clock, count: 7 },
   { id: "field", label: "Field reports", Icon: HardHat },
   { id: "projects", label: "Projects", Icon: Building2 },
+  { id: "inspections", label: "Inspections", Icon: ClipboardCheck },
   { id: "costs", label: "Expenses", Icon: Receipt, count: 4 },
   { id: "payroll", label: "Payroll prep", Icon: FileSpreadsheet },
   { id: "compliance", label: "Compliance", Icon: ShieldCheck },
   { id: "reporting", label: "Reports", Icon: BarChart3 },
 ];
+
+/** Subcontractor web application navigation. */
+const subNav: NavItem[] = [
+  { id: "home", label: "Overview", Icon: Home },
+  { id: "packages", label: "Shared packages", Icon: Layers },
+  { id: "bids", label: "Bid invitations", Icon: FileText, count: 1 },
+  { id: "rfis", label: "RFIs", Icon: MessagesSquare },
+  { id: "crews", label: "Crews", Icon: Users },
+  { id: "timesheets", label: "Timesheets", Icon: Clock },
+  { id: "payroll", label: "Payroll prep", Icon: FileSpreadsheet },
+  { id: "reporting", label: "Reports", Icon: BarChart3 },
+];
+
+export type AppIdentity = { initials: string; name: string; app: string; variant?: "gc" | "sub" };
+const defaultIdentity: AppIdentity = { initials: demoOrg.initials, name: demoOrg.short, app: "GC/Developer Web", variant: "gc" };
 
 /**
  * Desktop web-app chrome. Uses container queries: the sidebar collapses and
@@ -271,24 +292,32 @@ export function AppFrame({
   children,
   className,
   actions,
+  identity = defaultIdentity,
 }: {
   active: AppSection;
   crumbs: string[];
   children: ReactNode;
   className?: string;
   actions?: ReactNode;
+  /** Which Axtara application and company this screen belongs to. */
+  identity?: AppIdentity;
 }) {
+  const items = identity.variant === "sub" ? subNav : nav;
+  const markBg = identity.variant === "sub" ? "bg-brand-800" : "bg-ink-900";
   return (
     <div className={cn("@container relative overflow-hidden rounded-xl bg-n-25 text-left font-sans shadow-[0_0_0_1px_var(--n-200),var(--shadow-float)]", className)}>
       <div className="flex min-h-full">
         <aside className="hidden w-[188px] shrink-0 flex-col border-r border-n-150 bg-n-50/80 px-2.5 py-3 @3xl:flex">
           <div className="flex items-center gap-2 rounded-md px-1.5 py-1">
-            <span className="flex size-6 items-center justify-center rounded-[6px] bg-ink-900 text-[10px] font-bold text-white">{demoOrg.initials}</span>
-            <span className="ui-md min-w-0 flex-1 truncate font-semibold text-n-900">{demoOrg.short}</span>
+            <span className={cn("flex size-6 items-center justify-center rounded-[6px] text-[10px] font-bold text-white", markBg)}>{identity.initials}</span>
+            <span className="min-w-0 flex-1">
+              <span className="ui-md block truncate font-semibold text-n-900">{identity.name}</span>
+              <span className="block truncate text-[10.5px] leading-3 text-n-500">{identity.app}</span>
+            </span>
             <ChevronsUpDown className="size-3.5 text-n-400" aria-hidden="true" />
           </div>
           <nav aria-label="Demo application navigation" className="mt-4 space-y-px">
-            {nav.map((n) => (
+            {items.map((n) => (
               <div
                 key={n.id}
                 className={cn(
@@ -309,7 +338,7 @@ export function AppFrame({
         </aside>
         <div className="min-w-0 flex-1">
           <div className="flex h-11 items-center gap-3 border-b border-n-150 bg-white/70 px-3.5">
-            <span className="flex size-6 items-center justify-center rounded-[6px] bg-ink-900 text-[10px] font-bold text-white @3xl:hidden">{demoOrg.initials}</span>
+            <span className={cn("flex size-6 items-center justify-center rounded-[6px] text-[10px] font-bold text-white @3xl:hidden", markBg)}>{identity.initials}</span>
             <ol className="ui-md flex min-w-0 items-center gap-1.5 text-n-500">
               {crumbs.map((c, i) => (
                 <li key={c} className={cn("flex min-w-0 items-center gap-1.5", i === crumbs.length - 1 && "font-medium text-n-900", i < crumbs.length - 1 && "hidden @lg:flex")}>

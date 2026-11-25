@@ -22,6 +22,7 @@ import { Avatar, IllustrativeNote, Panel, PhoneFrame, Tag } from "@/components/p
 import { HeroDemo } from "./hero-demo";
 import { Fragmented } from "./fragmented";
 import { Journey, type JourneyStep } from "./journey";
+import { Logo } from "@/components/layout/logo";
 import { cn } from "@/lib/cn";
 
 const cap = (moduleSlug: ModuleSlug, id: string) => publicCapability(moduleSlug, id);
@@ -370,7 +371,7 @@ export function Ecosystem() {
               })}
             </svg>
             <div className="absolute left-1/2 top-1/2 flex size-[112px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-2xl bg-ink-900 text-white shadow-[var(--shadow-float)]">
-              <span className="text-[17px] font-semibold tracking-[-0.02em]">axtara</span>
+              <Logo dark height={20} />
               <span className="mt-0.5 text-[11px] text-white/60">Approved records</span>
             </div>
             <ul>

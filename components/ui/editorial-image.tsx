@@ -31,10 +31,10 @@ export function EditorialImage({
     );
   }
   return (
-    <div role="img" aria-label={m?.alt ?? "Construction site"} className={cn(pos, "overflow-hidden bg-[#1a2130]", className)}>
-      <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_80%_0%,#3a4a6b_0%,#1a2130_55%,#0f141f_100%)]" />
+    <div role="img" aria-label={m?.alt ?? "Construction site"} className={cn(pos, "overflow-hidden bg-[#061F29]", className)}>
+      <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_80%_0%,#0F4A52_0%,#061F29_55%,#02102B_100%)]" />
       <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" className="absolute inset-0 size-full opacity-[0.55]" aria-hidden="true">
-        <g stroke="#8fa6d6" strokeWidth="0.8" fill="none" opacity="0.55">
+        <g stroke="#5FD0D2" strokeWidth="0.8" fill="none" opacity="0.55">
           {variant % 2 === 0 ? (
             <>
               {/* building frame */}
@@ -59,7 +59,7 @@ export function EditorialImage({
             </>
           )}
         </g>
-        <rect x="0" y="260" width="400" height="40" fill="#0f141f" />
+        <rect x="0" y="260" width="400" height="40" fill="#02102B" />
       </svg>
       {showBriefs && m && (
         <p className="absolute inset-x-3 top-3 rounded-md bg-black/50 px-2.5 py-1.5 text-[11.5px] leading-4 text-white/80 backdrop-blur">

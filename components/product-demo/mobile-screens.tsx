@@ -131,7 +131,7 @@ export function MobileSchedule() {
                 <p className="ui-md font-semibold text-n-900">{x.site}</p>
                 <p className="ui-sm text-n-600">{x.t}</p>
               </div>
-              {x.note && <span className="ui-xs rounded bg-accent-100 px-1.5 py-0.5 font-medium text-accent-700">{x.note}</span>}
+              {x.note && <span className="ui-xs rounded bg-warn-bg px-1.5 py-0.5 font-medium text-warn">{x.note}</span>}
             </div>
           </Row>
         ))}
@@ -147,7 +147,7 @@ export function MobileDailyReport() {
     <>
       <MobileHeader title="Daily report" sub="Block B · Level 3" back />
       <div className="flex flex-1 flex-col gap-2 px-3">
-        <Row className="flex items-center gap-2"><Sun className="size-4 text-accent-600" aria-hidden="true" /><span className="ui-sm text-n-700">31°C · Clear · No weather delay</span></Row>
+        <Row className="flex items-center gap-2"><Sun className="size-4 text-warn" aria-hidden="true" /><span className="ui-sm text-n-700">31°C · Clear · No weather delay</span></Row>
         <Row>
           <p className="ui-xs font-medium text-n-500">Work completed</p>
           <p className="ui-sm mt-1 text-n-800">Rebar fixed to grid lines C–F. Column formwork struck C3–C6.</p>

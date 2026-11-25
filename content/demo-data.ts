@@ -183,3 +183,73 @@ export const demoCostCodes = [
 ];
 
 export const illustrativeLabel = "Illustrative product demonstration · fictional data";
+
+/* ───────────── Cross-company collaboration (fictional) ─────────────
+ * Meridian Construction Group is the GC on Harbour Point, building for the
+ * developer Seabreeze Developments. Subcontractors join Meridian's project
+ * workspace through package invitations and keep their own company records.
+ */
+export const demoCompanies = {
+  gc: { name: "Meridian Construction Group", short: "Meridian", initials: "MC", role: "General contractor" },
+  developer: { name: "Seabreeze Developments", short: "Seabreeze", initials: "SD", role: "Developer" },
+  sub: { name: "Volt Line Electrical", short: "Volt Line", initials: "VL", role: "Electrical subcontractor" },
+  masonry: { name: "Keystone Masonry", short: "Keystone", initials: "KM", role: "Masonry subcontractor" },
+  bidder: { name: "Brightwire Electrical", short: "Brightwire", initials: "BE", role: "Electrical subcontractor" },
+  waterproofing: { name: "Shoreline Membranes", short: "Shoreline", initials: "SM", role: "Waterproofing subcontractor" },
+} as const;
+
+/** People at partner companies (Meridian people are in demoPeople). */
+export const demoPartnerPeople = {
+  subOps: { name: "Paul Hylton", role: "Operations Manager", company: "Volt Line Electrical", tone: 3 },
+  subSupervisor: { name: "Tanya Brown", role: "Electrical Supervisor", company: "Volt Line Electrical", tone: 1 },
+  subWorker: { name: "Ricardo Lewis", role: "Electrician", company: "Volt Line Electrical", tone: 0 },
+  developer: { name: "Marcia Gayle", role: "Development Manager", company: "Seabreeze Developments", tone: 4 },
+  gcAdmin: { name: "Andre Campbell", role: "Project Manager", company: "Meridian Construction Group", tone: 2 },
+} as const;
+
+export type DemoPackage = {
+  code: string;
+  name: string;
+  partner: string;
+  kind: "Work package" | "Bid invitation";
+  status: string;
+  note: string;
+  tone: "ok" | "warn" | "neutral";
+};
+
+export const demoPackages: DemoPackage[] = [
+  { code: "E2", name: "Electrical rough-in, Block A", partner: "Volt Line Electrical", kind: "Work package", status: "Active", note: "RFI-021 answered · CR-004 in review", tone: "ok" },
+  { code: "W1", name: "Block A masonry", partner: "Keystone Masonry", kind: "Work package", status: "Active", note: "2 daily reports to review", tone: "ok" },
+  { code: "B1", name: "Block B masonry", partner: "2 companies invited", kind: "Bid invitation", status: "Closes 20 Nov", note: "1 submission received", tone: "warn" },
+  { code: "W2", name: "Podium waterproofing", partner: "Shoreline Membranes", kind: "Work package", status: "Active", note: "No open items", tone: "neutral" },
+];
+
+export const demoRfis = [
+  { id: "RFI-021", title: "Conduit route clashes with Level 3 beam GL C/4", pkg: "E2", raisedBy: "Tanya Brown", company: "Volt Line Electrical", to: "Services engineer", due: "Tue 17 Nov", status: "Answered" as const, answer: "Re-route via the riser at GL C/5. Revised sketch SK-E-014 attached." },
+  { id: "RFI-024", title: "Waterproofing upstand height at podium door thresholds", pkg: "W2", raisedBy: "Shoreline Membranes", company: "Shoreline Membranes", to: "Architect", due: "Fri 20 Nov", status: "Open" as const, answer: null },
+  { id: "RFI-025", title: "Block A lintel bearing at stair core openings", pkg: "W1", raisedBy: "Keystone Masonry", company: "Keystone Masonry", to: "Structural engineer", due: "Mon 23 Nov", status: "Open" as const, answer: null },
+];
+
+export const demoBids = [
+  { company: "Keystone Masonry", revision: "Rev 2 · 18 Nov", note: "Revised after addendum 01", price: "J$41,200,000", exclusions: ["Scaffold beyond Level 4", "Lintel supply"], ackAddendum: true },
+  { company: "Coralstone Masonry", revision: "Rev 1 · 17 Nov", note: "Addendum 01 not yet acknowledged", price: "J$39,850,000", exclusions: ["Lintel supply", "Cleaning", "Builder's work holes"], ackAddendum: false },
+];
+
+export const demoInspections = {
+  id: "INSP-007",
+  title: "Level 2 services inspection · Block A",
+  date: "Wed 18 Nov",
+  items: [
+    { id: "CI-031", pkg: "E2", owner: "Volt Line Electrical", text: "Fire-stop missing at two conduit penetrations, GL B/3", due: "Fri 20 Nov", status: "Open" as const },
+    { id: "CI-032", pkg: "W1", owner: "Keystone Masonry", text: "Mortar joints not struck at stair core, east face", due: "Mon 23 Nov", status: "Evidence submitted" as const },
+    { id: "CI-029", pkg: "E2", owner: "Volt Line Electrical", text: "Unlabelled circuits at DB-2A", due: "Tue 17 Nov", status: "Closed" as const },
+  ],
+};
+
+export const demoHandover = [
+  { pkg: "E2", item: "Electrical test certificates", status: "Received" as const },
+  { pkg: "E2", item: "As-built conduit drawings", status: "Outstanding" as const },
+  { pkg: "W1", item: "Masonry warranty", status: "Received" as const },
+  { pkg: "W2", item: "Membrane manufacturer warranty", status: "Outstanding" as const },
+  { pkg: "W2", item: "Flood test record", status: "Received" as const },
+];
