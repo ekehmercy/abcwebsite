@@ -184,6 +184,8 @@ await check("interactive product demos respond like the application", async () =
   await j.getByRole("tab", { name: "Cedar Heights" }).click();
   await j.getByText("Cedar Heights Residential Estate").waitFor();
   await j.getByRole("button", { name: /Prepare payroll/ }).click();
+  // The payroll step mounts on first open — wait for it before counting variances.
+  await j.getByText("Period summary").waitFor();
   const rev = j.getByRole("button", { name: "Review", exact: true });
   // Resolve each variance and wait for the UI to register it before the next click.
   for (let k = 0; k < 6; k++) {
