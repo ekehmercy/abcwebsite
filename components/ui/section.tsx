@@ -3,10 +3,7 @@ import { cn } from "@/lib/cn";
 
 export function Eyebrow({ children, dark, className }: { children: ReactNode; dark?: boolean; className?: string }) {
   return (
-    <p className={cn("t-eyebrow flex items-center gap-2", dark ? "text-brand-200" : "text-brand-700", className)}>
-      <span aria-hidden="true" className={cn("h-px w-5", dark ? "bg-brand-300/60" : "bg-brand-500/60")} />
-      {children}
-    </p>
+    <p className={cn("t-eyebrow flex items-center gap-2", dark ? "text-brand-200" : "text-brand-700", className)}>{children}</p>
   );
 }
 

@@ -156,7 +156,7 @@ export const modules: ProductModule[] = [
       c("ta-clock", "Clock-in and clock-out", "Workers record start and finish times from the Axtara mobile app."),
       c("ta-geofence", "Geofence verification", "Clock-ins are checked against the site boundary and flagged when outside it."),
       c("ta-face", "Facial verification", "Optional identity check at clock-in, where lawful and configured with worker consent.", "in-development"),
-      c("ta-timesheets", "Timesheet preparation", "Attendance becomes draft timesheets, allocated to projects and cost codes."),
+      c("ta-timesheets", "Timesheet preparation", "Attendance becomes timesheets, already allocated to projects and cost codes."),
       c("ta-exceptions", "Attendance exceptions", "Late arrivals, missed clock-outs and out-of-boundary records surface for review."),
       c("ta-approvals", "Supervisor approvals", "Supervisors approve, correct or query hours — with a full record of every change."),
       c("ta-overtime", "Overtime management", "Overtime is identified against configured rules and routed for approval."),
@@ -310,8 +310,8 @@ export const modules: ProductModule[] = [
     capabilities: [
       c("pp-hours", "Approved timesheet information", "Only supervisor-approved hours are included in payroll preparation."),
       c("pp-earnings", "Earnings and deductions", "Configured earnings types, allowances and deductions applied to approved hours."),
-      c("pp-prep", "Payroll preparation", "A payroll draft per period, with variances from the previous period highlighted."),
-      c("pp-review", "Review and approval", "Finance reviews, queries and approves the payroll draft with a recorded sign-off."),
+      c("pp-prep", "Payroll preparation", "Payroll prepared for each period, with variances from the previous period highlighted."),
+      c("pp-review", "Review and approval", "Finance reviews, queries and approves each payroll period with a recorded sign-off."),
       c("pp-schedule", "Payroll schedule generation", "A payroll schedule produced for your payroll provider or bank.", "in-development"),
       c("pp-handoff", "External payroll handoff", "Export or send approved payroll data to an external payroll provider.", "integration-required"),
       c("pp-payslips", "Payslip-related workflows", "Workers view payslip information in the app, where supported by your payroll provider.", "planned"),
@@ -321,7 +321,7 @@ export const modules: ProductModule[] = [
       steps: [
         { actor: "Site Supervisor", action: "Approves the week's hours for the Block B crew." },
         { actor: "Axtara", action: "Applies configured earnings and allowance rules." },
-        { actor: "Finance Manager", action: "Reviews variances and approves the payroll draft." },
+        { actor: "Finance Manager", action: "Reviews variances and approves the period." },
         { actor: "Payroll provider", action: "Receives the approved schedule and processes payment externally." },
       ],
     },

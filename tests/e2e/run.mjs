@@ -122,11 +122,11 @@ await check("journey next / previous / restart controls", async () => {
   await page.locator("#journey").scrollIntoViewIfNeeded();
   await page.getByRole("button", { name: "Restart walkthrough" }).click();
   await page.getByRole("button", { name: "Next step" }).click();
-  await page.getByText(/Step 2 of 7/).waitFor();
+  await page.getByText(/Step 2 of 6/).waitFor();
   await page.getByRole("button", { name: "Previous step" }).click();
-  await page.getByText(/Step 1 of 7/).waitFor();
-  await page.getByRole("button", { name: /Management reviews performance/ }).click();
-  await page.getByText(/Step 7 of 7/).waitFor();
+  await page.getByText(/Step 1 of 6/).waitFor();
+  await page.getByRole("button", { name: /See the whole operation/ }).click();
+  await page.getByText(/Step 6 of 6/).waitFor();
 });
 
 await check("cookie preferences dialog opens and closes", async () => {
@@ -166,6 +166,41 @@ await check("mobile navigation drawer opens, traps focus, closes on Escape", asy
   await p.keyboard.press("Escape");
   assert((await p.getByRole("dialog", { name: "Site navigation" }).count()) === 0, "drawer still open");
   await m.close();
+});
+
+await check("interactive product demos respond like the application", async () => {
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  const j = page.locator("#journey");
+  await j.scrollIntoViewIfNeeded();
+  await j.getByRole("button", { name: "Restart walkthrough" }).click();
+  await j.getByRole("button", { name: "Clock in", exact: true }).click();
+  await j.getByText("Recorded and sent for review").waitFor({ timeout: 4000 });
+  await j.getByRole("button", { name: /Review and approve/ }).click();
+  await j.getByRole("button", { name: "Approve", exact: true }).first().click();
+  await j.getByText("Approved by Shanice Brown").waitFor();
+  await j.getByRole("button", { name: /Update the project picture/ }).click();
+  await j.getByRole("tab", { name: "Cedar Heights" }).click();
+  await j.getByText("Cedar Heights Residential Estate").waitFor();
+  await j.getByRole("button", { name: /Prepare payroll/ }).click();
+  const rev = j.getByRole("button", { name: "Review", exact: true });
+  for (let k = 0; k < 5 && (await rev.count()); k++) await rev.first().click();
+  await j.getByRole("button", { name: "Approve and prepare schedule" }).click();
+  await j.getByText("Schedule ready for your payroll provider").waitFor();
+  const ex = page.locator("section[aria-labelledby=explore-title]");
+  await ex.getByRole("tab", { name: "Costs" }).click();
+  await ex.getByRole("button", { name: /Formwork release agent/ }).click();
+  await ex.getByRole("button", { name: "Approve", exact: true }).click();
+  await ex.getByText("Approved · added to project cost").waitFor();
+});
+
+await check("no development-stage language is visible", async () => {
+  const banned = /\b(under development|in development|coming soon|proposed model|being finalised|under review|under evaluation|design commitment|not yet assessed|confirm in demo)\b/i;
+  for (const r of ["/", "/platform/payroll", "/pricing", "/integrations", "/security", "/mobile", "/about"]) {
+    await page.goto(BASE + r, { waitUntil: "networkidle" });
+    const t = await page.evaluate(() => document.body.innerText);
+    const m = t.match(banned);
+    assert(!m, `${r}: "${m?.[0]}"`);
+  }
 });
 
 await check("sitemap and robots are served", async () => {

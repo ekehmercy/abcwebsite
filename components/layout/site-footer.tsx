@@ -40,7 +40,7 @@ export function SiteFooter() {
       <div className="border-t border-n-150">
         <div className="container-x flex flex-col gap-2 py-6 text-[13px] text-n-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {site.parentCompany}. All rights reserved.</p>
-          <p>Product interfaces shown on this site are illustrative and use fictional data.</p>
+          <p>Product screens on this site use demonstration data.</p>
         </div>
       </div>
     </footer>

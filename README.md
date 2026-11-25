@@ -21,7 +21,7 @@ npm run dev                  # http://localhost:3000
 | `npm run lint` | TypeScript type-check |
 | `npm test` | Unit tests (pricing engine, form validation) |
 | `npm run test:e2e` | Playwright QA against a running server (`BASE_URL=…`) |
-| `npm run audit:claims` | Lists every claim, policy, price and asset still awaiting approval |
+| `npm run audit:claims` | Writes the private publication checklist (`docs/PUBLICATION-CHECKLIST.md`) |
 
 Requires Node.js 22+.
 
@@ -72,26 +72,30 @@ Nothing business-critical is hardcoded in components. Update these files instead
 | `content/media.ts` | Photography slots, briefs, licence and credit |
 | `content/demo-data.ts` | Fictional demonstration organisation, projects and people |
 
-### Claims discipline
+### Release stages and claims discipline
 
-The site is built so that it **cannot overstate** the product:
+The site has two release stages, set with `NEXT_PUBLIC_RELEASE_STAGE` (`lib/release.ts`):
 
-- **Feature claims** — a capability marked `available` is only shown as available when `verified: true`. In production (`NEXT_PUBLIC_CLAIMS_MODE=strict`, the default) unverified capabilities display *“Confirm in demo”*. Planned or in-development items always show their status.
-- **Security** — statements are labelled *Design commitment* until engineering evidence upgrades them to `implemented`. No certifications are claimed.
-- **Integrations** — no third-party vendor is named until `partnerConfirmed: true`.
-- **Pricing** — no prices ship in the repository. Only rate cards with `"approved": true` are ever sent to the browser.
-- **Legal** — policy pages say they are being finalised and are `noindex` until approved text is supplied.
-- **Product UI** — every demonstration is labelled illustrative and uses fictional data.
+| Stage | What visitors see | Indexing |
+| --- | --- | --- |
+| `staging` (default) | Axtara presented as a complete product: every capability, integration and security control in the registers, in confident present-tense language, with no development-status labels | Blocked (`robots.txt` disallow + `noindex`) |
+| `public` | Only items marked `verified: true` (and published articles and policies). Anything unverified is simply omitted — never labelled "planned" or "in development" | Enabled |
 
-Run `npm run audit:claims` before launch to see everything still outstanding.
+Status and verification fields in `config/features.ts`, `config/integrations.ts` and `content/security.ts` are **internal** and never rendered. Outstanding items are listed in the private checklist:
+
+```bash
+npm run audit:claims    # → docs/PUBLICATION-CHECKLIST.md
+```
+
+Other safeguards stay in place in both stages: no certifications or regulatory badges are shown, no third-party vendor is named unless `partnerConfirmed: true`, no prices ship unless a rate card is `approved: true`, payroll copy never implies Axtara holds funds or pays wages, and product screens use one fictional demonstration organisation (Meridian Construction Group).
 
 ---
 
 ## Common content updates
 
-**Apply the verified brand palette** — edit `palette` in `config/brand.ts`, set `paletteVerified = true`. Replace the provisional wordmark in `components/layout/logo.tsx` with the approved logo (place files in `public/brand/`).
+**Apply the verified brand palette** — see `docs/BRAND-COLOUR-REPORT.md`. Run `node scripts/extract-brand-colours.cjs` with network access to www.axtara.com, then set `brandSource.primary` / `accent` in `config/brand.ts` and `paletteVerified = true`; every tint, shade, hover and active state is derived automatically. Replace the provisional wordmark in `components/layout/logo.tsx` with the approved logo (place files in `public/brand/`).
 
-**Verify a feature** — in `config/features.ts`, set the capability's `status` and `verified: true`.
+**Verify a feature** — in `config/features.ts`, set `verified: true` on the capability (required before it appears in the public release).
 
 **Add photography** — put licensed images in `public/images/`, then set `src`, `credit` and `licence` for the slot in `content/media.ts`. Images are served through `next/image` (AVIF/WebP, responsive sizes).
 
@@ -99,7 +103,7 @@ Run `npm run audit:claims` before launch to see everything still outstanding.
 
 **Publish a legal policy** — add the approved text to `content` in `config/legal.ts`, set `status: "published"`, `effectiveDate` and `approvedBy`.
 
-**Publish an article** — set `status: "published"` in `content/resources.ts`. Drafts show only in development or with `CONTENT_PREVIEW=true`.
+**Publish an article** — set `status: "published"` in `content/resources.ts`. Unpublished articles appear only on staging (or with `CONTENT_PREVIEW=true`).
 
 **Approve pricing** — see `config/pricing/README.md`.
 
@@ -129,7 +133,7 @@ Analytics is **off** unless `NEXT_PUBLIC_ANALYTICS_PROVIDER` is set (`plausible`
 
 The site needs a Node.js runtime for the form API and server-only pricing; everything else is statically generated.
 
-**Vercel (recommended)** — import the repository, set environment variables from `.env.example`, deploy. Set `ALLOW_INDEXING=false` on preview deployments.
+**Vercel (recommended)** — import the repository, set environment variables from `.env.example`, deploy. Staging deployments need no extra setting (they are never indexed); set `NEXT_PUBLIC_RELEASE_STAGE=public` only for the verified production launch.
 
 **Any Node host**
 
