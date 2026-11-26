@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens are generated from config/brand.ts and injected as CSS custom
+ * properties in app/layout.tsx. Tailwind's theme maps onto those variables so
+ * changing a value in brand.ts re-themes the whole site.
+ */
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
+
+  --color-accent-100: var(--accent-100);
+  --color-accent-300: var(--accent-300);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+
+  --color-n-0: var(--n-0);
+  --color-n-25: var(--n-25);
+  --color-n-50: var(--n-50);
+  --color-n-100: var(--n-100);
+  --color-n-150: var(--n-150);
+  --color-n-200: var(--n-200);
+  --color-n-300: var(--n-300);
+  --color-n-400: var(--n-400);
+  --color-n-500: var(--n-500);
+  --color-n-600: var(--n-600);
+  --color-n-700: var(--n-700);
+  --color-n-800: var(--n-800);
+  --color-n-900: var(--n-900);
+  --color-n-950: var(--n-950);
+
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-850: var(--ink-850);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+
+  --color-ok: var(--st-success);
+  --color-ok-bg: var(--st-successBg);
+  --color-warn: var(--st-warning);
+  --color-warn-bg: var(--st-warningBg);
+  --color-bad: var(--st-danger);
+  --color-bad-bg: var(--st-dangerBg);
+  --color-info: var(--st-info);
+  --color-info-bg: var(--st-infoBg);
+
+  --radius-xs: var(--r-xs);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+
+  --ease-out-soft: var(--ease-out);
+
+  --shadow-hairline: 0 0 0 1px rgb(12 13 13 / 0.06);
+  --shadow-card: 0 1px 2px rgb(12 13 13 / 0.04), 0 4px 16px -4px rgb(12 13 13 / 0.06);
+  --shadow-float: 0 1px 2px rgb(12 13 13 / 0.05), 0 24px 48px -16px rgb(2 16 43 / 0.18);
+  --shadow-device: 0 2px 4px rgb(12 13 13 / 0.08), 0 40px 80px -24px rgb(2 16 43 / 0.35);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-padding-top: 88px;
+  }
+  body {
+    background: var(--n-25);
+    color: var(--n-900);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection {
+    background: var(--brand-200);
+    color: var(--n-950);
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .dark-surface :focus-visible {
+    outline-color: var(--brand-300);
+  }
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Page container — 1312px content + responsive gutters. */
+  .container-x {
+    width: 100%;
+    max-width: 1376px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 4vw, 32px);
+  }
+
+  .t-display {
+    font-size: clamp(2.6rem, 1.35rem + 4.6vw, 5.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.038em;
+    font-weight: 560;
+  }
+  .t-h1 {
+    font-size: clamp(2.4rem, 1.5rem + 3.4vw, 4.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.034em;
+    font-weight: 560;
+  }
+  .t-h2 {
+    font-size: clamp(2rem, 1.35rem + 2.3vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    font-weight: 560;
+  }
+  .t-h3 {
+    font-size: clamp(1.45rem, 1.15rem + 1vw, 2.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.022em;
+    font-weight: 560;
+  }
+  .t-lead {
+    font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.2rem);
+    line-height: 1.55;
+    letter-spacing: -0.006em;
+  }
+  .t-eyebrow {
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+  }
+
+  /* Fine architectural grid used sparingly behind hero / map compositions. */
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, rgb(12 13 13 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(12 13 13 / 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .grid-lines-dark {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Product UI text sizes (kept ≥ 11px for legibility). */
+  .ui-xs { font-size: 11px; line-height: 15px; }
+  .ui-sm { font-size: 12px; line-height: 16px; }
+  .ui-md { font-size: 13px; line-height: 18px; }
+}
+
+/* Entrance reveal — content is visible by default; JS opts elements in. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 600ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.js [data-reveal][data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.55; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes travel {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(-6px); background-color: var(--brand-50); }
+  60% { background-color: var(--brand-50); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+.anim-fade { animation: fade-in 420ms var(--ease-out) both; }
+.anim-row { animation: row-in 900ms var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,25 @@
+[
+  {
+    "region": "JM",
+    "currency": "JMD",
+    "approved": false,
+    "model": "max-of-workers-or-minimum",
+    "_comment": "EXAMPLE SHAPE ONLY — placeholder numbers, not Axtara prices. Model A: monthly = max(own active workers × perWorkerMonthly, minimumMonthly) × the billing multiplier in config/pricing.ts.",
+    "plans": {
+      "core": { "perWorkerMonthly": 100, "minimumMonthly": 1000 },
+      "scale": { "perWorkerMonthly": 200, "minimumMonthly": 5000 }
+    }
+  },
+  {
+    "region": "NG",
+    "currency": "NGN",
+    "approved": false,
+    "model": "base-plus-allowance",
+    "annualBaseDiscount": 0.1,
+    "_comment": "EXAMPLE SHAPE ONLY — placeholder numbers, not Axtara prices. Model B: monthly = baseMonthly (includes includedProjects and includedWorkers) + extra projects × perExtraProjectMonthly + extra own workers × perExtraWorkerMonthly. annualBaseDiscount applies to the base only; additions are billed monthly.",
+    "plans": {
+      "core": { "baseMonthly": 1000, "includedProjects": 3, "includedWorkers": 25, "perExtraProjectMonthly": 100, "perExtraWorkerMonthly": 10 },
+      "scale": { "baseMonthly": 2000, "includedProjects": 10, "includedWorkers": 100, "perExtraProjectMonthly": 100, "perExtraWorkerMonthly": 10 }
+    }
+  }
+]
