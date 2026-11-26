@@ -1,8 +1,33 @@
 # Axtara — Product Marketing Website
 
-The product-led marketing website for **Axtara**, the connected workforce and project operations platform for construction and project-driven businesses. Axtara is a product of Anchor Bridge.
+A product-led marketing website for **Axtara**, a workforce and project operations platform for construction and project-driven businesses (Nigeria, Jamaica, Guyana and the United States).
 
-Built with Next.js (App Router), React, TypeScript and Tailwind CSS. Product demonstrations are real HTML/CSS components — not screenshots — so they stay sharp, accessible and editable.
+![Axtara homepage](.github/screenshots/home.jpg)
+
+## About this project
+
+**My role:** product owner and project lead. I wrote the brief and creative direction, defined the product positioning, supplied the brand and reference material, made the pricing and content decisions, and reviewed every iteration. The implementation was built with an AI coding assistant (Claude Code) under my direction — the commit history reflects that.
+
+**What was delivered**
+
+- 33 routes: homepage, platform overview, 10 product-module pages, 4 audience pages, pricing, ROI calculator, cross-company product tour, collaboration and lifecycle explainers, partner programme, security and trust, resources, demo and contact flows
+- **Interactive product demonstrations** built as real UI components — clock in on a phone, resolve an attendance exception, answer an RFI, award a bid, approve payroll preparation, publish handover readiness
+- **Pricing estimator** for three regional price books (USD, JMD, NGN) with a tested pricing engine
+- **Accessible forms** with server-side validation, spam protection and honest delivery states
+- **Release-stage system**: a staging site that is never indexed, and a public release that only shows claims marked as verified
+- Brand design system with centralised tokens and the original Axtara logo
+
+| | |
+| --- | --- |
+| ![Cross-company product tour](.github/screenshots/tour.jpg) | ![Pricing](.github/screenshots/pricing.jpg) |
+
+<img src=".github/screenshots/mobile.jpg" alt="Mobile homepage" width="260" />
+
+**Stack:** Next.js (App Router) · React · TypeScript · Tailwind CSS · Playwright · Node test runner
+
+**Quality:** 263 end-to-end checks across 33 routes at six screen widths (no console errors, no horizontal overflow, keyboard navigation, forms, calculators), 29 unit tests, Lighthouse desktop performance 100 and accessibility 96–100.
+
+> Product screens use fictional demonstration data. Axtara and the Axtara logo belong to Anchor Bridge.
 
 ---
 
