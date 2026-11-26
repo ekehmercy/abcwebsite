@@ -96,5 +96,6 @@ for (const [k, label] of [
 ] as const) if (!process.env[k]) item(`${label} — set ${k}`);
 
 md.push("", `**${open} item(s) outstanding.**`, "");
+fs.mkdirSync(new URL("../docs/", import.meta.url), { recursive: true });
 fs.writeFileSync(new URL("../docs/PUBLICATION-CHECKLIST.md", import.meta.url), md.join("\n"));
 console.log(`\n${open} item(s) awaiting verification or approval → docs/PUBLICATION-CHECKLIST.md\n`);

@@ -11,3 +11,6 @@ config/pricing/rates.private.json
 test-results/
 screenshots/
 .DS_Store
+
+# Internal reports — generated locally, never published
+docs/
